@@ -1,5 +1,5 @@
 name: Feedback
-description: Tell us what worked, what didn't, or what could be better in SoundCharts for ArcGIS.
+description: Ask a question, or tell us what worked, what didn't, or what could be better in SoundCharts for ArcGIS.
 title: "[Feedback]: "
 labels: ["feedback"]
 body:
@@ -7,13 +7,13 @@ body:
     attributes:
       value: |
         Thanks for your feedback! It doesn't need to be a bug or a fully
-        formed feature request.
+        formed feature request: questions and usage help belong here too.
 
   - type: textarea
     id: feedback
     attributes:
       label: Your feedback
-      description: What happened, or what could be improved?
+      description: What happened, what could be improved, or what would you like to know?
     validations:
       required: true
 

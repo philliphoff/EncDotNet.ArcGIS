@@ -16,8 +16,8 @@ sure you are running the most recent add-in before reporting an issue.
 
 ## Reporting a vulnerability
 
-**Please do not report security vulnerabilities through public GitHub issues,
-discussions, or pull requests.**
+**Please do not report security vulnerabilities through public GitHub issues
+or pull requests.**
 
 Instead, report them privately through GitHub's built-in security advisory
 workflow:

@@ -3,11 +3,10 @@
 Thanks for using SoundCharts for ArcGIS! This page explains where to go
 depending on what you need.
 
-## Questions and general discussion
+## Questions and feedback
 
-For "how do I…?" questions, usage help, ideas and general discussion, please
-use [GitHub Discussions](https://github.com/philliphoff/EncDotNet.ArcGIS/discussions).
-This keeps the issue tracker focused on actionable bugs and feature work.
+For "how do I…?" questions, usage help, ideas and general feedback, open a
+[feedback issue](https://github.com/philliphoff/EncDotNet.ArcGIS/issues/new?template=feedback.yml).
 
 Before asking, it can help to check:
 

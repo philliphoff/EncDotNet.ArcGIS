@@ -1,8 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Question or general discussion
-    url: https://github.com/philliphoff/EncDotNet.ArcGIS/discussions
-    about: For "how do I…?" questions, usage help, and ideas, please use Discussions.
   - name: Chart portrayal, S-100 products and the s100 tool
     url: https://github.com/philliphoff/EncDotNet.S100/issues/new/choose
     about: Problems that also show in the SoundCharts app or s100 belong in EncDotNet.S100.
