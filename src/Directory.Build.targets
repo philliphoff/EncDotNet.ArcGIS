@@ -1,0 +1,14 @@
+<Project>
+
+  <!--
+    Esri.ArcGISPro.Extensions30 packages an add-in (.esriAddinX) after Build
+    with inline tasks that use CodeTaskFactory, which only Visual Studio's
+    .NET Framework MSBuild supports. Under the .NET MSBuild (`dotnet build`,
+    `dotnet test`, `dotnet format`) they fail with MSB4801, so there
+    ArcGISPro.DotNetBuild.targets replaces them and the add-in compiles
+    without being packaged. Visual Studio's MSBuild keeps Esri's targets.
+  -->
+  <Import Project="$(MSBuildThisFileDirectory)ArcGISPro.DotNetBuild.targets"
+          Condition="'$(MSBuildRuntimeType)' == 'Core'" />
+
+</Project>

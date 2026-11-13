@@ -1,0 +1,23 @@
+<Project>
+
+  <!--
+    Imported by src/Directory.Build.targets under the .NET MSBuild only. These
+    targets replace Esri's targets of the same names (Directory.Build.targets
+    is imported after a package's build targets, so the later definition
+    wins), skipping .esriAddinX packaging and RegisterAddIn.exe.
+
+    To package the add-in, build with Visual Studio's MSBuild:
+    msbuild EncDotNet.ArcGIS.slnx /restore /p:Configuration=Release
+  -->
+  <Target Name="ArcGISInstallOutput"
+          AfterTargets="Build"
+          Condition="Exists('$(MSBuildProjectDirectory)\Config.daml')">
+    <Message Importance="High"
+             Text="$(MSBuildProjectName): skipped .esriAddinX packaging, which needs Visual Studio's MSBuild (msbuild /restore)." />
+  </Target>
+
+  <Target Name="PackageArcGISContents" />
+
+  <Target Name="CleanArcGISContents" />
+
+</Project>

@@ -1,0 +1,26 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- The EncDotNet.S100 packages are released together, so every
+         EncDotNet.S100.* reference uses this one version. Override it on the
+         command line (`-p:EncDotNetS100Version=<version>`) to try another
+         release locally. -->
+    <EncDotNetS100Version Condition="'$(EncDotNetS100Version)' == ''">0.27.0</EncDotNetS100Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- ArcGIS Pro SDK: Pro API reference assemblies and the add-in packaging
+         targets. Pin to the oldest Pro release the add-in supports; Pro loads
+         add-ins built for an earlier 3.x release. -->
+    <PackageVersion Include="Esri.ArcGISPro.Extensions30" Version="3.7.0.1901" />
+    <!-- EncDotNet.S100 -->
+    <PackageVersion Include="EncDotNet.S100" Version="$(EncDotNetS100Version)" />
+    <!-- Test -->
+    <PackageVersion Include="coverlet.collector" Version="10.1.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageVersion Include="xunit.v3" Version="3.2.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+  </ItemGroup>
+
+</Project>

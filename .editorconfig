@@ -1,14 +1,10 @@
-# EncDotNet.S100 — editorconfig
+# EncDotNet.ArcGIS — editorconfig
 #
 # Machine-readable encoding of the C# coding style guide
-# (docs/coding-style.md). This is Phase 2 ("Encode") of the coding-style
-# initiative: it captures the documented rules as analyzer/formatting settings.
-#
-# NOTE ON ROLLOUT: CI enforcement (`dotnet format --verify-no-changes`) and
-# `EnforceCodeStyleInBuild` are intentionally deferred to later phases so the
-# build stays green until the existing code is refactored into compliance
-# (Phase 4). Until then these rules drive the IDE and are opt-in via
-# `dotnet format`.
+# (docs/coding-style.md), carried over from EncDotNet.S100. CI's Format check
+# job verifies whitespace, using directives (IDE0005) and naming (IDE1006)
+# with `dotnet format --verify-no-changes`. `EnforceCodeStyleInBuild` stays
+# off, so the other rules drive the IDE and `dotnet format`.
 
 root = true
 
@@ -23,7 +19,7 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 4
 
-[*.{json,yml,yaml,csproj,props,targets,slnx,xml,axaml,xaml,resx}]
+[*.{json,yml,yaml,csproj,props,targets,slnx,xml,xaml,resx,daml}]
 indent_size = 2
 
 [*.{cmd,bat}]
@@ -32,22 +28,6 @@ end_of_line = crlf
 [*.md]
 # Trailing double-space is a hard line break in Markdown.
 trim_trailing_whitespace = false
-
-##########################################
-# Avalonia XAML files
-##########################################
-# The Avalonia XAML compiler reads these severities (note the
-# `avalonia_xaml_diagnostic` prefix, not `dotnet_diagnostic`) but does not
-# honour TreatWarningsAsErrors, so promote its warning-level diagnostics
-# here to keep the build warning-free. IDs mirror the ones Avalonia's own
-# .editorconfig sets to `warning`.
-[*.axaml]
-avalonia_xaml_diagnostic.AVLN2203.severity = error
-avalonia_xaml_diagnostic.AVLN2204.severity = error
-avalonia_xaml_diagnostic.AVLN2205.severity = error
-avalonia_xaml_diagnostic.AVLN2207.severity = error
-avalonia_xaml_diagnostic.AVLN2208.severity = error
-avalonia_xaml_diagnostic.AVLN5001.severity = error
 
 ##########################################
 # C# files

@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <!-- ArcGIS Pro is an x64 process, also on Arm64 Windows, where it runs
+         under emulation. Building for win-x64 also keeps the package to the
+         x64 natives: without a RID, every SkiaSharp native is copied and the
+         package paths pass MAX_PATH. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <!-- Pro loads the add-in from the .esriAddinX, so NuGet dependencies are
+         copied next to the add-in assembly to be packaged with it. -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <!-- Not EncDotNet.ArcGIS.SoundCharts: inside a namespace with an "ArcGIS"
+         segment, the Pro SDK's ArcGIS.* namespaces no longer resolve, and the
+         WPF code generator doesn't qualify them with global::. -->
+    <RootNamespace>EncDotNet.SoundCharts</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Packaged at the root of the .esriAddinX. -->
+    <Content Include="Config.daml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Esri.ArcGISPro.Extensions30" />
+    <PackageReference Include="EncDotNet.S100" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="EncDotNet.ArcGIS.SoundCharts.Tests" />
+  </ItemGroup>
+
+</Project>

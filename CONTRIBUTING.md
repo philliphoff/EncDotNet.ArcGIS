@@ -1,0 +1,187 @@
+# Contributing to EncDotNet.ArcGIS
+
+Thanks for your interest in contributing! EncDotNet.ArcGIS is SoundCharts for
+ArcGIS: an ArcGIS Pro add-in that brings S-100 portrayal from
+[EncDotNet.S100](https://github.com/philliphoff/EncDotNet.S100) into ArcGIS
+Pro. This guide covers how to build, test and submit changes. The
+repository follows EncDotNet.S100's layout and conventions; where this guide
+is silent, do what EncDotNet.S100 does.
+
+## Prerequisites
+
+- Windows. ArcGIS Pro and its add-ins are Windows-only.
+- Visual Studio 2022 (17.14 or later) or Visual Studio 2026, or their Build
+  Tools, with the .NET desktop workload.
+  Esri's add-in packaging targets use `CodeTaskFactory`, which only the .NET
+  Framework MSBuild in Visual Studio supports.
+- The [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) or
+  later. `global.json` asks for 10.0.100 and rolls forward to the newest
+  installed SDK, including a later major version such as .NET 11; the
+  projects target .NET 10 either way, which is the runtime Pro 3.7 hosts.
+- ArcGIS Pro 3.7 or later, to run the add-in. It isn't needed to build or
+  test: the Pro API reference assemblies come from the
+  `Esri.ArcGISPro.Extensions30` NuGet package.
+- A git client.
+
+## Building
+
+Build and package the add-in with Visual Studio's MSBuild, from a
+**Developer PowerShell for VS** (or with the full path to `MSBuild.exe`):
+
+```powershell
+msbuild EncDotNet.ArcGIS.slnx /restore /p:Configuration=Release
+```
+
+This writes
+`src/EncDotNet.ArcGIS.SoundCharts/bin/Release/net10.0-windows/win-x64/EncDotNet.ArcGIS.SoundCharts.esriAddinX`.
+
+`dotnet build` also works and is enough for compiling and testing, but it
+skips packaging: under the .NET MSBuild, `src/ArcGISPro.DotNetBuild.targets`
+replaces Esri's packaging targets, which would otherwise fail with MSB4801.
+
+The add-in builds for `win-x64` only. Pro is an x64 process, including on
+Arm64 Windows, where it runs under emulation. Building for one runtime also
+keeps SkiaSharp's natives for other platforms out of the package; with all
+of them the package's paths pass the Windows 260-character path limit.
+
+> [!NOTE]
+> If your clone sits in a deep folder and the build fails on long paths,
+> clone it to a shorter path, or map a drive letter to it with
+> `subst W: path\to\EncDotNet.ArcGIS` and build from `W:\`.
+
+## Running the add-in in Pro
+
+Esri's packaging targets install the add-in after each Visual Studio build
+by running `RegisterAddIn.exe` from Pro's `bin` folder. That step can't run
+when Pro isn't installed, under `dotnet build`, or when Windows'
+`NoDefaultCurrentDirectoryInExePath` setting stops `cmd` finding the
+program in its working folder. Install with the deploy script instead:
+
+```powershell
+tools/deploy-addin.ps1
+```
+
+It copies the `.esriAddinX` to
+`<Documents>\ArcGIS\AddIns\ArcGISPro\{add-in id}\`, following a redirected
+Documents folder. `-Path` installs another package, such as one from CI, and
+`-Remove` uninstalls the add-in. Restart Pro after installing.
+
+When Pro starts, the add-in writes a line with its versions to
+`%LOCALAPPDATA%\SoundCharts for ArcGIS\Logs\addin.log`, which shows it
+loaded without opening the ribbon.
+
+## Testing
+
+```powershell
+dotnet test EncDotNet.ArcGIS.slnx --configuration Release
+```
+
+Test conventions:
+
+- Every bug fix and new piece of logic is accompanied by an xunit test in
+  `tests/EncDotNet.ArcGIS.SoundCharts.Tests`.
+- Tests run without Pro. The Pro assemblies in the build are reference
+  assemblies only, so a test fails if it reaches a Pro type at runtime. Keep
+  logic that you want to test (settings, URL building, `.lyrx` authoring,
+  version formatting) in classes that don't use the Pro API, and keep the
+  Pro-facing classes (modules, buttons, panes) thin.
+- Tests that need optional external data, such as real S-100 datasets, skip
+  dynamically with xunit v3's `Assert.SkipUnless(...)` /
+  `Assert.SkipWhen(...)`, so CI doesn't fail without them.
+- **Never commit real ENC data files.** Use small synthetic fixtures, or skip
+  tests that need live data.
+- Check behaviour in Pro by hand: install the add-in, restart Pro and use it.
+  Say in the pull request what you checked.
+
+## Package management
+
+All NuGet versions are managed centrally with **Central Package Management**
+in `Directory.Packages.props`:
+
+- Don't add `Version` attributes to individual `.csproj` files.
+- Every `EncDotNet.S100.*` package uses the `EncDotNetS100Version` property,
+  so they move together. To try another EncDotNet.S100 release locally, pass
+  `-p:EncDotNetS100Version=<version>`.
+- Before introducing a new dependency, run the `gh-advisory-database`
+  security check and confirm the package has no known advisories. NuGet
+  audit fails the build on a vulnerable direct or transitive package.
+- The add-in runs inside Pro's process, alongside Pro's own copies of common
+  assemblies. Prefer dependencies EncDotNet.S100 already brings, and check a
+  new one doesn't conflict with an assembly Pro loads.
+
+## Skills and instructions
+
+Agent guidance lives in `.github/copilot-instructions.md`, with
+file-specific rules in `.github/instructions/` and task skills in
+`.github/skills/<name>/SKILL.md`:
+
+| Area | Skill / instruction |
+|---|---|
+| Add-in code, DAML, Pro SDK, threading, packaging | `arcgis-pro-addin` |
+| Developer docs under `docs/` and READMEs | `docs-writing` |
+
+For S-100 product semantics (feature catalogues, portrayal, a product's
+encoding), use EncDotNet.S100's own product skills, in that repository's
+`.github/skills/`. Product logic belongs in EncDotNet.S100, not in the
+add-in.
+
+## Coding style
+
+The normative style rules are in the
+[C# coding style guide](docs/coding-style.md); read it before submitting
+code. In brief:
+
+- `PascalCase` for types, methods and properties, `camelCase` for locals and
+  parameters, `_camelCase` for private fields.
+- File-scoped namespaces, 4-space indents, Allman braces.
+- Nullable reference types are enabled everywhere; avoid `!` suppression.
+- All public APIs carry XML doc comments.
+- Code namespaces start `EncDotNet.SoundCharts`, not
+  `EncDotNet.ArcGIS.SoundCharts`. Inside a namespace with an `ArcGIS`
+  segment, the Pro SDK's `ArcGIS.*` namespaces stop resolving, and the WPF
+  code generator doesn't qualify them with `global::`.
+
+The formatting rules are encoded in [`.editorconfig`](.editorconfig) and
+checked in CI (the **Format check** job). Before pushing, apply and verify
+formatting:
+
+```powershell
+dotnet format whitespace EncDotNet.ArcGIS.slnx
+dotnet format style EncDotNet.ArcGIS.slnx --diagnostics IDE0005
+dotnet format EncDotNet.ArcGIS.slnx --diagnostics IDE0005 IDE1006 --severity warn --verify-no-changes
+```
+
+## Documentation
+
+- Write pages and READMEs to the
+  [documentation style guide](docs/docs-style.md): pick a page type, use its
+  structure, and describe rather than promote. Agents load the
+  `docs-writing` skill.
+- Design notes for the add-in live in `docs/design/`.
+- UI text is localizable: strings shown by windows and panes live in
+  `src/EncDotNet.ArcGIS.SoundCharts/Resources/Strings.resx`, and ribbon
+  captions and tooltips in `Config.daml`. Copy UI labels from there exactly.
+
+## Branch and pull request workflow
+
+1. Create a topic branch off `main`.
+2. Make focused changes that fully address one concern.
+3. Make sure the build, the tests and the format check pass locally.
+4. Open a pull request against `main` and fill in the
+   [pull request template](.github/pull_request_template.md).
+5. CI must pass before review. It builds the add-in with Visual Studio's
+   MSBuild, runs the tests, and uploads the `.esriAddinX` as the **addin**
+   artifact.
+
+## Reporting bugs and requesting features
+
+Use the issue templates under
+[`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE/). For questions and
+general discussion, see [SUPPORT.md](SUPPORT.md). To report a security
+vulnerability, follow [SECURITY.md](SECURITY.md); please don't open a public
+issue for security problems.
+
+## License
+
+By contributing, you agree that your contributions will be licensed under the
+[MIT License](LICENSE) that covers this project.

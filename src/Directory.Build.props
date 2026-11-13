@@ -1,0 +1,25 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <Version>0.0.0-dev</Version>
+    <Authors>Phillip Hoff</Authors>
+    <Product>SoundCharts for ArcGIS</Product>
+    <Description>SoundCharts for ArcGIS Pro: S-100 nautical chart portrayal from EncDotNet.S100 in ArcGIS Pro.</Description>
+    <RepositoryUrl>https://github.com/philliphoff/EncDotNet.ArcGIS</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <!-- Add-ins are distributed as .esriAddinX files, not NuGet packages. -->
+    <IsPackable>false</IsPackable>
+    <!-- Fail the build (via TreatWarningsAsErrors) on missing (CS1591) or
+         malformed doc comments on public types. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- Deterministic CI builds: normalise source paths in PDBs so they do not
+       embed build-agent paths. -->
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+</Project>
