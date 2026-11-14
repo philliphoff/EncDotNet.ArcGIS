@@ -560,6 +560,7 @@ public static class Strings
 
     /// <summary>Gets the message when an action fails: <c>{0}</c> is why.</summary>
     public static string Library_ActionFailedFormat => Get(nameof(Library_ActionFailedFormat));
+
     /// <summary>Gets the message for a file that isn't a route (the viewer's).</summary>
     public static string RouteCheck_NotARoute => Get(nameof(RouteCheck_NotARoute));
 
