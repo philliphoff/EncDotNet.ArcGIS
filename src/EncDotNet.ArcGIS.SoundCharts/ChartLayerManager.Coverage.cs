@@ -180,6 +180,9 @@ internal sealed partial class ChartLayerManager
             {
                 AddInLog.Write($"Coverage in {map.Name}: wrote {footprints.Count} footprint(s), removed {plan.ToDelete.Count}.");
             }
+
+            // A8: the slider needs a time-aware layer; Coverage carries the time layers' first and last times (D29).
+            await MapTimeController.Instance.EnableCoverageTimeAsync(map).ConfigureAwait(false);
         }
         finally
         {

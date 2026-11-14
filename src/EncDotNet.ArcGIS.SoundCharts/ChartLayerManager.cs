@@ -9,6 +9,7 @@ using ArcGIS.Desktop.Mapping.Events;
 using EncDotNet.SoundCharts.ChartLayers;
 using EncDotNet.SoundCharts.Charts;
 using EncDotNet.SoundCharts.Logging;
+using EncDotNet.SoundCharts.MapTime;
 using EncDotNet.SoundCharts.Server;
 using EncDotNet.SoundCharts.Settings;
 
@@ -137,6 +138,7 @@ internal sealed partial class ChartLayerManager
             foreach (var (layer, ready) in bound)
             {
                 Bind(layer.URI, map, ready.Definition.Marker, ready.Lease, ready.Definition.CapabilitiesUri);
+                MapTimeController.Instance.Track(map, layer.URI, ready.Definition.Kind, ready.Steps);
             }
 
             // A prepared layer that wasn't placed (the map changed meanwhile) gives its server back.
@@ -288,26 +290,47 @@ internal sealed partial class ChartLayerManager
             return null;
         }
 
-        var minScale = TileJsonZoom.MinScale(await ReadMinZoomAsync(endpoint, lease.Server.LogSource).ConfigureAwait(false));
+        var tileJson = await ReadTileJsonAsync(endpoint, lease.Server.LogSource).ConfigureAwait(false);
+        var minScale = TileJsonZoom.MinScale(ReadMinZoom(tileJson, lease.Server.LogSource));
+        var steps = ReadSteps(tileJson, lease.Server.LogSource);
         var definition = new ChartLayerDefinition(
             marker, endpoint.WmtsCapabilitiesUri, Style: Settings.Effective.Style, MinScale: minScale, ServerVersion: ServerVersion);
-        return new Prepared(lease, definition);
+        return new Prepared(lease, definition, steps);
     }
 
-    private static async Task<int?> ReadMinZoomAsync(ServerEndpoint endpoint, string logSource)
+    private static async Task<string?> ReadTileJsonAsync(ServerEndpoint endpoint, string logSource)
     {
         try
         {
-            var json = await Http.GetStringAsync(endpoint.TileJsonUri).ConfigureAwait(false);
-            var minZoom = TileJsonZoom.TryReadMinZoom(json);
-            SoundChartsSession.Log.Write(LogLevel.Debug, logSource, $"Minimum zoom {minZoom?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "unknown"}.");
-            return minZoom;
+            return await Http.GetStringAsync(endpoint.TileJsonUri).ConfigureAwait(false);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
-            SoundChartsSession.Log.Write(LogLevel.Warning, logSource, $"Couldn't read the minimum zoom: {ex.Message}");
+            SoundChartsSession.Log.Write(LogLevel.Warning, logSource, $"Couldn't read the TileJSON: {ex.Message}");
             return null;
         }
+    }
+
+    private static int? ReadMinZoom(string? tileJson, string logSource)
+    {
+        var minZoom = tileJson is null ? null : TileJsonZoom.TryReadMinZoom(tileJson);
+        SoundChartsSession.Log.Write(LogLevel.Debug, logSource, $"Minimum zoom {minZoom?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "unknown"}.");
+        return minZoom;
+    }
+
+    /// <summary>The time steps the server advertises (A8, §6.3), or <see langword="null"/> for a chart without time.</summary>
+    private static TimeSteps? ReadSteps(string? tileJson, string logSource)
+    {
+        var steps = TimeSteps.TryReadTileJson(tileJson);
+        if (steps is not null)
+        {
+            SoundChartsSession.Log.Write(
+                LogLevel.Debug,
+                logSource,
+                $"{steps.Steps.Count} time step(s), {MapTimeText.FormatTime(steps.First)} to {MapTimeText.FormatTime(steps.Last)}, every {MapTimeText.FormatSpan(steps.Interval)}.");
+        }
+
+        return steps;
     }
 
     /// <summary>Creates or updates the group and the prepared layers. Runs on the MCT.</summary>
@@ -392,7 +415,9 @@ internal sealed partial class ChartLayerManager
             return false;
         }
 
-        cim.ServiceConnection = Connection(definition.CapabilitiesUri, definition.Style);
+        var connection = Connection(definition.CapabilitiesUri, definition.Style);
+        MapTimeController.KeepTime(cim.ServiceConnection, connection);
+        cim.ServiceConnection = connection;
         cim.CustomProperties = Marker(definition.Marker);
         cim.Description = ChartCredits.Description(definition.Marker.Datasets);
         cim.Attribution = ChartCredits.Attribution(definition.Marker.Datasets, definition.ServerVersion);
@@ -487,7 +512,9 @@ internal sealed partial class ChartLayerManager
                 return false;
             }
 
-            cim.ServiceConnection = Connection(endpoint.WmtsCapabilitiesUri, Settings.Effective.Style);
+            var connection = Connection(endpoint.WmtsCapabilitiesUri, Settings.Effective.Style);
+            MapTimeController.KeepTime(cim.ServiceConnection, connection);
+            cim.ServiceConnection = connection;
             layer.SetDefinition(cim);
             return true;
         });
@@ -600,7 +627,9 @@ internal sealed partial class ChartLayerManager
         }
 
         // A new connection, as a repoint makes, so Pro reconnects rather than patching the old one.
-        cim.ServiceConnection = Connection(capabilities, style);
+        var restyled = Connection(capabilities, style);
+        MapTimeController.KeepTime(connection, restyled);
+        cim.ServiceConnection = restyled;
         layer.SetDefinition(cim);
         return true;
     }
@@ -715,6 +744,7 @@ internal sealed partial class ChartLayerManager
         }
 
         Bind(uri, map, marker, ready.Lease, ready.Definition.CapabilitiesUri);
+        MapTimeController.Instance.Track(map, uri, ready.Definition.Kind, ready.Steps);
     }
 
     /// <summary>Releases the servers of layers no longer in their map.</summary>
@@ -740,6 +770,7 @@ internal sealed partial class ChartLayerManager
             }
 
             Registry.Remove(binding.LayerUri);
+            MapTimeController.Instance.Forget(binding.LayerUri);
             await binding.ReleaseAsync().ConfigureAwait(false);
         }
 
@@ -758,6 +789,7 @@ internal sealed partial class ChartLayerManager
         }
 
         Registry.Clear();
+        MapTimeController.Instance.Clear();
         foreach (var binding in all)
         {
             await binding.ReleaseAsync().ConfigureAwait(false);
@@ -811,7 +843,7 @@ internal sealed partial class ChartLayerManager
 
     private sealed record MapState(GroupLayer? Group, ChartComposition Composition, IReadOnlyDictionary<ChartLayerKind, Layer> Layers);
 
-    private sealed record Prepared(ChartServerLease Lease, ChartLayerDefinition Definition);
+    private sealed record Prepared(ChartServerLease Lease, ChartLayerDefinition Definition, TimeSteps? Steps);
 
     private sealed class Binding(string layerUri, Map map, ChartServerLease? lease)
     {

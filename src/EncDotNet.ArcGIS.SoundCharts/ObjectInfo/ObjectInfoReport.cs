@@ -33,10 +33,15 @@ public sealed record ObjectInfoReport(
 /// The dataset's features at the point, most specific first: points, then
 /// curves, then areas, nearer before farther; coverage values last.
 /// </param>
+/// <param name="InForce">
+/// For an S-124 dataset picked at a map time, whether its warning is in
+/// force then (D33); <see langword="null"/> otherwise.
+/// </param>
 public sealed record ObjectInfoDatasetResult(
     ChartDataset Dataset,
     string Spec,
-    IReadOnlyList<ObjectInfoFeature> Features);
+    IReadOnlyList<ObjectInfoFeature> Features,
+    bool? InForce = null);
 
 /// <summary>A dataset Object information couldn't read.</summary>
 /// <param name="Dataset">The dataset.</param>
