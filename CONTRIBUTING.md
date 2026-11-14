@@ -133,6 +133,15 @@ HDF5 dataset or `CATALOG.XML` that holds S-57 or S-1xx data and choose
 appears only for items whose content is chart data; the SoundCharts log
 records, at Debug level, what it found for each right-click.
 
+The tab's **Display** group sets the project's palette (**Day**, **Dusk**,
+**Night**, **Follow Pro theme**) and the **Text** toggle, and **Mariner
+Settings...** opens the **SoundCharts** page of Options. A palette change
+sets the layers' WMTS style; a text, scale or language change starts chart
+servers with the new options, whose URLs end in a new render key, and the
+log says "Mariner settings applied". Project settings are saved with the
+`.aprx`; application settings in
+`%LOCALAPPDATA%\SoundCharts\ArcGIS\settings.json`.
+
 To try **Export SoundCharts Chart...**, insert a layout with a map frame
 showing a SoundCharts chart, open it, and choose **SoundCharts** >
 **Export SoundCharts Chart...**. It renders the chart for the export at

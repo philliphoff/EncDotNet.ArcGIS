@@ -45,6 +45,7 @@ public sealed class ChartServer : IAsyncDisposable
     private volatile ChartServerState _state;
     private volatile ServerEndpoint? _endpoint;
     private volatile string? _failureReason;
+    private volatile string? _renderKey;
     private int _generation;
     private int _starts;
 
@@ -92,6 +93,14 @@ public sealed class ChartServer : IAsyncDisposable
 
     /// <summary>Gets why the server is <see cref="ChartServerState.Failed"/>, otherwise <see langword="null"/>.</summary>
     public string? FailureReason => _failureReason;
+
+    /// <summary>
+    /// Gets the render key of the last start (D27): the start-up options,
+    /// the <c>s100</c> version and the data revision, hashed. It's the suffix
+    /// of the endpoint's token, so every URL shows which settings and data
+    /// drew it; <see langword="null"/> before the first start.
+    /// </summary>
+    public string? RenderKey => _renderKey;
 
     /// <summary>Gets the number of times the process has been started, restarts included.</summary>
     public int StartCount => Volatile.Read(ref _starts);
@@ -242,13 +251,18 @@ public sealed class ChartServer : IAsyncDisposable
             return $"its working folder couldn't be created: {ex.Message}";
         }
 
+        // Read at each start, so a restart after the files changed gets a new key.
+        var renderKey = Charts.RenderKey.Compute(Datasets, executable.Version);
+        _renderKey = renderKey;
+        _host.Log.Write(LogLevel.Debug, LogSource, $"Render key {renderKey}.");
+
         for (var attempt = 1; attempt <= _host.Options.MaxPortAttempts; attempt++)
         {
             ServerEndpoint endpoint;
             IReadOnlyList<string> arguments;
             try
             {
-                endpoint = new ServerEndpoint(LoopbackPort.FindFree(), ServerToken.Create());
+                endpoint = new ServerEndpoint(LoopbackPort.FindFree(), ServerToken.Create(renderKey));
                 arguments = ServerCommandLine.Build(Datasets, endpoint, _host.Folders.TileCache, _host.Options.TileCacheMegabytes);
             }
             catch (Exception ex) when (ex is NotSupportedException or InvalidOperationException or System.Net.Sockets.SocketException)
