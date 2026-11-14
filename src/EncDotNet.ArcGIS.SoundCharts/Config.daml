@@ -134,6 +134,19 @@
                 loadOnClick="true" largeImage="GenericOptions32" smallImage="GenericOptions16">
           <tooltip heading="Mariner Settings">Set this project's palette and mariner settings on the SoundCharts page of Options. These settings apply to SoundCharts layers only, not to Esri ENC layers.<disabledText /></tooltip>
         </button>
+        <!-- Issue #6: Open with SoundCharts on Pro's Catalog context menus. The
+             dynamic menu adds SoundCharts_OpenWithMenu only when the
+             right-clicked items hold chart data, read from their content; for
+             anything else it adds nothing. hidden: not offered in ribbon
+             customization. -->
+        <dynamicMenu id="SoundCharts_OpenWithDynamicMenu" className="OpenWithDynamicMenu" caption="Open with SoundCharts"
+                     hidden="true" smallImage="GenericOpen16">
+          <tooltip heading="Open with SoundCharts">Shows SoundCharts commands for S-57 and S-1xx datasets, exchange sets and folders of them.<disabledText /></tooltip>
+        </dynamicMenu>
+        <button id="SoundCharts_OpenWithAddToMap" className="OpenWithAddToMapButton" caption="Add to Map"
+                loadOnClick="true" condition="esri_mapping_mapPane" smallImage="AddContent16" largeImage="AddContent32">
+          <tooltip heading="Add to Map">Add this data to the active map as a SoundCharts chart, as Add SoundCharts Data does. Not for navigation.<disabledText>Open a map to add SoundCharts data.</disabledText></tooltip>
+        </button>
       </controls>
       <splitButtons>
         <splitButton id="SoundCharts_PaletteSplitButton" keytip="P">
@@ -143,6 +156,13 @@
           <button refID="SoundCharts_PaletteFollowProTheme" />
         </splitButton>
       </splitButtons>
+      <menus>
+        <!-- A12 adds Add to Library here. -->
+        <menu id="SoundCharts_OpenWithMenu" caption="Open with SoundCharts" smallImage="GenericOpen16">
+          <tooltip heading="Open with SoundCharts">Add S-57 or S-1xx data to a map as a SoundCharts chart.<disabledText /></tooltip>
+          <button refID="SoundCharts_OpenWithAddToMap" />
+        </menu>
+      </menus>
       <dockPanes>
         <dockPane id="SoundCharts_ObjectInfoPane" caption="SoundCharts Object information" className="ObjectInfoPaneViewModel"
                   dock="group" dockWith="esri_core_projectDockPane" initiallyVisible="false" smallImage="Explore16">
@@ -154,6 +174,36 @@
         </dockPane>
       </dockPanes>
     </insertModule>
+    <!-- Issue #6: the Catalog item context menus Pro 3.7 defines in
+         Extensions\Catalog\ADGeoDatabase.daml (esri_geodatabase_module). Pro
+         has no context menu for every file: each item type has its own, and
+         files Pro doesn't recognize aren't shown in Catalog at all. These are
+         the menus of the items S-1xx data shows as: folders, folder
+         connections, ENC cells (S-57 and S-101 .000), raster datasets (HDF5)
+         and XML documents (CATALOG.XML), and the menu for several selected
+         items. Adding to them claims no file type. -->
+    <updateModule refID="esri_geodatabase_module">
+      <menus>
+        <updateMenu refID="folderGeneralItemMenu">
+          <insertDynamicMenu refID="SoundCharts_OpenWithDynamicMenu" inline="true" separator="true" />
+        </updateMenu>
+        <updateMenu refID="folderConnectionItemMenu">
+          <insertDynamicMenu refID="SoundCharts_OpenWithDynamicMenu" inline="true" separator="true" />
+        </updateMenu>
+        <updateMenu refID="ENCItemMenu">
+          <insertDynamicMenu refID="SoundCharts_OpenWithDynamicMenu" inline="true" separator="true" />
+        </updateMenu>
+        <updateMenu refID="rasterItemMenu">
+          <insertDynamicMenu refID="SoundCharts_OpenWithDynamicMenu" inline="true" separator="true" />
+        </updateMenu>
+        <updateMenu refID="esri_core_XmlMenu">
+          <insertDynamicMenu refID="SoundCharts_OpenWithDynamicMenu" inline="true" separator="true" />
+        </updateMenu>
+        <updateMenu refID="esri_geodatabase_ProjectMultiselectContextMenu">
+          <insertDynamicMenu refID="SoundCharts_OpenWithDynamicMenu" inline="true" separator="true" />
+        </updateMenu>
+      </menus>
+    </updateModule>
   </modules>
   <!-- Design brief D24: a SoundCharts page under Project (the project's mariner
        settings) and one under Application (defaults, Follow Pro theme, Time
