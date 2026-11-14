@@ -1,0 +1,25 @@
+<UserControl x:Class="EncDotNet.SoundCharts.ScaleNoteView"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
+             xmlns:res="clr-namespace:EncDotNet.SoundCharts.Resources">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <!-- Design brief §2.2: a read-only label. Pro's labelControl is static, so a custom control carries the changing text. -->
+  <TextBlock Text="{Binding Text}"
+             MinWidth="96"
+             MaxWidth="160"
+             Margin="4,2"
+             VerticalAlignment="Center"
+             TextWrapping="Wrap"
+             Foreground="{DynamicResource Esri_TextStyleDefaultBrush}"
+             AutomationProperties.AutomationId="ScaleNote.Text"
+             AutomationProperties.Name="{x:Static res:Strings.ScaleNote_AccessibleName}"
+             AutomationProperties.LiveSetting="Polite" />
+</UserControl>

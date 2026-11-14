@@ -312,6 +312,48 @@ public static class Strings
     /// <summary>Gets the line after the listed warnings: <c>{0}</c> is how many more are in the log.</summary>
     public static string AddData_MoreInLog => Get(nameof(AddData_MoreInLog));
 
+    /// <summary>Gets the Coverage layer's name, and its feature class's alias.</summary>
+    public static string Layer_Coverage => Get(nameof(Layer_Coverage));
+
+    /// <summary>Gets the Coverage layer's description.</summary>
+    public static string Coverage_Description => Get(nameof(Coverage_Description));
+
+    /// <summary>Gets the edit operation's name when footprints are written in the user's edit session.</summary>
+    public static string Coverage_EditName => Get(nameof(Coverage_EditName));
+
+    /// <summary>Gets the alias of the footprint's dataset name field.</summary>
+    public static string Coverage_FieldName => Get(nameof(Coverage_FieldName));
+
+    /// <summary>Gets the alias of the footprint's product field.</summary>
+    public static string Coverage_FieldProduct => Get(nameof(Coverage_FieldProduct));
+
+    /// <summary>Gets the alias of the footprint's edition field.</summary>
+    public static string Coverage_FieldEdition => Get(nameof(Coverage_FieldEdition));
+
+    /// <summary>Gets the alias of the footprint's chart layer field.</summary>
+    public static string Coverage_FieldLayer => Get(nameof(Coverage_FieldLayer));
+
+    /// <summary>Gets the alias of the footprint's dataset path field.</summary>
+    public static string Coverage_FieldPath => Get(nameof(Coverage_FieldPath));
+
+    /// <summary>Gets the alias of the footprint's issue date field.</summary>
+    public static string Coverage_FieldIssueDate => Get(nameof(Coverage_FieldIssueDate));
+
+    /// <summary>Gets the alias of the footprint's first time field.</summary>
+    public static string Coverage_FieldFirstTime => Get(nameof(Coverage_FieldFirstTime));
+
+    /// <summary>Gets the alias of the footprint's last time field.</summary>
+    public static string Coverage_FieldLastTime => Get(nameof(Coverage_FieldLastTime));
+
+    /// <summary>Gets the alias of the footprint's source field.</summary>
+    public static string Coverage_FieldSource => Get(nameof(Coverage_FieldSource));
+
+    /// <summary>Gets the scale note shown when the map is below the chart's minimum scale.</summary>
+    public static string ScaleNote_ZoomIn => Get(nameof(ScaleNote_ZoomIn));
+
+    /// <summary>Gets the scale note's accessible name.</summary>
+    public static string ScaleNote_AccessibleName => Get(nameof(ScaleNote_AccessibleName));
+
     /// <summary>Gets the project Options page's heading, the viewer's section name.</summary>
     public static string Settings_ProjectHeading => Get(nameof(Settings_ProjectHeading));
 
