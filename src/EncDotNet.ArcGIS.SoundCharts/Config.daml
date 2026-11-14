@@ -112,7 +112,7 @@
                 loadOnClick="true" largeImage="CatalogShowTree32" smallImage="CatalogShowTree16">
           <tooltip heading="SoundCharts Library">Browse folders, exchange sets and collection manifests of S-57 and S-1xx data without loading them, then add datasets to the map, show their footprints or validate them.<disabledText /></tooltip>
         </button>
-        <button id="SoundCharts_OpenWithAddToLibrary" className="OpenWithAddToLibraryButton" caption="Add to Library"
+        <button id="SoundCharts_OpenWithAddToLibrary" className="OpenWithAddToLibraryButton" caption="Add to Library" keytip="L"
                 loadOnClick="true" smallImage="CatalogShowTree16" largeImage="CatalogShowTree32">
           <tooltip heading="Add to Library">Add this data to the SoundCharts Library, indexed in place without loading it.<disabledText /></tooltip>
         </button>
@@ -135,7 +135,7 @@
         </dockPane>
         <!-- Design brief D3, D9: the viewer's Library model; drops on the pane add to it. -->
         <dockPane id="SoundCharts_LibraryPane" caption="SoundCharts Library" className="LibraryPaneViewModel"
-                  dock="group" dockWith="esri_core_projectDockPane" initiallyVisible="false" smallImage="CatalogShowTree16">
+                  dock="group" dockWith="esri_core_projectDockPane" smallImage="CatalogShowTree16">
           <content className="LibraryPaneView" />
         </dockPane>
       </dockPanes>
