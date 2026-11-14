@@ -349,6 +349,62 @@
     <value>...and {0} more. Show the SoundCharts Log for all of them.</value>
     <comment>{0} is a count.</comment>
   </data>
+  <data name="Features_GroupName" xml:space="preserve">
+    <value>SoundCharts features · {0}</value>
+    <comment>{0} is a dataset name.</comment>
+  </data>
+  <data name="Features_LayerName" xml:space="preserve">
+    <value>{0} · {1}</value>
+    <comment>{0} is a feature type, {1} a dataset name.</comment>
+  </data>
+  <data name="Features_SplitLayerName" xml:space="preserve">
+    <value>{0} ({1}) · {2}</value>
+    <comment>{0} is a feature type, {1} a geometry word (point, line, area), {2} a dataset name.</comment>
+  </data>
+  <data name="Features_Point" xml:space="preserve">
+    <value>point</value>
+  </data>
+  <data name="Features_Multipoint" xml:space="preserve">
+    <value>multipoint</value>
+  </data>
+  <data name="Features_Line" xml:space="preserve">
+    <value>line</value>
+  </data>
+  <data name="Features_Area" xml:space="preserve">
+    <value>area</value>
+  </data>
+  <data name="Features_Table" xml:space="preserve">
+    <value>table</value>
+  </data>
+  <data name="Features_Associations" xml:space="preserve">
+    <value>Feature associations</value>
+  </data>
+  <data name="Features_Title" xml:space="preserve">
+    <value>Add as Feature Layers</value>
+  </data>
+  <data name="Features_ProgressReading" xml:space="preserve">
+    <value>Reading features...</value>
+  </data>
+  <data name="Features_NotFeatures" xml:space="preserve">
+    <value>{0} is {1}, which has no features to add as feature layers.</value>
+    <comment>{0} is a dataset name, {1} its product (S-102).</comment>
+  </data>
+  <data name="Features_NoTables" xml:space="preserve">
+    <value>{0} has no features.</value>
+    <comment>{0} is a dataset name.</comment>
+  </data>
+  <data name="Features_PluginMissing" xml:space="preserve">
+    <value>The SoundCharts features plugin isn't installed, so {0} can't be added as feature layers. Install EncDotNet.ArcGIS.SoundCharts.Features.esriPlugin beside the add-in and restart ArcGIS Pro.</value>
+    <comment>{0} is a dataset name. Keep the file name.</comment>
+  </data>
+  <data name="Features_DatasetFailed" xml:space="preserve">
+    <value>{0} couldn't be added as feature layers: {1}</value>
+    <comment>{0} is a dataset name, {1} the reason in English.</comment>
+  </data>
+  <data name="Features_Added" xml:space="preserve">
+    <value>Added {0} as feature layers.</value>
+    <comment>{0} is a dataset count text.</comment>
+  </data>
   <data name="Library_OneDataset" xml:space="preserve">
     <value>1 dataset</value>
   </data>
@@ -736,5 +792,11 @@ Choose No to export without it.</value>
   </data>
   <data name="Tooltip_ExportResolution" xml:space="preserve">
     <value>Dots per inch on the page. SoundCharts symbols keep their printed size at every resolution.</value>
+  </data>
+  <data name="Library_AddFeatureLayers" xml:space="preserve">
+    <value>Add as Feature Layers</value>
+  </data>
+  <data name="Tooltip_LibraryAddFeatureLayers" xml:space="preserve">
+    <value>Add the selected dataset's features to the active map as feature layers, one per feature type, for selection, attribute tables and geoprocessing. S-101, S-124, S-421 and S-57 only.</value>
   </data>
 </root>

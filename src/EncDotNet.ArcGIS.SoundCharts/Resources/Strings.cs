@@ -312,6 +312,54 @@ public static class Strings
     /// <summary>Gets the line after the listed warnings: <c>{0}</c> is how many more are in the log.</summary>
     public static string AddData_MoreInLog => Get(nameof(AddData_MoreInLog));
 
+    /// <summary>Gets the name of a dataset's feature layer group: <c>{0}</c> is the dataset.</summary>
+    public static string Features_GroupName => Get(nameof(Features_GroupName));
+
+    /// <summary>Gets a feature layer's name: <c>{0}</c> is the feature type, <c>{1}</c> the dataset.</summary>
+    public static string Features_LayerName => Get(nameof(Features_LayerName));
+
+    /// <summary>Gets the name of a feature layer of a type found with several geometries: <c>{0}</c> is the feature type, <c>{1}</c> the geometry, <c>{2}</c> the dataset.</summary>
+    public static string Features_SplitLayerName => Get(nameof(Features_SplitLayerName));
+
+    /// <summary>Gets the geometry word for points.</summary>
+    public static string Features_Point => Get(nameof(Features_Point));
+
+    /// <summary>Gets the geometry word for multipoints.</summary>
+    public static string Features_Multipoint => Get(nameof(Features_Multipoint));
+
+    /// <summary>Gets the geometry word for lines.</summary>
+    public static string Features_Line => Get(nameof(Features_Line));
+
+    /// <summary>Gets the geometry word for areas.</summary>
+    public static string Features_Area => Get(nameof(Features_Area));
+
+    /// <summary>Gets the geometry word for features without geometry.</summary>
+    public static string Features_Table => Get(nameof(Features_Table));
+
+    /// <summary>Gets the name of the feature association table.</summary>
+    public static string Features_Associations => Get(nameof(Features_Associations));
+
+    /// <summary>Gets the title of Add as Feature Layers' dialogs and messages.</summary>
+    public static string Features_Title => Get(nameof(Features_Title));
+
+    /// <summary>Gets the progress text while datasets are read.</summary>
+    public static string Features_ProgressReading => Get(nameof(Features_ProgressReading));
+
+    /// <summary>Gets the warning for a dataset without features: <c>{0}</c> is the dataset, <c>{1}</c> its product.</summary>
+    public static string Features_NotFeatures => Get(nameof(Features_NotFeatures));
+
+    /// <summary>Gets the warning for a dataset with no features: <c>{0}</c> is the dataset.</summary>
+    public static string Features_NoTables => Get(nameof(Features_NoTables));
+
+    /// <summary>Gets the message when the plugin datasource isn't installed: <c>{0}</c> is the dataset.</summary>
+    public static string Features_PluginMissing => Get(nameof(Features_PluginMissing));
+
+    /// <summary>Gets the warning when a dataset's layers can't be made: <c>{0}</c> is the dataset, <c>{1}</c> the reason.</summary>
+    public static string Features_DatasetFailed => Get(nameof(Features_DatasetFailed));
+
+    /// <summary>Gets the summary of added feature layers: <c>{0}</c> is a dataset count.</summary>
+    public static string Features_Added => Get(nameof(Features_Added));
+
     /// <summary>Gets a count of one dataset.</summary>
     public static string Library_OneDataset => Get(nameof(Library_OneDataset));
 
@@ -656,6 +704,12 @@ public static class Strings
 
     /// <summary>Gets the resolution list's tooltip.</summary>
     public static string Tooltip_ExportResolution => Get(nameof(Tooltip_ExportResolution));
+
+    /// <summary>Gets the Library pane's Add as Feature Layers button.</summary>
+    public static string Library_AddFeatureLayers => Get(nameof(Library_AddFeatureLayers));
+
+    /// <summary>Gets the Library pane's Add as Feature Layers tooltip.</summary>
+    public static string Tooltip_LibraryAddFeatureLayers => Get(nameof(Tooltip_LibraryAddFeatureLayers));
 
     private static string Get(string name) =>
         Manager.GetString(name, CultureInfo.CurrentUICulture) ?? name;

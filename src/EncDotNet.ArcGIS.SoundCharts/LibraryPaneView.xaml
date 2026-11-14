@@ -225,7 +225,7 @@
                        FontWeight="Bold" />
           </Border>
 
-          <!-- Add to Map, Show Footprint, Validate, Open Containing Folder (D9). -->
+          <!-- Add to Map, Add as Feature Layers (#15), Show Footprint, Validate, Open Containing Folder (D9). -->
           <WrapPanel Margin="0,8,0,0" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
             <Button Content="{x:Static res:Strings.Library_AddToMap}"
                     ToolTip="{x:Static res:Strings.Tooltip_LibraryAddToMap}"
@@ -234,6 +234,13 @@
                     Margin="0,0,4,4"
                     AutomationProperties.AutomationId="Library.AddToMap"
                     AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_LibraryAddToMap}" />
+            <Button Content="{x:Static res:Strings.Library_AddFeatureLayers}"
+                    ToolTip="{x:Static res:Strings.Tooltip_LibraryAddFeatureLayers}"
+                    Command="{Binding AddFeatureLayersCommand}"
+                    Style="{DynamicResource Esri_Button}"
+                    Margin="0,0,4,4"
+                    AutomationProperties.AutomationId="Library.AddFeatureLayers"
+                    AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_LibraryAddFeatureLayers}" />
             <Button Content="{x:Static res:Strings.Library_ShowFootprint}"
                     ToolTip="{x:Static res:Strings.Tooltip_LibraryShowFootprint}"
                     Command="{Binding ShowFootprintCommand}"
