@@ -104,6 +104,36 @@ jobs:
           SOUNDCHARTS_S100_TEST_DATASETS: ${{ github.workspace }}/s100-datasets/tests/datasets
         run: dotnet test EncDotNet.ArcGIS.slnx --no-build --configuration Release --logger trx --results-directory TestResults
 
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          # ArcGIS Pro 3.7's Python.
+          python-version: '3.13'
+
+      - name: Test the toolbox
+        # SoundCharts Tools' logic doesn't use arcpy, so it's tested without
+        # Pro. The tests that run s100 find the chart server build in
+        # artifacts/server and use the same upstream datasets.
+        env:
+          SOUNDCHARTS_S100_TEST_DATASETS: ${{ github.workspace }}/s100-datasets/tests/datasets
+        run: python -I -m unittest discover -s tests/toolbox -v
+
+      - name: Check the toolbox is packaged
+        shell: pwsh
+        run: |
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $package = 'src/EncDotNet.ArcGIS.SoundCharts/bin/Release/net10.0-windows/win-x64/EncDotNet.ArcGIS.SoundCharts.esriAddinX'
+          $zip = [System.IO.Compression.ZipFile]::OpenRead($package)
+          try {
+            $entries = $zip.Entries | ForEach-Object { $_.FullName -replace '\\', '/' }
+            foreach ($expected in 'Toolboxes/SoundChartsTools.pyt', 'Toolboxes/soundcharts_tools/runner.py') {
+              if ($entries -notcontains $expected) { throw "$expected isn't in the add-in package." }
+            }
+            if ($entries -match '__pycache__') { throw 'The add-in package has __pycache__ folders.' }
+          } finally {
+            $zip.Dispose()
+          }
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v7

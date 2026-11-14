@@ -168,6 +168,13 @@ Test conventions:
   deliberate change, run the tests with `SOUNDCHARTS_UPDATE_SNAPSHOTS=1`,
   review the snapshot diff, and load the new `.lyrx` in Pro (or with
   `arcpy.mp.LayerFile`) before committing it.
+- The **SoundCharts Tools** Python toolbox has its own tests in
+  `tests/toolbox`, run with Pro's Python (or any Python 3.9 or later):
+  `"C:\Program Files\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\python.exe" -I -m unittest discover -s tests/toolbox -v`.
+  Keep the toolbox's logic in the arcpy-free `soundcharts_tools` package so
+  it's tested on CI. Its layer file is checked against the snapshots above,
+  so a change to the add-in's CIM needs the same change in
+  `soundcharts_tools/layerfile.py`. See [docs/toolbox.md](docs/toolbox.md#test-the-toolbox).
 - The layout export test, `tests/export/test_export_dpi.py`, exports
   layouts with arcpy at 96 and 300 dpi and compares the images
   ([design note](docs/design/chart-export.md#testing)). It needs ArcGIS
