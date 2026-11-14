@@ -13,6 +13,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- The feature tables of the SoundCharts plugin datasource (Features/)
+         read datasets with EncDotNet.S100, in-process like Object
+         information: light, read-only work. -->
+    <PackageReference Include="EncDotNet.S100" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="EncDotNet.ArcGIS.SoundCharts.Tests" />
   </ItemGroup>
 
