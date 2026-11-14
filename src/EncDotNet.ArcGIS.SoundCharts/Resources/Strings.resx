@@ -349,4 +349,312 @@
     <value>...and {0} more. Show the SoundCharts Log for all of them.</value>
     <comment>{0} is a count.</comment>
   </data>
+  <data name="RouteCheck_NotARoute" xml:space="preserve">
+    <value>This file isn't an RTZ or S-421 route.</value>
+  </data>
+  <data name="RouteCheck_TooFewWaypoints" xml:space="preserve">
+    <value>The route has fewer than two waypoints.</value>
+  </data>
+  <data name="RouteCheck_DatasetProblemFormat" xml:space="preserve">
+    <value>{0}: {1}</value>
+    <comment>{0} is a dataset name, {1} the reason in English.</comment>
+  </data>
+  <data name="RouteCheck_FooterWeather" xml:space="preserve">
+    <value>weather forecast</value>
+  </data>
+  <data name="RouteCheck_FooterCyclones" xml:space="preserve">
+    <value>NHC advisory</value>
+  </data>
+  <data name="RouteCheck_GroupMustReview" xml:space="preserve">
+    <value>MUST REVIEW</value>
+  </data>
+  <data name="RouteCheck_GroupCheck" xml:space="preserve">
+    <value>CHECK</value>
+  </data>
+  <data name="RouteCheck_GroupInfo" xml:space="preserve">
+    <value>INFO</value>
+  </data>
+  <data name="RouteCheck_TagClearance" xml:space="preserve">
+    <value>Clearance</value>
+  </data>
+  <data name="RouteCheck_TagRouteCheck" xml:space="preserve">
+    <value>Route check</value>
+  </data>
+  <data name="RouteCheck_TagS124" xml:space="preserve">
+    <value>S-124</value>
+  </data>
+  <data name="RouteCheck_TagConfidence" xml:space="preserve">
+    <value>Confidence</value>
+  </data>
+  <data name="RouteCheck_TagWeather" xml:space="preserve">
+    <value>Weather</value>
+  </data>
+  <data name="RouteCheck_TagData" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="RouteCheck_GroupLayerFormat" xml:space="preserve">
+    <value>Route check · {0}</value>
+    <comment>{0} is a route name.</comment>
+  </data>
+  <data name="RouteCheck_FindingsLayerPoints" xml:space="preserve">
+    <value>Findings (points)</value>
+  </data>
+  <data name="RouteCheck_FindingsLayerSegments" xml:space="preserve">
+    <value>Findings (segments)</value>
+  </data>
+  <data name="RouteCheck_EmptyTitle" xml:space="preserve">
+    <value>Check a route</value>
+  </data>
+  <data name="RouteCheck_EmptyDescription" xml:space="preserve">
+    <value>Select a line feature and choose Check Selected Line, draw a route, or open an S-421 or RTZ route. It's checked against the datasets of the map's SoundCharts layers.</value>
+  </data>
+  <data name="RouteCheck_Computing" xml:space="preserve">
+    <value>Checking the passage…</value>
+  </data>
+  <data name="RouteCheck_ErrorFormat" xml:space="preserve">
+    <value>Couldn't check the passage: {0}</value>
+    <comment>{0} is the reason.</comment>
+  </data>
+  <data name="RouteCheck_VerdictWaterLevelEnds" xml:space="preserve">
+    <value>Arrival is after the water-level data ends</value>
+  </data>
+  <data name="RouteCheck_VerdictBelowOne" xml:space="preserve">
+    <value>Below your UKC setting in 1 place</value>
+  </data>
+  <data name="RouteCheck_VerdictBelowFormat" xml:space="preserve">
+    <value>Below your UKC setting in {0} places</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_VerdictIncomplete" xml:space="preserve">
+    <value>No data for part of the passage</value>
+  </data>
+  <data name="RouteCheck_VerdictTight" xml:space="preserve">
+    <value>Meets your settings · tight</value>
+  </data>
+  <data name="RouteCheck_VerdictMeets" xml:space="preserve">
+    <value>Meets your settings</value>
+  </data>
+  <data name="RouteCheck_ConfidenceS101Format" xml:space="preserve">
+    <value>Charted depth from S-101 on {0:0.0} NM</value>
+    <comment>{0} is a distance in nautical miles.</comment>
+  </data>
+  <data name="RouteCheck_ConfidenceDatumUnconfirmed" xml:space="preserve">
+    <value>Vertical datums unconfirmed: depth and water level may not share a reference</value>
+  </data>
+  <data name="RouteCheck_ConfidencePredictedFormat" xml:space="preserve">
+    <value>Water level predicted on {0:0.0} NM: astronomical tide only, not a forecast</value>
+    <comment>{0} is a distance in nautical miles.</comment>
+  </data>
+  <data name="RouteCheck_ToReviewFormat" xml:space="preserve">
+    <value>{0} to review</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_ToCheckFormat" xml:space="preserve">
+    <value>{0} to check</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_MoreFormat" xml:space="preserve">
+    <value>and {0} more</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_VerdictCheckFormat" xml:space="preserve">
+    <value>Meets your settings · {0} to check</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_AndMoreToReviewFormat" xml:space="preserve">
+    <value>{0} · and {1} more to review</value>
+    <comment>{0} is a place, {1} a count.</comment>
+  </data>
+  <data name="RouteCheck_NoDraftVerdictNone" xml:space="preserve">
+    <value>No findings for your settings</value>
+  </data>
+  <data name="RouteCheck_ClearNoDraft" xml:space="preserve">
+    <value>Land, drying, dangers, areas and warnings checked</value>
+  </data>
+  <data name="RouteCheck_Separator" xml:space="preserve">
+    <value> · </value>
+  </data>
+  <data name="RouteCheck_SummaryClearance" xml:space="preserve">
+    <value>Clearance</value>
+  </data>
+  <data name="RouteCheck_SummaryRoute" xml:space="preserve">
+    <value>Route</value>
+  </data>
+  <data name="RouteCheck_SummaryWarnings" xml:space="preserve">
+    <value>Warnings</value>
+  </data>
+  <data name="RouteCheck_SummaryWeather" xml:space="preserve">
+    <value>Weather</value>
+  </data>
+  <data name="RouteCheck_SummaryNotChecked" xml:space="preserve">
+    <value>Not checked</value>
+  </data>
+  <data name="RouteCheck_NoClearance" xml:space="preserve">
+    <value>No clearance could be computed</value>
+  </data>
+  <data name="RouteCheck_SummaryClearanceFormat" xml:space="preserve">
+    <value>min {0} · required {1}</value>
+    <comment>{0} and {1} are depths with units.</comment>
+  </data>
+  <data name="RouteCheck_SummaryClearanceNoMarginFormat" xml:space="preserve">
+    <value>min {0} · no margin set</value>
+    <comment>{0} is a depth with its unit.</comment>
+  </data>
+  <data name="RouteCheck_ChipBelowFormat" xml:space="preserve">
+    <value>{0} below</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_ChipTight" xml:space="preserve">
+    <value>tight</value>
+  </data>
+  <data name="RouteCheck_ChipNoTide" xml:space="preserve">
+    <value>no water level</value>
+  </data>
+  <data name="RouteCheck_ChipMeets" xml:space="preserve">
+    <value>meets</value>
+  </data>
+  <data name="RouteCheck_SummaryNothingFound" xml:space="preserve">
+    <value>Nothing found</value>
+  </data>
+  <data name="RouteCheck_SummaryNothingOnRoute" xml:space="preserve">
+    <value>Nothing on route</value>
+  </data>
+  <data name="RouteCheck_SummaryNearRouteFormat" xml:space="preserve">
+    <value>{0} near route</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_SummaryInForceFormat" xml:space="preserve">
+    <value>{0} in force on route</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_SummaryNearFormat" xml:space="preserve">
+    <value>{0} near</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_SummaryWeatherMustReviewFormat" xml:space="preserve">
+    <value>{0} must review</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_SummaryWeatherAboveFormat" xml:space="preserve">
+    <value>{0} above limits</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_SummaryWeatherToCheckFormat" xml:space="preserve">
+    <value>{0} to check</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_SummaryWeatherNotCheckedFormat" xml:space="preserve">
+    <value>{0} not checked</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_LegFormat" xml:space="preserve">
+    <value>Leg {0} → {1}</value>
+    <comment>{0} and {1} are waypoint numbers.</comment>
+  </data>
+  <data name="RouteCheck_MinutesBelowFormat" xml:space="preserve">
+    <value>{0} min below</value>
+    <comment>{0} is a number of minutes.</comment>
+  </data>
+  <data name="RouteCheck_FooterFormat" xml:space="preserve">
+    <value>Not for navigation · computed from {0} for your settings</value>
+    <comment>{0} is a list of products, such as "S-101, S-102".</comment>
+  </data>
+  <data name="RouteCheck_FooterNoData" xml:space="preserve">
+    <value>Not for navigation · no data loaded for this route</value>
+  </data>
+  <data name="RouteCheck_ParameterDraftFormat" xml:space="preserve">
+    <value>Draft {0}</value>
+    <comment>{0} is a depth with its unit.</comment>
+  </data>
+  <data name="RouteCheck_ParameterNoDraft" xml:space="preserve">
+    <value>No draft</value>
+  </data>
+  <data name="RouteCheck_ParameterUkcFormat" xml:space="preserve">
+    <value>UKC margin {0}</value>
+    <comment>{0} is a depth with its unit, or "no margin set".</comment>
+  </data>
+  <data name="RouteCheck_NoMarginSet" xml:space="preserve">
+    <value>no margin set</value>
+  </data>
+  <data name="RouteCheck_ParameterSafetyContourFormat" xml:space="preserve">
+    <value>Safety contour {0}</value>
+    <comment>{0} is a depth with its unit.</comment>
+  </data>
+  <data name="RouteCheck_ParameterSafetyDepthFormat" xml:space="preserve">
+    <value>Safety depth {0}</value>
+    <comment>{0} is a depth with its unit.</comment>
+  </data>
+  <data name="RouteCheck_FromRouteFormat" xml:space="preserve">
+    <value>{0} (route)</value>
+    <comment>{0} is a parameter, such as "Draft 7.0 m".</comment>
+  </data>
+  <data name="RouteCheck_CheckSelectedLine" xml:space="preserve">
+    <value>Check Selected Line</value>
+  </data>
+  <data name="RouteCheck_CheckSelectedLineTooltip" xml:space="preserve">
+    <value>Check the line feature selected in the map.</value>
+  </data>
+  <data name="RouteCheck_DrawRoute" xml:space="preserve">
+    <value>Draw Route</value>
+  </data>
+  <data name="RouteCheck_DrawRouteTooltip" xml:space="preserve">
+    <value>Draw a route on the map, then double-click to finish and check it.</value>
+  </data>
+  <data name="RouteCheck_OpenRoute" xml:space="preserve">
+    <value>Open Route...</value>
+  </data>
+  <data name="RouteCheck_OpenRouteTooltip" xml:space="preserve">
+    <value>Check an S-421 or RTZ route file.</value>
+  </data>
+  <data name="RouteCheck_OpenRouteTitle" xml:space="preserve">
+    <value>Open Route</value>
+  </data>
+  <data name="RouteCheck_OpenRouteFilter" xml:space="preserve">
+    <value>Routes (*.rtz;*.gml;*.xml)|*.rtz;*.gml;*.xml|All files (*.*)|*.*</value>
+    <comment>A Windows file dialog filter: label|patterns pairs.</comment>
+  </data>
+  <data name="RouteCheck_NoLineSelected" xml:space="preserve">
+    <value>Select a line feature in the map first.</value>
+  </data>
+  <data name="RouteCheck_NoMap" xml:space="preserve">
+    <value>Open a map to check a route.</value>
+  </data>
+  <data name="RouteCheck_Findings" xml:space="preserve">
+    <value>Findings</value>
+  </data>
+  <data name="RouteCheck_Empty" xml:space="preserve">
+    <value>No findings for this route.</value>
+  </data>
+  <data name="RouteCheck_ObjectInformation" xml:space="preserve">
+    <value>Object information</value>
+  </data>
+  <data name="RouteCheck_ObjectInformationTooltip" xml:space="preserve">
+    <value>List the chart features here in the SoundCharts Object information pane.</value>
+  </data>
+  <data name="RouteCheck_ZoomTooltip" xml:space="preserve">
+    <value>Zoom map to finding location.</value>
+  </data>
+  <data name="RouteCheck_NoPlaceTooltip" xml:space="preserve">
+    <value>This finding has no place on the route.</value>
+  </data>
+  <data name="RouteCheck_FindingsWriteFailedFormat" xml:space="preserve">
+    <value>The findings couldn't be added to the map: {0}</value>
+    <comment>{0} is the reason in English.</comment>
+  </data>
+  <data name="RouteCheck_ProblemsHeading" xml:space="preserve">
+    <value>Some data couldn't be read:</value>
+  </data>
+  <data name="RouteCheck_SketchName" xml:space="preserve">
+    <value>Drawn route</value>
+  </data>
+  <data name="RouteCheck_FeatureNameFormat" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>{0} is a layer name, {1} an object id.</comment>
+  </data>
+  <data name="RouteCheck_CheckAgain" xml:space="preserve">
+    <value>Check Again</value>
+  </data>
+  <data name="RouteCheck_CheckAgainTooltip" xml:space="preserve">
+    <value>Check the same route again, with the map's current SoundCharts layers and settings.</value>
+  </data>
 </root>

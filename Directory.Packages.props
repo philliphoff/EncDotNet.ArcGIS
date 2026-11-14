@@ -16,6 +16,7 @@
     <PackageVersion Include="Esri.ArcGISPro.Extensions30" Version="3.7.0.1901" />
     <!-- EncDotNet.S100 -->
     <PackageVersion Include="EncDotNet.S100" Version="$(EncDotNetS100Version)" />
+    <PackageVersion Include="EncDotNet.S100.Routes.Rtz" Version="$(EncDotNetS100Version)" />
     <!-- Test -->
     <PackageVersion Include="coverlet.collector" Version="10.1.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
