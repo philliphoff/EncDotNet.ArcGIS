@@ -21,7 +21,7 @@ namespace EncDotNet.SoundCharts.Features;
 /// of a complex attribute) are joined with <see cref="ValueSeparator"/> in
 /// the dataset's order. The value is the library's display text (an
 /// enumeration's label, say), except that a number shown with its unit
-/// (<c>12.5 m</c>) keeps the bare number, so the column can be numeric.
+/// (<c>12.5 m</c>: the number, a space and more) keeps the bare number, so the column can be numeric.
 /// </para>
 /// </remarks>
 public static class AttributeFlattener
@@ -88,7 +88,7 @@ public static class AttributeFlattener
         var raw = attribute.RawValue;
         if (!string.Equals(display, raw, StringComparison.Ordinal)
             && raw.Length > 0
-            && display.StartsWith(raw, StringComparison.Ordinal)
+            && display.StartsWith(raw + " ", StringComparison.Ordinal)
             && double.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out _))
         {
             return raw;
