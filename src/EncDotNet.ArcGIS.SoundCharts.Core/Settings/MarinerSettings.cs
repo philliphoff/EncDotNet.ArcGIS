@@ -31,6 +31,9 @@ public sealed record MarinerSettings
     /// <summary>The deepest contour or depth the settings take, in metres.</summary>
     public const double MaxDepth = 12000;
 
+    /// <summary>The deepest draft or UKC margin a route check takes, in metres.</summary>
+    public const double MaxDraft = 100;
+
     /// <summary>Gets the viewer's defaults.</summary>
     public static MarinerSettings Default { get; } = new();
 
@@ -89,6 +92,21 @@ public sealed record MarinerSettings
     public string NationalLanguage { get; init; } = string.Empty;
 
     /// <summary>
+    /// Gets the ship's draft in metres for route checks, or <c>null</c> when
+    /// none is set (design brief §5.2, D24). A route's own draft wins over it;
+    /// without either, the clearance (UKC) check doesn't run. Route check
+    /// only: it isn't a chart server setting, so changing it restarts nothing.
+    /// </summary>
+    public double? Draft { get; init; }
+
+    /// <summary>
+    /// Gets the required under-keel clearance in metres for route checks, or
+    /// <c>null</c> when none is set (checked against 0 m). A route's own
+    /// required UKC wins over it.
+    /// </summary>
+    public double? UkcMargin { get; init; }
+
+    /// <summary>
     /// Gets the <c>s100 tiles serve</c> start-up options these settings
     /// give: the ones the server applies (<see cref="ChartServerSupport"/>).
     /// </summary>
@@ -111,7 +129,8 @@ public sealed record MarinerSettings
     public IReadOnlyList<MarinerSettingsProblem> Validate()
     {
         List<MarinerSettingsProblem> problems = [];
-        if (!IsDepth(SafetyContour) || !IsDepth(SafetyDepth) || !IsDepth(ShallowContour) || !IsDepth(DeepContour))
+        if (!IsDepth(SafetyContour) || !IsDepth(SafetyDepth) || !IsDepth(ShallowContour) || !IsDepth(DeepContour)
+            || !IsDraft(Draft) || !IsMargin(UkcMargin))
         {
             problems.Add(MarinerSettingsProblem.DepthOutOfRange);
         }
@@ -140,6 +159,12 @@ public sealed record MarinerSettings
     }
 
     private static bool IsDepth(double metres) => double.IsFinite(metres) && metres is >= 0 and <= MaxDepth;
+
+    /// <summary>Gets whether <paramref name="metres"/> is a draft: none, or more than 0 and at most 100 m.</summary>
+    internal static bool IsDraft(double? metres) => metres is not { } d || (double.IsFinite(d) && d is > 0 and <= MaxDraft);
+
+    /// <summary>Gets whether <paramref name="metres"/> is a UKC margin: none, or 0 to 100 m.</summary>
+    internal static bool IsMargin(double? metres) => metres is not { } m || (double.IsFinite(m) && m is >= 0 and <= MaxDraft);
 
     private static bool IsScale(double factor) => double.IsFinite(factor) && factor is >= MinScale and <= MaxScale;
 }

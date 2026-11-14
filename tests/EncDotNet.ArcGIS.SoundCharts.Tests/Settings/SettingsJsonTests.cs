@@ -24,12 +24,31 @@ public class SettingsJsonTests
         SymbolScale = 1.5,
         TextScale = 0.8,
         NationalLanguage = "fra",
+        Draft = 7.5,
+        UkcMargin = 1.2,
     };
 
     [Fact]
     public void MarinerSettings_RoundTrip()
     {
         Assert.Equal(Changed, SettingsJson.ReadMariner(SettingsJson.ToJson(Changed)));
+    }
+
+    [Fact]
+    public void RouteCheckValues_UnsetByNull_DefaultWhenMissingOrInvalid()
+    {
+        var defaults = MarinerSettings.Default with { Draft = 6.0, UkcMargin = 1.0 };
+
+        Assert.Equal((6.0, 1.0), Ship(SettingsJson.ReadMariner("{}", defaults)));
+        Assert.Equal(((double?)null, (double?)null), Ship(SettingsJson.ReadMariner("""{"draft":null,"ukcMargin":null}""", defaults)));
+        Assert.Equal((6.0, 1.0), Ship(SettingsJson.ReadMariner("""{"draft":0,"ukcMargin":-1}""", defaults)));
+
+        // A bad draft doesn't take the depths with it.
+        var read = SettingsJson.ReadMariner("""{"draft":500,"safetyContour":10,"deepContour":40}""", defaults);
+        Assert.Equal(6.0, read?.Draft);
+        Assert.Equal(10, read?.SafetyContour);
+
+        static (double?, double?) Ship(MarinerSettings? settings) => (settings?.Draft, settings?.UkcMargin);
     }
 
     [Fact]

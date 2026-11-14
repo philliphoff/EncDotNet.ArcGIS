@@ -73,9 +73,33 @@ public class MarinerSettingsTests
             SafetyContour = 10,
             FourShades = true,
             ShowSoundings = false,
+            Draft = 7.0,
+            UkcMargin = 1.0,
         };
 
         Assert.Equal(MarinerSettings.Default.ToRenderOptions(), settings.ToRenderOptions());
+    }
+
+    [Theory]
+    [InlineData(0.0, null)]
+    [InlineData(-1.0, null)]
+    [InlineData(101.0, null)]
+    [InlineData(double.NaN, null)]
+    [InlineData(null, -0.5)]
+    [InlineData(null, 101.0)]
+    public void RouteCheckValues_OutOfRange_AreDepthProblems(double? draft, double? margin)
+    {
+        var settings = MarinerSettings.Default with { Draft = draft, UkcMargin = margin };
+
+        Assert.Equal([MarinerSettingsProblem.DepthOutOfRange], settings.Validate());
+    }
+
+    [Fact]
+    public void RouteCheckValues_NoneByDefault_AndValidWhenSet()
+    {
+        Assert.Null(MarinerSettings.Default.Draft);
+        Assert.Null(MarinerSettings.Default.UkcMargin);
+        Assert.Empty((MarinerSettings.Default with { Draft = 7.0, UkcMargin = 0 }).Validate());
     }
 
     [Theory]
