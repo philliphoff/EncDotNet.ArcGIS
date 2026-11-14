@@ -111,6 +111,15 @@ own chart server; **Object information** then picks in it. Selecting the
 group or a layer shows the **SoundCharts Layer** tab, with **Zoom to Data**
 and the chart's **Log**.
 
+The tab's **Display** group sets the project's palette (**Day**, **Dusk**,
+**Night**, **Follow Pro theme**) and the **Text** toggle, and **Mariner
+Settings...** opens the **SoundCharts** page of Options. A palette change
+sets the layers' WMTS style; a text, scale or language change starts chart
+servers with the new options, whose URLs end in a new render key, and the
+log says "Mariner settings applied". Project settings are saved with the
+`.aprx`; application settings in
+`%LOCALAPPDATA%\SoundCharts\ArcGIS\settings.json`.
+
 To try **Object information** on any map without adding data, build the
 Debug configuration and start Pro with `SOUNDCHARTS_DEBUG_DATASETS` set to
 dataset paths separated by `;`. The tool then looks in those datasets

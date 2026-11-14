@@ -20,7 +20,7 @@ public sealed record ChartLayerDefinition(
     double MinScale = 0,
     string? ServerVersion = null)
 {
-    /// <summary>The palette until the Palette setting exists (A5).</summary>
+    /// <summary>The Day palette's style; the chart layer manager passes the project's (A5).</summary>
     public const string DefaultStyle = "day";
 
     /// <summary>Gets the layer's kind.</summary>

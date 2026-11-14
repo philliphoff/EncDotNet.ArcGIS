@@ -27,6 +27,7 @@
       <tabs>
         <tab id="SoundCharts_Tab" caption="SoundCharts" keytip="SC">
           <group refID="SoundCharts_DataGroup" />
+          <group refID="SoundCharts_DisplayGroup" />
           <group refID="SoundCharts_InquireGroup" />
           <group refID="SoundCharts_HelpGroup" />
         </tab>
@@ -46,6 +47,15 @@
         <group id="SoundCharts_DataGroup" caption="Data" appearsOnAddInTab="false" keytip="D">
           <button refID="SoundCharts_AddData" size="large" />
           <button refID="SoundCharts_AddFolder" size="middle" />
+        </group>
+        <!-- Design brief §2.1 and D5: palette, display category and the two quick
+             toggles on the tab; everything else on the Options page. A5. -->
+        <group id="SoundCharts_DisplayGroup" caption="Display" appearsOnAddInTab="false" keytip="P">
+          <splitButton refID="SoundCharts_PaletteSplitButton" size="large" />
+          <comboBox refID="SoundCharts_DisplayCategory" />
+          <checkBox refID="SoundCharts_SoundingsCheckBox" />
+          <checkBox refID="SoundCharts_TextCheckBox" />
+          <button refID="SoundCharts_MarinerSettingsButton" size="small" />
         </group>
         <group id="SoundCharts_LayerDatasetsGroup" caption="Datasets" appearsOnAddInTab="false" keytip="D">
           <button refID="SoundCharts_ZoomToData" size="large" />
@@ -93,7 +103,46 @@
                 loadOnClick="true" largeImage="DiagnosticsMonitor32" smallImage="DiagnosticsMonitor16">
           <tooltip heading="SoundCharts Log">Show add-in events and chart server output, to find out why a chart doesn't draw.<disabledText /></tooltip>
         </button>
+        <!-- A5: the palette (D26, D27) and mariner settings (D5, D23–D25). -->
+        <button id="SoundCharts_PaletteDay" className="PaletteDayButton" caption="Day" keytip="D"
+                loadOnClick="false" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/Sun32.png" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/Sun16.png">
+          <tooltip heading="Day palette">Draw this project's SoundCharts layers in the Day palette, for print and daylight. These settings apply to SoundCharts layers only, not to Esri ENC layers.<disabledText /></tooltip>
+        </button>
+        <button id="SoundCharts_PaletteDusk" className="PaletteDuskButton" caption="Dusk" keytip="U"
+                loadOnClick="false" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/ColorSelector32.png" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/ColorSelector16.png">
+          <tooltip heading="Dusk palette">Draw this project's SoundCharts layers in the Dusk palette, for a dark screen. These settings apply to SoundCharts layers only, not to Esri ENC layers.<disabledText /></tooltip>
+        </button>
+        <button id="SoundCharts_PaletteNight" className="PaletteNightButton" caption="Night" keytip="N"
+                loadOnClick="false" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/ColorSelector32.png" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/ColorSelector16.png">
+          <tooltip heading="Night palette">Draw this project's SoundCharts layers in the Night palette, for a dark bridge. These settings apply to SoundCharts layers only, not to Esri ENC layers.<disabledText /></tooltip>
+        </button>
+        <button id="SoundCharts_PaletteFollowProTheme" className="FollowProThemeButton" caption="Follow Pro theme" keytip="T"
+                loadOnClick="false" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/ColorSelector32.png" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/ColorSelector16.png">
+          <tooltip heading="Follow Pro theme">Pro's Light theme shows the Day palette and its Dark theme the Dusk palette, in every project. Choosing a palette by hand turns this off.<disabledText /></tooltip>
+        </button>
+        <comboBox id="SoundCharts_DisplayCategory" className="DisplayCategoryComboBox" caption="Display category" keytip="C"
+                  loadOnClick="false" isEditable="false" isReadOnly="true" sizeString="Other Information  " itemWidth="140">
+          <tooltip heading="Display category">The ECDIS display category: Display Base, Standard, Other Information or All. These settings apply to SoundCharts layers only, not to Esri ENC layers.<disabledText>Needs a newer chart server: SoundCharts keeps the setting, and the chart draws with it once the chart server takes it.</disabledText></tooltip>
+        </comboBox>
+        <checkBox id="SoundCharts_SoundingsCheckBox" className="SoundingsCheckBox" caption="Soundings" keytip="S" loadOnClick="false">
+          <tooltip heading="Soundings">Show or hide soundings on this project's SoundCharts layers.<disabledText>Needs a newer chart server: SoundCharts keeps the setting, and the chart draws with it once the chart server takes it.</disabledText></tooltip>
+        </checkBox>
+        <checkBox id="SoundCharts_TextCheckBox" className="TextCheckBox" caption="Text" keytip="X" loadOnClick="false">
+          <tooltip heading="Text">Show or hide chart text on this project's SoundCharts layers. A change starts new chart servers, and the layers redraw from them.<disabledText /></tooltip>
+        </checkBox>
+        <button id="SoundCharts_MarinerSettingsButton" className="MarinerSettingsButton" caption="Mariner Settings..." keytip="M"
+                loadOnClick="true" largeImage="GenericOptions32" smallImage="GenericOptions16">
+          <tooltip heading="Mariner Settings">Set this project's palette and mariner settings on the SoundCharts page of Options. These settings apply to SoundCharts layers only, not to Esri ENC layers.<disabledText /></tooltip>
+        </button>
       </controls>
+      <splitButtons>
+        <splitButton id="SoundCharts_PaletteSplitButton" keytip="P">
+          <button refID="SoundCharts_PaletteDay" />
+          <button refID="SoundCharts_PaletteDusk" />
+          <button refID="SoundCharts_PaletteNight" />
+          <button refID="SoundCharts_PaletteFollowProTheme" />
+        </splitButton>
+      </splitButtons>
       <dockPanes>
         <dockPane id="SoundCharts_ObjectInfoPane" caption="SoundCharts Object information" className="ObjectInfoPaneViewModel"
                   dock="group" dockWith="esri_core_projectDockPane" initiallyVisible="false" smallImage="Explore16">
@@ -106,4 +155,17 @@
       </dockPanes>
     </insertModule>
   </modules>
+  <!-- Design brief D24: a SoundCharts page under Project (the project's mariner
+       settings) and one under Application (defaults, Follow Pro theme, Time
+       Format, the s100 program, the tile cache). -->
+  <propertySheets>
+    <updateSheet refID="esri_core_optionsPropertySheet">
+      <insertPage id="SoundCharts_ProjectOptionsPage" caption="SoundCharts" className="ProjectOptionsViewModel" group="Project">
+        <content className="ProjectOptionsView" />
+      </insertPage>
+      <insertPage id="SoundCharts_ApplicationOptionsPage" caption="SoundCharts" className="ApplicationOptionsViewModel" group="Application">
+        <content className="ApplicationOptionsView" />
+      </insertPage>
+    </updateSheet>
+  </propertySheets>
 </ArcGIS>

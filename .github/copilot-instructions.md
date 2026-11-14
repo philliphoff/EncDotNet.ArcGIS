@@ -44,6 +44,7 @@ src/
     Charts/                            # DatasetSet, DatasetSource: what one chart server portrays
     Server/                            # ChartServerPool, ChartServer (supervisor), endpoints, process launch
     Logging/                           # SoundChartsLog: the Log pane's list and the daily file
+    Settings/                          # Mariner settings, application settings, the render key's style, settings JSON
   ArcGISPro.DotNetBuild.targets        # Skips Esri's packaging under `dotnet build`
 tests/
   EncDotNet.ArcGIS.SoundCharts.Tests/  # xunit v3 tests for logic that doesn't need Pro
