@@ -111,6 +111,15 @@ own chart server; **Object information** then picks in it. Selecting the
 group or a layer shows the **SoundCharts Layer** tab, with **Zoom to Data**
 and the chart's **Log**.
 
+**SoundCharts** > **Route check** opens the **SoundCharts Route check**
+pane. Select a line feature over the chart and choose **Check Selected
+Line**, choose **Draw Route** and draw one, or choose **Open Route...** with
+one of EncDotNet.S100's `tests/datasets/RTZ` or `tests/datasets/S421`
+routes. The findings appear in the pane, grouped **MUST REVIEW**,
+**CHECK**, **INFO**, and as a **Route check · {route}** group in the map,
+over feature classes in the project's `SoundCharts.gdb`. The draft and UKC
+margin come from the route, or from the **SoundCharts** Options page.
+
 In the **Catalog** pane, right-click a folder, folder connection, cell,
 HDF5 dataset or `CATALOG.XML` that holds S-57 or S-1xx data and choose
 **Open with SoundCharts** > **Add to Map** for the same result. The command
@@ -152,8 +161,9 @@ Test conventions:
 - Tests that need optional external data, such as real S-100 datasets, skip
   dynamically with xunit v3's `Assert.SkipUnless(...)` /
   `Assert.SkipWhen(...)`, so CI doesn't fail without them.
-- The Object information coverage tests (S-102, S-104, S-111) and the
-  content detection tests of Add SoundCharts Data use EncDotNet.S100's own
+- The Object information coverage tests (S-102, S-104, S-111), the
+  content detection tests of Add SoundCharts Data and the route check tests
+  (US5MA1BO, and the S-421 and RTZ route fixtures) use EncDotNet.S100's own
   test datasets. Set `SOUNDCHARTS_S100_TEST_DATASETS` to the
   `tests/datasets` folder of an EncDotNet.S100 clone to run them; CI checks
   that folder out at the pinned release.

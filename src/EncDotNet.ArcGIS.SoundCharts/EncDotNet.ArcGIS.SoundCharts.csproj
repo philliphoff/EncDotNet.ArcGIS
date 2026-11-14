@@ -28,6 +28,7 @@
     <PackageReference Include="Esri.ArcGISPro.Extensions30" />
     <PackageReference Include="EncDotNet.S100" />
     <PackageReference Include="EncDotNet.S100.Collections" />
+    <PackageReference Include="EncDotNet.S100.Routes.Rtz" />
   </ItemGroup>
 
   <ItemGroup>

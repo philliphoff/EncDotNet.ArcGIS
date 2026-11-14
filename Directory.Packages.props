@@ -18,6 +18,8 @@
     <PackageVersion Include="EncDotNet.S100" Version="$(EncDotNetS100Version)" />
     <!-- The Library pane (A12): dataset collections, indexed without loading. -->
     <PackageVersion Include="EncDotNet.S100.Collections" Version="$(EncDotNetS100Version)" />
+    <!-- Route check (A11): RTZ route files. -->
+    <PackageVersion Include="EncDotNet.S100.Routes.Rtz" Version="$(EncDotNetS100Version)" />
     <!-- Test -->
     <PackageVersion Include="coverlet.collector" Version="10.1.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
