@@ -28,6 +28,7 @@
         <tab id="SoundCharts_Tab" caption="SoundCharts" keytip="SC">
           <group refID="SoundCharts_DataGroup" />
           <group refID="SoundCharts_InquireGroup" />
+          <group refID="SoundCharts_OutputGroup" />
           <group refID="SoundCharts_HelpGroup" />
         </tab>
         <!-- Design brief D2: one tab, SoundCharts, in the SoundCharts Layer tab
@@ -55,6 +56,10 @@
         </group>
         <group id="SoundCharts_InquireGroup" caption="Inquire" appearsOnAddInTab="false" keytip="I">
           <tool refID="SoundCharts_ObjectInfoTool" size="large" />
+        </group>
+        <!-- Design brief §2.1: produce output, after asking questions. -->
+        <group id="SoundCharts_OutputGroup" caption="Output" appearsOnAddInTab="false" keytip="O">
+          <button refID="SoundCharts_ExportChart" size="large" />
         </group>
         <group id="SoundCharts_HelpGroup" caption="Help" appearsOnAddInTab="false" keytip="H">
           <button refID="SoundCharts_LogButton" size="large" />
@@ -89,6 +94,12 @@
               loadOnClick="true" condition="esri_mapping_mapPane" largeImage="Explore32" smallImage="Explore16">
           <tooltip heading="Object information">Click the map to list every feature and coverage value of the SoundCharts layers there, in the SoundCharts Object information pane.<disabledText>Open a map to use Object information.</disabledText></tooltip>
         </tool>
+        <!-- Issue #12, D10: renders the layout's SoundCharts layers at its
+             scale and resolution for the export, instead of screen tiles. -->
+        <button id="SoundCharts_ExportChart" className="ExportChartButton" caption="Export SoundCharts Chart..." keytip="E"
+                loadOnClick="true" condition="esri_layouts_layoutPane" largeImage="GenericExport32" smallImage="GenericExport16">
+          <tooltip heading="Export SoundCharts Chart">Export the active layout to PDF, PNG, JPEG or TIFF with its SoundCharts layers rendered at the layout's scale and resolution, so symbols print at their screen size and show the same content. Not for navigation.<disabledText>Open a layout to export a SoundCharts chart.</disabledText></tooltip>
+        </button>
         <button id="SoundCharts_LogButton" className="ShowLogButton" caption="Log" keytip="L"
                 loadOnClick="true" largeImage="DiagnosticsMonitor32" smallImage="DiagnosticsMonitor16">
           <tooltip heading="SoundCharts Log">Show add-in events and chart server output, to find out why a chart doesn't draw.<disabledText /></tooltip>

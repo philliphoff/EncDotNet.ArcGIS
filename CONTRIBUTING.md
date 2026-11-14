@@ -117,6 +117,12 @@ HDF5 dataset or `CATALOG.XML` that holds S-57 or S-1xx data and choose
 appears only for items whose content is chart data; the SoundCharts log
 records, at Debug level, what it found for each right-click.
 
+To try **Export SoundCharts Chart...**, insert a layout with a map frame
+showing a SoundCharts chart, open it, and choose **SoundCharts** >
+**Export SoundCharts Chart...**. It renders the chart for the export at
+the layout's scale and resolution, and logs each render under the
+`export` source in the SoundCharts log.
+
 To try **Object information** on any map without adding data, build the
 Debug configuration and start Pro with `SOUNDCHARTS_DEBUG_DATASETS` set to
 dataset paths separated by `;`. The tool then looks in those datasets
@@ -154,6 +160,16 @@ Test conventions:
   deliberate change, run the tests with `SOUNDCHARTS_UPDATE_SNAPSHOTS=1`,
   review the snapshot diff, and load the new `.lyrx` in Pro (or with
   `arcpy.mp.LayerFile`) before committing it.
+- The layout export test, `tests/export/test_export_dpi.py`, exports
+  layouts with arcpy at 96 and 300 dpi and compares the images
+  ([design note](docs/design/chart-export.md#testing)). It needs ArcGIS
+  Pro's Python, the bundled server and `SOUNDCHARTS_S100_TEST_DATASETS`, so
+  CI doesn't run it; run it after changing the export:
+
+  ```powershell
+  & "$env:ProgramFiles\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\python.exe" -I -m unittest discover -s tests/export -v
+  ```
+
 - **Never commit real ENC data files.** Use small synthetic fixtures, or skip
   tests that need live data.
 - Check behaviour in Pro by hand: install the add-in, restart Pro and use it.

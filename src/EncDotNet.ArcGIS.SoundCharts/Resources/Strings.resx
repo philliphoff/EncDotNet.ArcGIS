@@ -349,4 +349,117 @@
     <value>...and {0} more. Show the SoundCharts Log for all of them.</value>
     <comment>{0} is a count.</comment>
   </data>
+  <data name="Export_Title" xml:space="preserve">
+    <value>Export SoundCharts Chart</value>
+  </data>
+  <data name="Export_Heading" xml:space="preserve">
+    <value>Export {0}</value>
+    <comment>{0} is the layout's name.</comment>
+  </data>
+  <data name="Export_OneLayer" xml:space="preserve">
+    <value>1 SoundCharts layer is rendered at the layout's scale and resolution.</value>
+  </data>
+  <data name="Export_LayerCount" xml:space="preserve">
+    <value>{0} SoundCharts layers are rendered at the layout's scale and resolution.</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="Export_FileLabel" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Export_FormatLabel" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Export_ResolutionLabel" xml:space="preserve">
+    <value>Resolution</value>
+  </data>
+  <data name="Export_ResolutionFormat" xml:space="preserve">
+    <value>{0} dpi</value>
+    <comment>{0} is dots per inch.</comment>
+  </data>
+  <data name="Export_FormatPdf" xml:space="preserve">
+    <value>PDF (georeferenced)</value>
+  </data>
+  <data name="Export_FormatPng" xml:space="preserve">
+    <value>PNG (with world file)</value>
+  </data>
+  <data name="Export_FormatJpeg" xml:space="preserve">
+    <value>JPEG (with world file)</value>
+  </data>
+  <data name="Export_FormatTiff" xml:space="preserve">
+    <value>TIFF (GeoTIFF)</value>
+  </data>
+  <data name="Export_FilterPdf" xml:space="preserve">
+    <value>PDF (*.pdf)|*.pdf</value>
+    <comment>A Windows file dialog filter: label|pattern.</comment>
+  </data>
+  <data name="Export_FilterPng" xml:space="preserve">
+    <value>PNG (*.png)|*.png</value>
+    <comment>A Windows file dialog filter: label|pattern.</comment>
+  </data>
+  <data name="Export_FilterJpeg" xml:space="preserve">
+    <value>JPEG (*.jpg)|*.jpg;*.jpeg</value>
+    <comment>A Windows file dialog filter: label|pattern.</comment>
+  </data>
+  <data name="Export_FilterTiff" xml:space="preserve">
+    <value>TIFF (*.tif)|*.tif;*.tiff</value>
+    <comment>A Windows file dialog filter: label|pattern.</comment>
+  </data>
+  <data name="Export_FileDialogTitle" xml:space="preserve">
+    <value>Export SoundCharts Chart</value>
+  </data>
+  <data name="Export_Note" xml:space="preserve">
+    <value>SoundCharts layers print with the symbol sizes and the content they show on screen at this scale. Raster formats are georeferenced to the largest map frame with SoundCharts layers. Not for navigation.</value>
+  </data>
+  <data name="Export_NoLayers" xml:space="preserve">
+    <value>The active layout has no visible SoundCharts layers to render. Use Pro's Export Layout for it.</value>
+  </data>
+  <data name="Export_NoticeQuestion" xml:space="preserve">
+    <value>This layout doesn't say that its chart is not for navigation. Add this text at the lower left of the page?
+
+{0}
+
+Choose No to export without it.</value>
+    <comment>{0} is the notice text.</comment>
+  </data>
+  <data name="Export_NoticeText" xml:space="preserve">
+    <value>SoundCharts · Not for navigation · Data: {0}</value>
+    <comment>{0} is the data producers. Design brief §7.1.</comment>
+  </data>
+  <data name="Export_Progress" xml:space="preserve">
+    <value>Rendering SoundCharts layers for the export...</value>
+  </data>
+  <data name="Export_Done" xml:space="preserve">
+    <value>Exported {0}.</value>
+    <comment>{0} is a file path.</comment>
+  </data>
+  <data name="Export_Partial" xml:space="preserve">
+    <value>Exported {0}. {1} SoundCharts layer(s) couldn't be rendered and are drawn from the chart server's tiles. Show the SoundCharts Log for the reason.</value>
+    <comment>{0} is a file path, {1} a count.</comment>
+  </data>
+  <data name="Export_NotWritten" xml:space="preserve">
+    <value>ArcGIS Pro couldn't write {0}. Check that the folder exists and the file isn't open in another program.</value>
+    <comment>{0} is a file path.</comment>
+  </data>
+  <data name="Export_Failed" xml:space="preserve">
+    <value>The SoundCharts chart couldn't be exported: {0}</value>
+    <comment>{0} is the reason.</comment>
+  </data>
+  <data name="Button_Browse" xml:space="preserve">
+    <value>_Browse...</value>
+  </data>
+  <data name="Button_Export" xml:space="preserve">
+    <value>_Export</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Tooltip_ExportBrowse" xml:space="preserve">
+    <value>Choose the file to export to.</value>
+  </data>
+  <data name="Tooltip_ExportFormat" xml:space="preserve">
+    <value>PDF keeps each map frame's coordinate system. PNG, JPEG and TIFF are georeferenced to one map frame.</value>
+  </data>
+  <data name="Tooltip_ExportResolution" xml:space="preserve">
+    <value>Dots per inch on the page. SoundCharts symbols keep their printed size at every resolution.</value>
+  </data>
 </root>
