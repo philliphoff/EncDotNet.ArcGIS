@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The add-in's logic that doesn't need ArcGIS Pro: dataset sets, the
+       chart server and its supervisor, and the SoundCharts log. It has no
+       reference to the Pro SDK, so nothing here can reach a Pro type, and the
+       tests and other slices (A3 chart layers, A6 Object information) build on
+       it. Pro-facing code stays in EncDotNet.ArcGIS.SoundCharts. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>EncDotNet.SoundCharts</RootNamespace>
+    <!-- LibraryImport (job objects, long paths) generates unsafe code. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="EncDotNet.ArcGIS.SoundCharts.Tests" />
+  </ItemGroup>
+
+</Project>

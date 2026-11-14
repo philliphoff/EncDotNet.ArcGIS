@@ -25,6 +25,36 @@ is silent, do what EncDotNet.S100 does.
 
 ## Building
 
+### The chart server
+
+The add-in draws charts with `s100 tiles serve` from EncDotNet.S100, run as
+a separate process, and ships a pinned build of it (design brief D21). No
+EncDotNet.S100 release serves WMTS yet, so the pin is a commit, in
+`tools/s100-server.json`. Build it once, before the add-in:
+
+```powershell
+tools/build-server.ps1
+```
+
+The script fetches that commit into `artifacts/s100-src` and publishes the
+CLI for `win-x64` and `win-arm64` into `artifacts/server/<rid>/`, a few
+minutes the first time. The add-in project packages whatever is there as
+`server/<rid>/` in the `.esriAddinX`; without it the add-in still builds
+and loads, but its chart servers fail with "isn't installed". On Arm64
+Windows the add-in runs the `win-arm64` server natively, although Pro
+itself runs as x64.
+
+`-RestoreConfigFile` restores through a NuGet mirror, and
+`-RollForwardLatestMajor` lets the upstream build use a newer major .NET
+SDK. To move the pin, change `commit` and `version` in
+`tools/s100-server.json`; CI caches the build by both.
+
+To try another `s100` build without rebuilding the add-in, set
+`SOUNDCHARTS_S100_PATH` to its `s100.exe` before starting Pro. *About
+SoundCharts* shows which server runs.
+
+### The add-in
+
 Build and package the add-in with Visual Studio's MSBuild, from a
 **Developer PowerShell for VS** (or with the full path to `MSBuild.exe`):
 
@@ -66,9 +96,12 @@ It copies the `.esriAddinX` to
 Documents folder. `-Path` installs another package, such as one from CI, and
 `-Remove` uninstalls the add-in. Restart Pro after installing.
 
-When Pro starts, the add-in writes a line with its versions to
-`%LOCALAPPDATA%\SoundCharts for ArcGIS\Logs\addin.log`, which shows it
-loaded without opening the ribbon.
+When Pro starts, the add-in writes a line with its versions, and one naming
+the chart server it found, to the SoundCharts log,
+`%LOCALAPPDATA%\SoundCharts\ArcGIS\logs\soundcharts-<yyyyMMdd>.log`, which
+shows it loaded without opening the ribbon. The same log, with each chart
+server's output, is in the **SoundCharts Log** pane (**SoundCharts** tab >
+**Log**).
 
 ## Testing
 
@@ -81,10 +114,14 @@ Test conventions:
 - Every bug fix and new piece of logic is accompanied by an xunit test in
   `tests/EncDotNet.ArcGIS.SoundCharts.Tests`.
 - Tests run without Pro. The Pro assemblies in the build are reference
-  assemblies only, so a test fails if it reaches a Pro type at runtime. Keep
+  assemblies only, so a test fails if it reaches a Pro type at runtime. Put
   logic that you want to test (settings, URL building, `.lyrx` authoring,
-  version formatting) in classes that don't use the Pro API, and keep the
-  Pro-facing classes (modules, buttons, panes) thin.
+  the chart server) in `src/EncDotNet.ArcGIS.SoundCharts.Core`, which has no
+  Pro reference, and keep the Pro-facing classes (modules, buttons, panes)
+  thin.
+- The chart server supervisor is tested with fake processes, and once
+  against the real bundled `s100` (`BundledServerTests`), which is skipped
+  when `tools/build-server.ps1` hasn't run.
 - Tests that need optional external data, such as real S-100 datasets, skip
   dynamically with xunit v3's `Assert.SkipUnless(...)` /
   `Assert.SkipWhen(...)`, so CI doesn't fail without them.

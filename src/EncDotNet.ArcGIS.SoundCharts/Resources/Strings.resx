@@ -51,4 +51,91 @@
   <data name="Tooltip_AboutCopy" xml:space="preserve">
     <value>Copy the versions to the clipboard, to paste into an issue.</value>
   </data>
+  <data name="About_ServerVersion" xml:space="preserve">
+    <value>Chart server (s100)</value>
+    <comment>The label for the bundled s100 chart server's version.</comment>
+  </data>
+  <data name="About_ServerNotInstalled" xml:space="preserve">
+    <value>not installed</value>
+    <comment>Shown for the chart server when no s100 program was found.</comment>
+  </data>
+  <data name="About_ServerOverride" xml:space="preserve">
+    <value>{0} (from {1})</value>
+    <comment>{0} is the s100 version, {1} the path set by SOUNDCHARTS_S100_PATH.</comment>
+  </data>
+  <data name="Log_Filter" xml:space="preserve">
+    <value>Level filter</value>
+    <comment>Accessible name of the SoundCharts Log pane's level filter.</comment>
+  </data>
+  <data name="Log_Filter_InfoAndAbove" xml:space="preserve">
+    <value>Info and above</value>
+    <comment>Log level filter, the default; the SoundCharts viewer's wording.</comment>
+  </data>
+  <data name="Log_Filter_WarningsAndErrors" xml:space="preserve">
+    <value>Warnings and errors</value>
+    <comment>Log level filter; the SoundCharts viewer's wording.</comment>
+  </data>
+  <data name="Log_Filter_Errors" xml:space="preserve">
+    <value>Errors</value>
+    <comment>Log level filter; the SoundCharts viewer's wording.</comment>
+  </data>
+  <data name="Log_Filter_Everything" xml:space="preserve">
+    <value>Everything, Debug included</value>
+    <comment>Log level filter; the SoundCharts viewer's wording.</comment>
+  </data>
+  <data name="Log_Entries" xml:space="preserve">
+    <value>Log entries</value>
+    <comment>Accessible name of the SoundCharts Log pane's list.</comment>
+  </data>
+  <data name="Log_Column_Time" xml:space="preserve">
+    <value>Time (UTC)</value>
+    <comment>Log pane column header.</comment>
+  </data>
+  <data name="Log_Column_Level" xml:space="preserve">
+    <value>Level</value>
+    <comment>Log pane column header.</comment>
+  </data>
+  <data name="Log_Column_Source" xml:space="preserve">
+    <value>Source</value>
+    <comment>Log pane column header: add-in, or chart {id}.</comment>
+  </data>
+  <data name="Log_Column_Message" xml:space="preserve">
+    <value>Message</value>
+    <comment>Log pane column header.</comment>
+  </data>
+  <data name="Log_ShowingSource" xml:space="preserve">
+    <value>Showing {0} only</value>
+    <comment>{0} is a log source such as "chart 3f9a1c02".</comment>
+  </data>
+  <data name="Button_CopyAll" xml:space="preserve">
+    <value>Copy all</value>
+    <comment>The SoundCharts viewer's wording.</comment>
+  </data>
+  <data name="Button_OpenLogFolder" xml:space="preserve">
+    <value>Open Log Folder</value>
+  </data>
+  <data name="Button_ShowAll" xml:space="preserve">
+    <value>Show all</value>
+    <comment>Clears the Log pane's chart filter.</comment>
+  </data>
+  <data name="Tooltip_LogCopyAll" xml:space="preserve">
+    <value>Copy the lines shown to the clipboard, with your home folder replaced by ~.</value>
+  </data>
+  <data name="Tooltip_LogOpenFolder" xml:space="preserve">
+    <value>Open the folder that holds a log file for each day.</value>
+  </data>
+  <data name="Tooltip_LogShowAll" xml:space="preserve">
+    <value>Show the lines of every chart and of the add-in.</value>
+  </data>
+  <data name="Notification_Title" xml:space="preserve">
+    <value>SoundCharts</value>
+    <comment>Title of Pro notifications from SoundCharts.</comment>
+  </data>
+  <data name="Notification_ServerStopped" xml:space="preserve">
+    <value>SoundCharts chart server stopped: {0}</value>
+    <comment>{0} is the reason, in English, from the server supervisor.</comment>
+  </data>
+  <data name="Notification_ShowLog" xml:space="preserve">
+    <value>Select this notification to show the SoundCharts Log.</value>
+  </data>
 </root>

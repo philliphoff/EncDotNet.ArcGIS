@@ -23,6 +23,21 @@ publishes.
 
 ---
 
+## The s100 chart server — MIT License
+
+- **Files:** `server/win-x64/` and `server/win-arm64/` in the package: the
+  `s100` command-line tool from EncDotNet.S100, built from the commit in
+  `tools/s100-server.json`, self-contained.
+- **Copyright:** Copyright (c) 2026 Phillip Hoff.
+- **Source:** https://github.com/philliphoff/EncDotNet.S100.
+- **Notices:** A self-contained build carries the .NET runtime and ASP.NET
+  Core (MIT, .NET Foundation and contributors) and the libraries the CLI
+  depends on, SkiaSharp and SQLite among them. Their notices are in
+  [EncDotNet.S100's third-party notices](https://github.com/philliphoff/EncDotNet.S100/blob/main/THIRD-PARTY-NOTICES.md)
+  and the [.NET runtime's](https://github.com/dotnet/runtime/blob/main/THIRD-PARTY-NOTICES.TXT).
+
+---
+
 ## Other libraries
 
 | Package | License | Source |

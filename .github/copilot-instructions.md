@@ -40,10 +40,16 @@ src/
   EncDotNet.ArcGIS.SoundCharts/        # The add-in: Config.daml, module, ribbon controls, windows
     Config.daml                        # DAML: add-in info, module, tabs, groups, controls
     Resources/Strings.resx             # Localizable UI strings (+ hand-written Strings.cs)
+  EncDotNet.ArcGIS.SoundCharts.Core/   # Logic with no Pro reference, for tests and other slices
+    Charts/                            # DatasetSet, DatasetSource: what one chart server portrays
+    Server/                            # ChartServerPool, ChartServer (supervisor), endpoints, process launch
+    Logging/                           # SoundChartsLog: the Log pane's list and the daily file
   ArcGISPro.DotNetBuild.targets        # Skips Esri's packaging under `dotnet build`
 tests/
   EncDotNet.ArcGIS.SoundCharts.Tests/  # xunit v3 tests for logic that doesn't need Pro
 tools/
+  build-server.ps1                     # Builds the pinned s100 chart server into artifacts/server/
+  s100-server.json                     # The pin: EncDotNet.S100 commit and version
   deploy-addin.ps1                     # Installs the .esriAddinX for the current user
 docs/                                  # Coding and docs style guides, design notes (docs/design/)
 ```
@@ -63,6 +69,9 @@ docs/                                  # Coding and docs style guides, design no
 
 ## Building and testing
 
+- Build the pinned chart server once with `tools/build-server.ps1`; the
+  add-in packages `artifacts/server/<rid>/`. Without it the add-in builds,
+  but chart servers can't start and `BundledServerTests` skips.
 - Package the add-in with Visual Studio's MSBuild:
   `msbuild EncDotNet.ArcGIS.slnx /restore /p:Configuration=Release`. Esri's
   packaging targets use `CodeTaskFactory`, which the .NET MSBuild doesn't
@@ -73,8 +82,13 @@ docs/                                  # Coding and docs style guides, design no
   runtime.
 - Run tests with `dotnet test EncDotNet.ArcGIS.slnx --configuration Release`.
 - Install into Pro with `tools/deploy-addin.ps1`, then restart Pro. The
-  module logs its versions to
-  `%LOCALAPPDATA%\SoundCharts for ArcGIS\Logs\addin.log` when Pro starts.
+  module logs its versions and the chart server it found to
+  `%LOCALAPPDATA%\SoundCharts\ArcGIS\logs\soundcharts-<yyyyMMdd>.log` when
+  Pro starts.
+- Chart servers run out of process (`s100 tiles serve`), one per dataset
+  set, supervised by `ChartServer`: loopback, a random token, a long-path
+  working folder, a kill-on-close job. Nothing a server does may throw into
+  Pro; report it through the log and the server's state.
 - You can't click in Pro from an agent session. Verify what you can with
   tests and the log, and ask the user to check UI behaviour in Pro.
 

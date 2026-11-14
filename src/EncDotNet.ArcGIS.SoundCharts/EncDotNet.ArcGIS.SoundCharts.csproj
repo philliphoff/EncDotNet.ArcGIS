@@ -33,4 +33,24 @@
     <InternalsVisibleTo Include="EncDotNet.ArcGIS.SoundCharts.Tests" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EncDotNet.ArcGIS.SoundCharts.Core\EncDotNet.ArcGIS.SoundCharts.Core.csproj" />
+  </ItemGroup>
+
+  <!-- The pinned s100 chart server (design brief D21), built by
+       tools/build-server.ps1 into artifacts/server/<rid>/. Copied to
+       server/<rid>/ in the output, and so packaged in the .esriAddinX beside
+       the add-in assembly. Without it the add-in builds and loads, but chart
+       servers fail to start, saying s100 isn't installed. -->
+  <PropertyGroup>
+    <SoundChartsServerDirectory Condition="'$(SoundChartsServerDirectory)' == ''">$(MSBuildThisFileDirectory)..\..\artifacts\server\</SoundChartsServerDirectory>
+  </PropertyGroup>
+
+  <ItemGroup Condition="Exists('$(SoundChartsServerDirectory)')">
+    <None Include="$(SoundChartsServerDirectory)win-*\**\*"
+          Link="server\%(RecursiveDir)%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest"
+          Visible="false" />
+  </ItemGroup>
+
 </Project>
