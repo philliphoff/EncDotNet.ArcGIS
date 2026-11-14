@@ -25,6 +25,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Synthetic data only: never real ENC data. -->
+    <None Include="TestData\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\EncDotNet.ArcGIS.SoundCharts\EncDotNet.ArcGIS.SoundCharts.csproj" />
   </ItemGroup>
 

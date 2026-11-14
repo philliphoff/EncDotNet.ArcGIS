@@ -23,6 +23,7 @@
       </tabs>
       <groups>
         <group id="SoundCharts_HelpGroup" caption="Help" appearsOnAddInTab="false" keytip="H">
+          <button refID="SoundCharts_LogButton" size="large" />
           <button refID="SoundCharts_AboutButton" size="large" />
         </group>
       </groups>
@@ -31,7 +32,17 @@
                 loadOnClick="true" largeImage="GenericInformation32" smallImage="GenericInformation16">
           <tooltip heading="About SoundCharts">Show the versions of SoundCharts, EncDotNet.S100, ArcGIS Pro and .NET.<disabledText /></tooltip>
         </button>
+        <button id="SoundCharts_LogButton" className="ShowLogButton" caption="Log" keytip="L"
+                loadOnClick="true" largeImage="DiagnosticsMonitor32" smallImage="DiagnosticsMonitor16">
+          <tooltip heading="SoundCharts Log">Show add-in events and chart server output, to find out why a chart doesn't draw.<disabledText /></tooltip>
+        </button>
       </controls>
+      <dockPanes>
+        <dockPane id="SoundCharts_LogPane" caption="SoundCharts Log" className="LogPaneViewModel" dock="bottom"
+                  keytip="L" autoHide="false">
+          <content className="LogPaneView" />
+        </dockPane>
+      </dockPanes>
     </insertModule>
   </modules>
 </ArcGIS>
