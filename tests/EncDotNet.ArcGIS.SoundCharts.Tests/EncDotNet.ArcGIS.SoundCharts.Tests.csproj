@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Tests for the add-in's logic that doesn't need ArcGIS Pro. The Pro
+       assemblies are reference-only (from Esri.ArcGISPro.Extensions30), so a
+       test that reaches a Pro type fails to load it. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <!-- x64, like Pro and the add-in; the Pro reference assemblies are x64. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <RootNamespace>EncDotNet.SoundCharts.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\EncDotNet.ArcGIS.SoundCharts\EncDotNet.ArcGIS.SoundCharts.csproj" />
+  </ItemGroup>
+
+</Project>

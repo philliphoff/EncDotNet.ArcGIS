@@ -1,2 +1,11 @@
-# Performance baseline JSONL files are machine-generated.
-tools/EncDotNet.S100.PerfRunner/baselines/**/*.jsonl linguist-generated
+# Check out text files with LF on every platform, to match `end_of_line = lf`
+# in .editorconfig. Without this, Git for Windows (core.autocrlf=true, also the
+# default on GitHub's Windows runners) checks out CRLF and the Format check
+# job reports every file.
+* text=auto eol=lf
+
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+*.png binary
+*.esriAddinX binary

@@ -1,0 +1,75 @@
+<controls:ProWindow x:Class="EncDotNet.SoundCharts.AboutWindow"
+                    x:ClassModifier="internal"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"
+                    xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
+                    xmlns:res="clr-namespace:EncDotNet.SoundCharts.Resources"
+                    Title="{x:Static res:Strings.About_Title}"
+                    SizeToContent="WidthAndHeight"
+                    ResizeMode="NoResize"
+                    ShowInTaskbar="False"
+                    WindowStartupLocation="CenterOwner"
+                    AutomationProperties.AutomationId="About">
+  <controls:ProWindow.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </controls:ProWindow.Resources>
+
+  <StackPanel Margin="16" MinWidth="360" Grid.IsSharedSizeScope="True">
+    <TextBlock Text="{x:Static res:Strings.About_Heading}"
+               Style="{DynamicResource Esri_TextBlockH3}"
+               Margin="0,0,0,12" />
+
+    <ItemsControl ItemsSource="{Binding Rows}"
+                  Focusable="False"
+                  AutomationProperties.AutomationId="About.Versions"
+                  AutomationProperties.Name="{x:Static res:Strings.About_Versions}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <Grid Margin="0,2">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto" SharedSizeGroup="Label" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding Label}"
+                       Style="{DynamicResource Esri_TextBlockRegular}"
+                       Margin="0,0,16,0" />
+            <!-- A read-only text box so the value can be selected and copied. -->
+            <TextBox Grid.Column="1"
+                     Text="{Binding Value, Mode=OneWay}"
+                     IsReadOnly="True"
+                     BorderThickness="0"
+                     Background="Transparent"
+                     Foreground="{DynamicResource Esri_TextStyleDefaultBrush}"
+                     Padding="0"
+                     AutomationProperties.Name="{Binding Label}" />
+          </Grid>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+    <TextBlock Text="{x:Static res:Strings.About_NotForNavigation}"
+               Style="{DynamicResource Esri_TextBlockRegular}"
+               FontWeight="SemiBold"
+               Margin="0,12,0,0" />
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+      <Button Content="{x:Static res:Strings.Button_Copy}"
+              ToolTip="{x:Static res:Strings.Tooltip_AboutCopy}"
+              Style="{DynamicResource Esri_Button}"
+              Click="OnCopyClick"
+              AutomationProperties.AutomationId="About.Copy"
+              AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_AboutCopy}" />
+      <Button Content="{x:Static res:Strings.Button_Close}"
+              Style="{DynamicResource Esri_Button}"
+              IsDefault="True"
+              IsCancel="True"
+              Click="OnCloseClick"
+              AutomationProperties.AutomationId="About.Close" />
+    </StackPanel>
+  </StackPanel>
+</controls:ProWindow>
