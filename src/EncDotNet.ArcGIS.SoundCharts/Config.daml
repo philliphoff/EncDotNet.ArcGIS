@@ -46,6 +46,7 @@
         <group id="SoundCharts_DataGroup" caption="Data" appearsOnAddInTab="false" keytip="D">
           <button refID="SoundCharts_AddData" size="large" />
           <button refID="SoundCharts_AddFolder" size="middle" />
+          <button refID="SoundCharts_AddFeatureLayers" size="middle" />
         </group>
         <group id="SoundCharts_LayerDatasetsGroup" caption="Datasets" appearsOnAddInTab="false" keytip="D">
           <button refID="SoundCharts_ZoomToData" size="large" />
@@ -71,6 +72,16 @@
         <button id="SoundCharts_AddFolder" className="AddFolderButton" caption="Add Folder" keytip="F"
                 loadOnClick="true" condition="esri_mapping_mapPane" largeImage="FolderOpenState32" smallImage="FolderOpenState16">
           <tooltip heading="Add SoundCharts Folder">Add an exchange-set folder, or every dataset in a folder, to the map as a SoundCharts chart.<disabledText>Open a map to add SoundCharts data.</disabledText></tooltip>
+        </button>
+        <!-- Issue #15: the plugin datasource's feature layers, in a
+             SoundCharts features group outside the chart group (D14). -->
+        <button id="SoundCharts_AddFeatureLayers" className="AddFeatureLayersButton" caption="Add as Feature Layers" keytip="E"
+                loadOnClick="true" condition="esri_mapping_mapPane" largeImage="LayerNew32" smallImage="LayerNew16">
+          <tooltip heading="Add as Feature Layers">Add the features of S-101, S-124, S-421 or S-57 datasets, or of an exchange set, to the map as feature layers, one per feature type, for selection, attribute tables, joins and geoprocessing. Pro draws them with its default symbols. Not for navigation.<disabledText>Open a map to add SoundCharts data.</disabledText></tooltip>
+        </button>
+        <button id="SoundCharts_OpenWithAddFeatureLayers" className="OpenWithAddFeatureLayersButton" caption="Add as Feature Layers"
+                loadOnClick="true" condition="esri_mapping_mapPane" smallImage="LayerNew16" largeImage="LayerNew32">
+          <tooltip heading="Add as Feature Layers">Add this data's features to the active map as feature layers, one per feature type, as Add as Feature Layers does. Not for navigation.<disabledText>Open a map to add SoundCharts data.</disabledText></tooltip>
         </button>
         <button id="SoundCharts_ZoomToData" className="ZoomToDataButton" caption="Zoom to Data" keytip="Z"
                 loadOnClick="true" condition="SoundCharts_HasChartLayerCondition" largeImage="ZoomFullExtent32" smallImage="ZoomFullExtent16">
@@ -112,6 +123,7 @@
         <menu id="SoundCharts_OpenWithMenu" caption="Open with SoundCharts" smallImage="GenericOpen16">
           <tooltip heading="Open with SoundCharts">Add S-57 or S-1xx data to a map as a SoundCharts chart.<disabledText /></tooltip>
           <button refID="SoundCharts_OpenWithAddToMap" />
+          <button refID="SoundCharts_OpenWithAddFeatureLayers" />
         </menu>
       </menus>
       <dockPanes>
