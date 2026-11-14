@@ -69,15 +69,29 @@ public sealed class ChartLayerRegistry
         }
     }
 
-    /// <summary>Gets the chart layers (not groups) of map <paramref name="mapUri"/>, with their URIs.</summary>
+    /// <summary>Gets the chart layers (not groups or the Coverage layer) of map <paramref name="mapUri"/>, with their URIs.</summary>
     /// <param name="mapUri">The map's URI.</param>
     public IReadOnlyList<KeyValuePair<string, ChartLayerMarker>> LayersOf(string mapUri)
     {
         lock (_gate)
         {
             return [.. _layers
-                .Where(pair => pair.Value.MapUri == mapUri && !pair.Value.Marker.IsGroup)
+                .Where(pair => pair.Value.MapUri == mapUri && pair.Value.Marker is { IsGroup: false, IsCoverage: false })
                 .Select(pair => new KeyValuePair<string, ChartLayerMarker>(pair.Key, pair.Value.Marker))];
+        }
+    }
+
+    /// <summary>Gets the URI of map <paramref name="mapUri"/>'s Coverage layer, or <see langword="null"/>.</summary>
+    /// <param name="mapUri">The map's URI.</param>
+    public string? CoverageOf(string mapUri)
+    {
+        lock (_gate)
+        {
+            return _layers
+                .Where(pair => pair.Value.MapUri == mapUri && pair.Value.Marker.IsCoverage)
+                .Select(pair => pair.Key)
+                .Order(StringComparer.Ordinal)
+                .FirstOrDefault();
         }
     }
 

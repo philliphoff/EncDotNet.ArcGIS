@@ -349,4 +349,52 @@
     <value>...and {0} more. Show the SoundCharts Log for all of them.</value>
     <comment>{0} is a count.</comment>
   </data>
+  <data name="Layer_Coverage" xml:space="preserve">
+    <value>Coverage</value>
+    <comment>The SoundCharts layer of dataset footprints, and its feature class's alias.</comment>
+  </data>
+  <data name="Coverage_Description" xml:space="preserve">
+    <value>Footprints of the SoundCharts chart's datasets: where each dataset has data. Labelled where the chart is out of scale. Not for navigation.</value>
+  </data>
+  <data name="Coverage_EditName" xml:space="preserve">
+    <value>Update SoundCharts coverage</value>
+    <comment>The name of the edit operation, in Pro's undo list, when footprints are written in the user's edit session.</comment>
+  </data>
+  <data name="Coverage_FieldName" xml:space="preserve">
+    <value>Dataset</value>
+  </data>
+  <data name="Coverage_FieldProduct" xml:space="preserve">
+    <value>Product</value>
+  </data>
+  <data name="Coverage_FieldEdition" xml:space="preserve">
+    <value>Edition</value>
+    <comment>The product specification's edition, such as 2.0.0.</comment>
+  </data>
+  <data name="Coverage_FieldLayer" xml:space="preserve">
+    <value>Chart layer</value>
+    <comment>The SoundCharts layer that draws the dataset.</comment>
+  </data>
+  <data name="Coverage_FieldPath" xml:space="preserve">
+    <value>Dataset path</value>
+  </data>
+  <data name="Coverage_FieldIssueDate" xml:space="preserve">
+    <value>Issue date</value>
+  </data>
+  <data name="Coverage_FieldFirstTime" xml:space="preserve">
+    <value>First time (UTC)</value>
+  </data>
+  <data name="Coverage_FieldLastTime" xml:space="preserve">
+    <value>Last time (UTC)</value>
+  </data>
+  <data name="Coverage_FieldSource" xml:space="preserve">
+    <value>Footprint from</value>
+    <comment>Whether the polygon is the dataset's declared coverage or its bounds.</comment>
+  </data>
+  <data name="ScaleNote_ZoomIn" xml:space="preserve">
+    <value>Zoom in to see the chart</value>
+    <comment>Shown on the SoundCharts Layer tab when the map is below the selected chart layer's minimum scale.</comment>
+  </data>
+  <data name="ScaleNote_AccessibleName" xml:space="preserve">
+    <value>Scale note</value>
+  </data>
 </root>

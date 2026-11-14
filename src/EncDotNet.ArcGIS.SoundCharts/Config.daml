@@ -36,6 +36,7 @@
         <tab id="SoundCharts_LayerTab" caption="SoundCharts" condition="SoundCharts_HasChartLayerCondition"
              tabGroupID="SoundCharts_LayerTabGroup" keytip="SL">
           <group refID="SoundCharts_LayerDatasetsGroup" />
+          <group refID="SoundCharts_LayerCoverageGroup" />
           <group refID="SoundCharts_LayerServerGroup" />
         </tab>
       </tabs>
@@ -49,6 +50,11 @@
         </group>
         <group id="SoundCharts_LayerDatasetsGroup" caption="Datasets" appearsOnAddInTab="false" keytip="D">
           <button refID="SoundCharts_ZoomToData" size="large" />
+        </group>
+        <!-- Design brief §2.2, D13 (A7): the Coverage layer and the zoom floor. -->
+        <group id="SoundCharts_LayerCoverageGroup" caption="Coverage" appearsOnAddInTab="false" keytip="C">
+          <checkBox refID="SoundCharts_Footprints" />
+          <customControl refID="SoundCharts_ScaleNote" size="large" />
         </group>
         <group id="SoundCharts_LayerServerGroup" caption="Server" appearsOnAddInTab="false" keytip="S">
           <button refID="SoundCharts_ChartLog" size="large" />
@@ -76,6 +82,18 @@
                 loadOnClick="true" condition="SoundCharts_HasChartLayerCondition" largeImage="ZoomFullExtent32" smallImage="ZoomFullExtent16">
           <tooltip heading="Zoom to Data">Zoom to the footprints of the selected SoundCharts layer's datasets.<disabledText>Select a SoundCharts layer in Contents.</disabledText></tooltip>
         </button>
+        <checkBox id="SoundCharts_Footprints" className="FootprintsCheckBox" caption="Footprints" keytip="F"
+                  loadOnClick="false" condition="SoundCharts_HasChartLayerCondition">
+          <tooltip heading="Footprints">Show or hide the Coverage layer: each dataset's footprint, labelled where the chart is out of scale.<disabledText>This map's SoundCharts chart has no Coverage layer.</disabledText></tooltip>
+        </checkBox>
+        <!-- A read-only note ("Zoom in to see the chart"). Pro's labelControl
+             can't change its caption, so the note is a custom control. -->
+        <customControl id="SoundCharts_ScaleNote" caption="Scale" className="ScaleNoteViewModel" keytip="N"
+                       loadOnClick="false" condition="SoundCharts_HasChartLayerCondition" hideTooltip="false"
+                       largeImage="GenericInformation32" smallImage="GenericInformation16">
+          <content className="ScaleNoteView" />
+          <tooltip heading="Scale note">Says "Zoom in to see the chart" when the map is below the selected chart layer's minimum scale. Below it the chart server draws nothing, and the Coverage layer shows where the data is.<disabledText>Select a SoundCharts layer in Contents.</disabledText></tooltip>
+        </customControl>
         <button id="SoundCharts_ChartLog" className="ChartLogButton" caption="Log" keytip="L"
                 loadOnClick="true" condition="SoundCharts_HasChartLayerCondition" largeImage="DiagnosticsMonitor32" smallImage="DiagnosticsMonitor16">
           <tooltip heading="Chart Log">Show the SoundCharts Log for the selected layer's chart server.<disabledText>Select a SoundCharts layer in Contents.</disabledText></tooltip>

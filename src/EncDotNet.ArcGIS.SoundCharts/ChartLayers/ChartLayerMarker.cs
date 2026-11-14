@@ -52,7 +52,14 @@ public sealed record ChartLayerMarker
     /// <summary>Gets whether this marks the <b>SoundCharts · {source}</b> group rather than a chart layer.</summary>
     public bool IsGroup { get; }
 
-    /// <summary>Gets the chart layer's kind, or <see langword="null"/> for the group.</summary>
+    /// <summary>
+    /// Gets whether this marks the group's <b>Coverage</b> feature layer
+    /// (A7) rather than a chart layer. It has no <see cref="Kind"/> and no
+    /// <see cref="Datasets"/>.
+    /// </summary>
+    public bool IsCoverage { get; private init; }
+
+    /// <summary>Gets the chart layer's kind, or <see langword="null"/> for the group and the Coverage layer.</summary>
     public ChartLayerKind? Kind { get; }
 
     /// <summary>Gets the datasets the layer draws, in canonical order; empty for the group.</summary>
@@ -88,6 +95,12 @@ public sealed record ChartLayerMarker
     }
 
     /// <summary>
+    /// Creates the marker of the <b>Coverage</b> layer (A7): its footprints
+    /// live in its feature class, so the marker holds no datasets.
+    /// </summary>
+    public static ChartLayerMarker ForCoverage() => new(false, null, [], []) { IsCoverage = true };
+
+    /// <summary>
     /// Reads a marker from its JSON, or returns <see langword="null"/> when
     /// the text isn't a marker this version understands. Never throws.
     /// </summary>
@@ -110,6 +123,11 @@ public sealed record ChartLayerMarker
             if (dto.Role == "group")
             {
                 return ForGroup(dto.Inputs ?? []);
+            }
+
+            if (dto.Role == "coverage")
+            {
+                return ForCoverage();
             }
 
             if (dto.Role != "layer" || ChartLayerKinds.FromId(dto.Kind) is not { } kind)
@@ -141,10 +159,10 @@ public sealed record ChartLayerMarker
         var dto = new MarkerDto
         {
             Version = CurrentVersion,
-            Role = IsGroup ? "group" : "layer",
+            Role = IsGroup ? "group" : IsCoverage ? "coverage" : "layer",
             Kind = Kind is { } kind ? ChartLayerKinds.Id(kind) : null,
             Inputs = IsGroup ? [.. Inputs] : null,
-            Datasets = IsGroup
+            Datasets = IsGroup || IsCoverage
                 ? null
                 : [.. Datasets.Select(d => new DatasetDto
                 {
@@ -164,12 +182,12 @@ public sealed record ChartLayerMarker
     /// as dataset files.
     /// </summary>
     /// <param name="options">The start-up options, or <see langword="null"/> for the defaults.</param>
-    /// <exception cref="InvalidOperationException">This is the group's marker.</exception>
+    /// <exception cref="InvalidOperationException">This is the group's or the Coverage layer's marker.</exception>
     public DatasetSet ToDatasetSet(ChartRenderOptions? options = null)
     {
-        if (IsGroup)
+        if (IsGroup || IsCoverage)
         {
-            throw new InvalidOperationException("The group has no datasets of its own.");
+            throw new InvalidOperationException("The group and the Coverage layer have no datasets of their own.");
         }
 
         return new DatasetSet(Datasets.Select(d => DatasetSource.Dataset(d.Path)), options);
