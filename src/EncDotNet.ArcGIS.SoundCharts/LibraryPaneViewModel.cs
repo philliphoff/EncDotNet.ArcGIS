@@ -43,6 +43,7 @@ internal sealed class LibraryPaneViewModel : DockPane
         RefreshCommand = new RelayCommand(Refresh);
         RemoveCommand = new RelayCommand(Remove, () => _selectedNode?.Kind is LibraryNodeKind.Collection or LibraryNodeKind.Source);
         AddToMapCommand = new RelayCommand(AddToMapAsync, () => _selectedNode?.Item is not null && MapView.Active is not null);
+        AddFeatureLayersCommand = new RelayCommand(AddFeatureLayersAsync, () => _selectedNode?.Item is not null && MapView.Active is not null);
         ShowFootprintCommand = new RelayCommand(ShowFootprintAsync, () => _selectedNode?.Item is not null);
         ValidateCommand = new RelayCommand(ValidateAsync, () => _selectedNode?.Item is not null && !IsValidating);
         OpenContainingFolderCommand = new RelayCommand(OpenContainingFolder, () => _selectedNode?.Item is not null);
@@ -122,6 +123,9 @@ internal sealed class LibraryPaneViewModel : DockPane
 
     /// <summary>Gets the <b>Add to Map</b> command.</summary>
     public ICommand AddToMapCommand { get; }
+
+    /// <summary>Gets the <b>Add as Feature Layers</b> command (issue #15).</summary>
+    public ICommand AddFeatureLayersCommand { get; }
 
     /// <summary>Gets the <b>Show Footprint</b> command.</summary>
     public ICommand ShowFootprintCommand { get; }
@@ -395,6 +399,31 @@ internal sealed class LibraryPaneViewModel : DockPane
         catch (Exception ex)
         {
             Fail("Add to Map", ex);
+        }
+    }
+
+    private async Task AddFeatureLayersAsync()
+    {
+        try
+        {
+            if (_selectedNode?.Item is not { } state || MapView.Active is not { } view)
+            {
+                return;
+            }
+
+            var paths = LibraryItemPaths.AddToMapPaths([state.Item]);
+            if (paths.FirstOrDefault(p => !LibraryItemPaths.Exists(p)) is { } missing)
+            {
+                Say(string.Format(CultureInfo.CurrentCulture, Strings.Library_FileMissingFormat, missing), MessageBoxImage.Warning);
+                return;
+            }
+
+            AddInLog.Write($"SoundCharts Library: adding {string.Join(", ", paths)} as feature layers.");
+            await AddSoundChartsFeatures.RunAsync(view, paths);
+        }
+        catch (Exception ex)
+        {
+            Fail("Add as Feature Layers", ex);
         }
     }
 

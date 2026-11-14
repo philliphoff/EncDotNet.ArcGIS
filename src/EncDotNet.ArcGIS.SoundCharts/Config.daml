@@ -27,7 +27,9 @@
       <tabs>
         <tab id="SoundCharts_Tab" caption="SoundCharts" keytip="SC">
           <group refID="SoundCharts_DataGroup" />
+          <group refID="SoundCharts_DisplayGroup" />
           <group refID="SoundCharts_InquireGroup" />
+          <group refID="SoundCharts_OutputGroup" />
           <group refID="SoundCharts_HelpGroup" />
         </tab>
         <!-- Design brief D2: one tab, SoundCharts, in the SoundCharts Layer tab
@@ -46,7 +48,17 @@
         <group id="SoundCharts_DataGroup" caption="Data" appearsOnAddInTab="false" keytip="D">
           <button refID="SoundCharts_AddData" size="large" />
           <button refID="SoundCharts_AddFolder" size="middle" />
+          <button refID="SoundCharts_AddFeatureLayers" size="middle" />
           <button refID="SoundCharts_LibraryButton" size="large" />
+        </group>
+        <!-- Design brief §2.1 and D5: palette, display category and the two quick
+             toggles on the tab; everything else on the Options page. A5. -->
+        <group id="SoundCharts_DisplayGroup" caption="Display" appearsOnAddInTab="false" keytip="P">
+          <splitButton refID="SoundCharts_PaletteSplitButton" size="large" />
+          <comboBox refID="SoundCharts_DisplayCategory" />
+          <checkBox refID="SoundCharts_SoundingsCheckBox" />
+          <checkBox refID="SoundCharts_TextCheckBox" />
+          <button refID="SoundCharts_MarinerSettingsButton" size="small" />
         </group>
         <group id="SoundCharts_LayerDatasetsGroup" caption="Datasets" appearsOnAddInTab="false" keytip="D">
           <button refID="SoundCharts_ZoomToData" size="large" />
@@ -57,6 +69,10 @@
         <group id="SoundCharts_InquireGroup" caption="Inquire" appearsOnAddInTab="false" keytip="I">
           <tool refID="SoundCharts_ObjectInfoTool" size="large" />
           <button refID="SoundCharts_RouteCheckButton" size="large" />
+        </group>
+        <!-- Design brief §2.1: produce output, after asking questions. -->
+        <group id="SoundCharts_OutputGroup" caption="Output" appearsOnAddInTab="false" keytip="O">
+          <button refID="SoundCharts_ExportChart" size="large" />
         </group>
         <group id="SoundCharts_HelpGroup" caption="Help" appearsOnAddInTab="false" keytip="H">
           <button refID="SoundCharts_LogButton" size="large" />
@@ -73,6 +89,16 @@
         <button id="SoundCharts_AddFolder" className="AddFolderButton" caption="Add Folder" keytip="F"
                 loadOnClick="true" condition="esri_mapping_mapPane" largeImage="FolderOpenState32" smallImage="FolderOpenState16">
           <tooltip heading="Add SoundCharts Folder">Add an exchange-set folder, or every dataset in a folder, to the map as a SoundCharts chart.<disabledText>Open a map to add SoundCharts data.</disabledText></tooltip>
+        </button>
+        <!-- Issue #15: the plugin datasource's feature layers, in a
+             SoundCharts features group outside the chart group (D14). -->
+        <button id="SoundCharts_AddFeatureLayers" className="AddFeatureLayersButton" caption="Add as Feature Layers" keytip="T"
+                loadOnClick="true" condition="esri_mapping_mapPane" largeImage="LayerNew32" smallImage="LayerNew16">
+          <tooltip heading="Add as Feature Layers">Add the features of S-101, S-124, S-421 or S-57 datasets, or of an exchange set, to the map as feature layers, one per feature type, for selection, attribute tables, joins and geoprocessing. Pro draws them with its default symbols. Not for navigation.<disabledText>Open a map to add SoundCharts data.</disabledText></tooltip>
+        </button>
+        <button id="SoundCharts_OpenWithAddFeatureLayers" className="OpenWithAddFeatureLayersButton" caption="Add as Feature Layers"
+                loadOnClick="true" condition="esri_mapping_mapPane" smallImage="LayerNew16" largeImage="LayerNew32">
+          <tooltip heading="Add as Feature Layers">Add this data's features to the active map as feature layers, one per feature type, as Add as Feature Layers does. Not for navigation.<disabledText>Open a map to add SoundCharts data.</disabledText></tooltip>
         </button>
         <button id="SoundCharts_ZoomToData" className="ZoomToDataButton" caption="Zoom to Data" keytip="Z"
                 loadOnClick="true" condition="SoundCharts_HasChartLayerCondition" largeImage="ZoomFullExtent32" smallImage="ZoomFullExtent16">
@@ -91,6 +117,12 @@
               loadOnClick="true" condition="esri_mapping_mapPane" largeImage="Explore32" smallImage="Explore16">
           <tooltip heading="Object information">Click the map to list every feature and coverage value of the SoundCharts layers there, in the SoundCharts Object information pane.<disabledText>Open a map to use Object information.</disabledText></tooltip>
         </tool>
+        <!-- Issue #12, D10: renders the layout's SoundCharts layers at its
+             scale and resolution for the export, instead of screen tiles. -->
+        <button id="SoundCharts_ExportChart" className="ExportChartButton" caption="Export SoundCharts Chart..." keytip="E"
+                loadOnClick="true" condition="esri_layouts_layoutPane" largeImage="GenericExport32" smallImage="GenericExport16">
+          <tooltip heading="Export SoundCharts Chart">Export the active layout to PDF, PNG, JPEG or TIFF with its SoundCharts layers rendered at the layout's scale and resolution, so symbols print at their screen size and show the same content. Not for navigation.<disabledText>Open a layout to export a SoundCharts chart.</disabledText></tooltip>
+        </button>
         <!-- Design brief §2.1, D7: opens the SoundCharts Route check pane (A11). -->
         <button id="SoundCharts_RouteCheckButton" className="RouteCheckButton" caption="Route check" keytip="R"
                 loadOnClick="true" largeImage="GenericCheckMark32" smallImage="GenericCheckMark16">
@@ -105,6 +137,37 @@
         <button id="SoundCharts_LogButton" className="ShowLogButton" caption="Log" keytip="L"
                 loadOnClick="true" largeImage="DiagnosticsMonitor32" smallImage="DiagnosticsMonitor16">
           <tooltip heading="SoundCharts Log">Show add-in events and chart server output, to find out why a chart doesn't draw.<disabledText /></tooltip>
+        </button>
+        <!-- A5: the palette (D26, D27) and mariner settings (D5, D23–D25). -->
+        <button id="SoundCharts_PaletteDay" className="PaletteDayButton" caption="Day" keytip="D"
+                loadOnClick="false" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/Sun32.png" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/Sun16.png">
+          <tooltip heading="Day palette">Draw this project's SoundCharts layers in the Day palette, for print and daylight. These settings apply to SoundCharts layers only, not to Esri ENC layers.<disabledText /></tooltip>
+        </button>
+        <button id="SoundCharts_PaletteDusk" className="PaletteDuskButton" caption="Dusk" keytip="U"
+                loadOnClick="false" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/ColorSelector32.png" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/ColorSelector16.png">
+          <tooltip heading="Dusk palette">Draw this project's SoundCharts layers in the Dusk palette, for a dark screen. These settings apply to SoundCharts layers only, not to Esri ENC layers.<disabledText /></tooltip>
+        </button>
+        <button id="SoundCharts_PaletteNight" className="PaletteNightButton" caption="Night" keytip="N"
+                loadOnClick="false" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/ColorSelector32.png" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/ColorSelector16.png">
+          <tooltip heading="Night palette">Draw this project's SoundCharts layers in the Night palette, for a dark bridge. These settings apply to SoundCharts layers only, not to Esri ENC layers.<disabledText /></tooltip>
+        </button>
+        <button id="SoundCharts_PaletteFollowProTheme" className="FollowProThemeButton" caption="Follow Pro theme" keytip="T"
+                loadOnClick="false" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/ColorSelector32.png" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/ColorSelector16.png">
+          <tooltip heading="Follow Pro theme">Pro's Light theme shows the Day palette and its Dark theme the Dusk palette, in every project. Choosing a palette by hand turns this off.<disabledText /></tooltip>
+        </button>
+        <comboBox id="SoundCharts_DisplayCategory" className="DisplayCategoryComboBox" caption="Display category" keytip="C"
+                  loadOnClick="false" isEditable="false" isReadOnly="true" sizeString="Other Information  " itemWidth="140">
+          <tooltip heading="Display category">The ECDIS display category: Display Base, Standard, Other Information or All. These settings apply to SoundCharts layers only, not to Esri ENC layers.<disabledText>Needs a newer chart server: SoundCharts keeps the setting, and the chart draws with it once the chart server takes it.</disabledText></tooltip>
+        </comboBox>
+        <checkBox id="SoundCharts_SoundingsCheckBox" className="SoundingsCheckBox" caption="Soundings" keytip="S" loadOnClick="false">
+          <tooltip heading="Soundings">Show or hide soundings on this project's SoundCharts layers.<disabledText>Needs a newer chart server: SoundCharts keeps the setting, and the chart draws with it once the chart server takes it.</disabledText></tooltip>
+        </checkBox>
+        <checkBox id="SoundCharts_TextCheckBox" className="TextCheckBox" caption="Text" keytip="X" loadOnClick="false">
+          <tooltip heading="Text">Show or hide chart text on this project's SoundCharts layers. A change starts new chart servers, and the layers redraw from them.<disabledText /></tooltip>
+        </checkBox>
+        <button id="SoundCharts_MarinerSettingsButton" className="MarinerSettingsButton" caption="Mariner Settings..." keytip="M"
+                loadOnClick="true" largeImage="GenericOptions32" smallImage="GenericOptions16">
+          <tooltip heading="Mariner Settings">Set this project's palette and mariner settings on the SoundCharts page of Options. These settings apply to SoundCharts layers only, not to Esri ENC layers.<disabledText /></tooltip>
         </button>
         <!-- Issue #6: Open with SoundCharts on Pro's Catalog context menus. The
              dynamic menu adds SoundCharts_OpenWithMenu only when the
@@ -129,10 +192,19 @@
           <tooltip heading="Add to Library">Add this data to the SoundCharts Library, indexed in place without loading it.<disabledText /></tooltip>
         </button>
       </controls>
+      <splitButtons>
+        <splitButton id="SoundCharts_PaletteSplitButton" keytip="P">
+          <button refID="SoundCharts_PaletteDay" />
+          <button refID="SoundCharts_PaletteDusk" />
+          <button refID="SoundCharts_PaletteNight" />
+          <button refID="SoundCharts_PaletteFollowProTheme" />
+        </splitButton>
+      </splitButtons>
       <menus>
         <menu id="SoundCharts_OpenWithMenu" caption="Open with SoundCharts" smallImage="GenericOpen16">
           <tooltip heading="Open with SoundCharts">Add S-57 or S-1xx data to a map as a SoundCharts chart, or to the SoundCharts Library.<disabledText /></tooltip>
           <button refID="SoundCharts_OpenWithAddToMap" />
+          <button refID="SoundCharts_OpenWithAddFeatureLayers" />
           <button refID="SoundCharts_OpenWithAddToLibrary" />
         </menu>
       </menus>
@@ -187,4 +259,17 @@
       </menus>
     </updateModule>
   </modules>
+  <!-- Design brief D24: a SoundCharts page under Project (the project's mariner
+       settings) and one under Application (defaults, Follow Pro theme, Time
+       Format, the s100 program, the tile cache). -->
+  <propertySheets>
+    <updateSheet refID="esri_core_optionsPropertySheet">
+      <insertPage id="SoundCharts_ProjectOptionsPage" caption="SoundCharts" className="ProjectOptionsViewModel" group="Project">
+        <content className="ProjectOptionsView" />
+      </insertPage>
+      <insertPage id="SoundCharts_ApplicationOptionsPage" caption="SoundCharts" className="ApplicationOptionsViewModel" group="Application">
+        <content className="ApplicationOptionsView" />
+      </insertPage>
+    </updateSheet>
+  </propertySheets>
 </ArcGIS>

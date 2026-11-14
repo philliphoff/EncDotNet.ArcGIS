@@ -1,3 +1,4 @@
+using EncDotNet.SoundCharts.Charts;
 using EncDotNet.SoundCharts.Logging;
 using EncDotNet.SoundCharts.Server;
 
@@ -41,6 +42,35 @@ public class ChartServerTests
         Assert.Equal(context.Folders.TileCache, process.Argument("--cache-dir"));
         Assert.Equal(["tiles", "serve", server.Datasets.Sources[0].Path], process.StartInfo.Arguments.Take(3));
         Assert.Contains($":{endpoint.Port}/{endpoint.Token}/", endpoint.WmtsCapabilitiesUri.AbsoluteUri, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Start_EndsTheTokenWithTheRenderKey()
+    {
+        using var context = new ServerTestContext();
+        await using var server = context.Server();
+
+        await server.StartAsync(Token);
+
+        var endpoint = Assert.IsType<ServerEndpoint>(server.Endpoint);
+        Assert.True(RenderKey.IsValid(server.RenderKey));
+        Assert.Equal(RenderKey.Compute(server.Datasets, context.Host.Executable?.Version), server.RenderKey);
+        Assert.EndsWith($"-{server.RenderKey}", endpoint.Token, StringComparison.Ordinal);
+        Assert.Contains($"-{server.RenderKey}/wmts/", endpoint.WmtsCapabilitiesUri.AbsoluteUri, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Restart_AfterTheDataChanged_GetsANewRenderKey()
+    {
+        using var context = new ServerTestContext();
+        await using var server = context.Server();
+        await server.StartAsync(Token);
+        var before = server.RenderKey;
+
+        File.AppendAllText(server.Datasets.Sources[0].Path, "new edition");
+        await server.RestartAsync(Token);
+
+        Assert.NotEqual(before, server.RenderKey);
     }
 
     [Fact]
