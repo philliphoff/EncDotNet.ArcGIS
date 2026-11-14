@@ -33,6 +33,9 @@ internal sealed class SoundChartsModule : Module
 
             SoundChartsSession.ChartServers.ServerFailed += ChartServerNotification.OnServerFailed;
             ChartLayerManager.Instance.Start();
+#if DEBUG
+            FeatureLayers.FeaturesSelfCheck.RunIfRequested();
+#endif
         }
         catch (Exception ex)
         {

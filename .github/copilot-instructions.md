@@ -44,6 +44,8 @@ src/
     Charts/                            # DatasetSet, DatasetSource: what one chart server portrays
     Server/                            # ChartServerPool, ChartServer (supervisor), endpoints, process launch
     Logging/                           # SoundChartsLog: the Log pane's list and the daily file
+    Features/                          # DatasetTables: S-1xx features as tables for the plugin datasource
+  EncDotNet.ArcGIS.SoundCharts.Features/ # The plugin datasource (.esriPlugin, Config.xml): its own package
   ArcGISPro.DotNetBuild.targets        # Skips Esri's packaging under `dotnet build`
 tests/
   EncDotNet.ArcGIS.SoundCharts.Tests/  # xunit v3 tests for logic that doesn't need Pro

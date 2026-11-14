@@ -79,10 +79,11 @@ jobs:
           /bl:msbuild.binlog
 
       - name: Check out EncDotNet.S100 test datasets
-        # Object information's coverage tests (S-102, S-104, S-111) and Add
+        # Object information's coverage tests (S-102, S-104, S-111), Add
         # SoundCharts Data's content detection tests (S-57, S-101 exchange
-        # set and its .zip, S-124) use EncDotNet.S100's own test datasets, so
-        # no real data is committed here. Cone mode also brings the files at
+        # set and its .zip, S-124) and the feature table tests (S-57, S-101,
+        # S-124, S-421) use EncDotNet.S100's own test datasets, so no real
+        # data is committed here. Cone mode also brings the files at
         # tests/datasets itself, S101.zip among them. Keep the ref in step
         # with EncDotNetS100Version.
         uses: actions/checkout@v7
@@ -97,6 +98,7 @@ jobs:
             tests/datasets/S104
             tests/datasets/S111
             tests/datasets/S124
+            tests/datasets/S421
           sparse-checkout-cone-mode: true
 
       - name: Test
@@ -124,7 +126,11 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: addin
-          path: src/EncDotNet.ArcGIS.SoundCharts/bin/Release/net10.0-windows/win-x64/EncDotNet.ArcGIS.SoundCharts.esriAddinX
+          # The add-in and its features plugin datasource (issue #15): two
+          # packages, installed together by tools/deploy-addin.ps1.
+          path: |
+            src/EncDotNet.ArcGIS.SoundCharts/bin/Release/net10.0-windows/win-x64/EncDotNet.ArcGIS.SoundCharts.esriAddinX
+            src/EncDotNet.ArcGIS.SoundCharts.Features/bin/Release/net10.0-windows/win-x64/EncDotNet.ArcGIS.SoundCharts.Features.esriPlugin
           if-no-files-found: error
 
   format:

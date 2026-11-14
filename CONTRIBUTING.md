@@ -62,8 +62,14 @@ Build and package the add-in with Visual Studio's MSBuild, from a
 msbuild EncDotNet.ArcGIS.slnx /restore /p:Configuration=Release
 ```
 
-This writes
-`src/EncDotNet.ArcGIS.SoundCharts/bin/Release/net10.0-windows/win-x64/EncDotNet.ArcGIS.SoundCharts.esriAddinX`.
+This writes two packages:
+
+- `src/EncDotNet.ArcGIS.SoundCharts/bin/Release/net10.0-windows/win-x64/EncDotNet.ArcGIS.SoundCharts.esriAddinX`,
+  the add-in.
+- `src/EncDotNet.ArcGIS.SoundCharts.Features/bin/Release/net10.0-windows/win-x64/EncDotNet.ArcGIS.SoundCharts.Features.esriPlugin`,
+  the SoundCharts features plugin datasource behind **Add as Feature
+  Layers**. A plugin datasource can't be part of an add-in package; see
+  [the design note](docs/design/plugin-datasource.md).
 
 `dotnet build` also works and is enough for compiling and testing, but it
 skips packaging: under the .NET MSBuild, `src/ArcGISPro.DotNetBuild.targets`
@@ -92,9 +98,11 @@ tools/deploy-addin.ps1
 ```
 
 It copies the `.esriAddinX` to
-`<Documents>\ArcGIS\AddIns\ArcGISPro\{add-in id}\`, following a redirected
-Documents folder. `-Path` installs another package, such as one from CI, and
-`-Remove` uninstalls the add-in. Restart Pro after installing.
+`<Documents>\ArcGIS\AddIns\ArcGISPro\{add-in id}\` and the `.esriPlugin`
+to `<Documents>\ArcGIS\AddIns\ArcGISPro3.7\{plugin id}\`, where
+`RegisterAddIn.exe` puts each, following a redirected Documents folder.
+`-Path` and `-PluginPath` install other packages, such as those from CI, and
+`-Remove` uninstalls both. Restart Pro after installing.
 
 When Pro starts, the add-in writes a line with its versions, and one naming
 the chart server it found, to the SoundCharts log,
@@ -110,6 +118,14 @@ datasets, for example `tests/datasets/S57/US5MA1BO/US5MA1BO.000`. A
 own chart server; **Object information** then picks in it. Selecting the
 group or a layer shows the **SoundCharts Layer** tab, with **Zoom to Data**
 and the chart's **Log**.
+
+To work with a dataset's features rather than the chart, choose
+**SoundCharts** > **Add as Feature Layers** with an S-101, S-124, S-421 or
+S-57 dataset, such as EncDotNet.S100's
+`tests/datasets/S101/S-101/DATASET_FILES/101AA00DS0003.000`. A
+**SoundCharts features · 101AA00DS0003** group appears with a feature layer
+per feature type, which you can select, open in an attribute table and use
+in geoprocessing tools.
 
 In the **Catalog** pane, right-click a folder, folder connection, cell,
 HDF5 dataset or `CATALOG.XML` that holds S-57 or S-1xx data and choose
@@ -149,6 +165,9 @@ Test conventions:
   test datasets. Set `SOUNDCHARTS_S100_TEST_DATASETS` to the
   `tests/datasets` folder of an EncDotNet.S100 clone to run them; CI checks
   that folder out at the pinned release.
+- The feature tables of **Add as Feature Layers** are tested in
+  `Features/` without Pro: the mapping with a fake dataset processor, and
+  against EncDotNet.S100's S-57, S-101, S-124 and S-421 test datasets.
 - The CIM the add-in authors is tested as `.lyrx` JSON snapshots in
   `tests/EncDotNet.ArcGIS.SoundCharts.Tests/ChartLayers/Snapshots`. After a
   deliberate change, run the tests with `SOUNDCHARTS_UPDATE_SNAPSHOTS=1`,
