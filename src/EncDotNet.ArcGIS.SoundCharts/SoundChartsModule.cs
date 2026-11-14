@@ -33,6 +33,7 @@ internal sealed class SoundChartsModule : Module
 
             SoundChartsSession.ChartServers.ServerFailed += ChartServerNotification.OnServerFailed;
             ChartLayerManager.Instance.Start();
+            MapTimeController.Instance.Start();
         }
         catch (Exception ex)
         {

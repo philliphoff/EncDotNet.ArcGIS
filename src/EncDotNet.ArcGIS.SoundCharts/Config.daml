@@ -36,6 +36,7 @@
         <tab id="SoundCharts_LayerTab" caption="SoundCharts" condition="SoundCharts_HasChartLayerCondition"
              tabGroupID="SoundCharts_LayerTabGroup" keytip="SL">
           <group refID="SoundCharts_LayerDatasetsGroup" />
+          <group refID="SoundCharts_LayerTimeGroup" />
           <group refID="SoundCharts_LayerServerGroup" />
         </tab>
       </tabs>
@@ -49,6 +50,11 @@
         </group>
         <group id="SoundCharts_LayerDatasetsGroup" caption="Datasets" appearsOnAddInTab="false" keytip="D">
           <button refID="SoundCharts_ZoomToData" size="large" />
+        </group>
+        <!-- Design brief §6, D31, D32 (A8): map time drives the time layers. -->
+        <group id="SoundCharts_LayerTimeGroup" caption="Time" appearsOnAddInTab="false" keytip="T">
+          <button refID="SoundCharts_GoToNearestData" size="large" />
+          <button refID="SoundCharts_MapTimeNow" size="large" />
         </group>
         <group id="SoundCharts_LayerServerGroup" caption="Server" appearsOnAddInTab="false" keytip="S">
           <button refID="SoundCharts_ChartLog" size="large" />
@@ -75,6 +81,15 @@
         <button id="SoundCharts_ZoomToData" className="ZoomToDataButton" caption="Zoom to Data" keytip="Z"
                 loadOnClick="true" condition="SoundCharts_HasChartLayerCondition" largeImage="ZoomFullExtent32" smallImage="ZoomFullExtent16">
           <tooltip heading="Zoom to Data">Zoom to the footprints of the selected SoundCharts layer's datasets.<disabledText>Select a SoundCharts layer in Contents.</disabledText></tooltip>
+        </button>
+        <!-- Not loadOnClick: their tooltips carry the time layers' status. -->
+        <button id="SoundCharts_GoToNearestData" className="GoToNearestDataButton" caption="Go to Nearest Data" keytip="N"
+                loadOnClick="false" condition="SoundCharts_HasChartLayerCondition" largeImage="MapTime32" smallImage="MapTime16">
+          <tooltip heading="Go to Nearest Data">Move map time to the nearest time a Water level or Surface currents layer has data. A layer with no data at map time draws nothing and says so here.<disabledText>Every Water level and Surface currents layer has data at map time.</disabledText></tooltip>
+        </button>
+        <button id="SoundCharts_MapTimeNow" className="MapTimeNowButton" caption="Now" keytip="W"
+                loadOnClick="false" condition="SoundCharts_HasChartLayerCondition" largeImage="GenericTime32" smallImage="GenericTime16">
+          <tooltip heading="Now">Set map time to now, once. Water level and Surface currents draw their nearest time step.<disabledText>The map has no map time: add a time-aware layer, such as Coverage, to show the time slider.</disabledText></tooltip>
         </button>
         <button id="SoundCharts_ChartLog" className="ChartLogButton" caption="Log" keytip="L"
                 loadOnClick="true" condition="SoundCharts_HasChartLayerCondition" largeImage="DiagnosticsMonitor32" smallImage="DiagnosticsMonitor16">

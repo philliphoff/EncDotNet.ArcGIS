@@ -349,4 +349,57 @@
     <value>...and {0} more. Show the SoundCharts Log for all of them.</value>
     <comment>{0} is a count.</comment>
   </data>
+  <data name="ObjectInfo_InForce" xml:space="preserve">
+    <value>In force at map time</value>
+    <comment>An S-124 navigational warning in force at the map's time (design brief D33).</comment>
+  </data>
+  <data name="ObjectInfo_NotInForce" xml:space="preserve">
+    <value>Not in force at map time</value>
+    <comment>An S-124 navigational warning not in force at the map's time (design brief D33).</comment>
+  </data>
+  <data name="ObjectInfo_MapTimeFormat" xml:space="preserve">
+    <value>Navigational warnings at {0}.</value>
+    <comment>{0} is the map time, formatted by ObjectInfo_UtcFormat.</comment>
+  </data>
+  <data name="Status_UtcFormat" xml:space="preserve">
+    <value>{0:d MMM yyyy HH:mm} UTC</value>
+    <comment>A UTC time, the Time format default (design brief D28).</comment>
+  </data>
+  <data name="Status_SpanMinutes" xml:space="preserve">
+    <value>{0} min</value>
+    <comment>{0} is a number of minutes.</comment>
+  </data>
+  <data name="Status_SpanHours" xml:space="preserve">
+    <value>{0} h</value>
+    <comment>{0} is a number of hours.</comment>
+  </data>
+  <data name="Status_SpanDays" xml:space="preserve">
+    <value>{0} days</value>
+    <comment>{0} is a number of days.</comment>
+  </data>
+  <data name="Status_LayerAtTime" xml:space="preserve">
+    <value>{0} · {1}</value>
+    <comment>{0} is a layer name, {1} the time step it draws.</comment>
+  </data>
+  <data name="Status_LayerNoData" xml:space="preserve">
+    <value>{0} · {1}</value>
+    <comment>{0} is a layer name, {1} Status_NoDataLast, Status_NoDataNext or Status_NoData.</comment>
+  </data>
+  <data name="Status_NoData" xml:space="preserve">
+    <value>No data at map time</value>
+  </data>
+  <data name="Status_NoDataLast" xml:space="preserve">
+    <value>No data at map time · last {0}, {1} earlier</value>
+    <comment>The viewer's wording. {0} is the last time with data, {1} how long before map time.</comment>
+  </data>
+  <data name="Status_NoDataNext" xml:space="preserve">
+    <value>No data at map time · next {0}, {1} later</value>
+    <comment>The viewer's wording. {0} is the next time with data, {1} how long after map time.</comment>
+  </data>
+  <data name="Status_NoTimeLayers" xml:space="preserve">
+    <value>No Water level or Surface currents layer in this map.</value>
+  </data>
+  <data name="Status_NoMapTime" xml:space="preserve">
+    <value>The map has no map time. Turn time on in the map's time slider.</value>
+  </data>
 </root>

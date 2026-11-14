@@ -84,11 +84,11 @@ internal sealed class ObjectInfoTool : MapTool
 
             pane?.ShowWorking(click.Latitude, click.Longitude);
 
-            // Design brief §6: once map time drives the time layers (A8),
-            // coverages are sampled at the map instant. Until then each
+            // Design brief §6, D30: coverages are sampled, and navigational
+            // warnings checked, at the map instant; without map time each
             // dataset's default step is used.
             var report = await ObjectInfoHost.Service.IdentifyAsync(
-                datasets, click.Latitude, click.Longitude, click.RadiusMeters, time: null, pick.Token);
+                datasets, click.Latitude, click.Longitude, click.RadiusMeters, click.Time, pick.Token);
             pick.Token.ThrowIfCancellationRequested();
             pane?.ShowReport(report, view);
         }
@@ -130,8 +130,8 @@ internal sealed class ObjectInfoTool : MapTool
             .Where(l => l.IsVisibleInView(view))
             .Select(l => new ChartLayerReference(l.URI, l.Name, map.URI))
             .ToList();
-        return new Click(wgs84.Y, wgs84.X, Math.Clamp(radius, 0.0, 100_000.0), layers);
+        return new Click(wgs84.Y, wgs84.X, Math.Clamp(radius, 0.0, 100_000.0), layers, MapTimeController.Instant(view.Time));
     }
 
-    private sealed record Click(double Latitude, double Longitude, double RadiusMeters, IReadOnlyList<ChartLayerReference> Layers);
+    private sealed record Click(double Latitude, double Longitude, double RadiusMeters, IReadOnlyList<ChartLayerReference> Layers, DateTime? Time);
 }

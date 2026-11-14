@@ -157,7 +157,8 @@ public sealed class ObjectInfoService : IDisposable
                     var features = Pick(processor, latitude, longitude, radiusMeters, utcTime, cancellationToken);
                     if (features.Count > 0)
                     {
-                        results.Add(new ObjectInfoDatasetResult(dataset, processor.Spec.Name, features));
+                        results.Add(new ObjectInfoDatasetResult(
+                            dataset, processor.Spec.Name, features, InForce(dataset, processor.Spec.Name, utcTime)));
                     }
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
@@ -245,6 +246,29 @@ public sealed class ObjectInfoService : IDisposable
         }
 
         return features;
+    }
+
+    /// <summary>
+    /// Whether an S-124 dataset's warning is in force at <paramref name="time"/>
+    /// (D33); <see langword="null"/> for other products, without a map time,
+    /// or when the warning can't be read as a typed model.
+    /// </summary>
+    private static bool? InForce(ChartDataset dataset, string spec, DateTime? time)
+    {
+        if (time is not { } instant || !string.Equals(spec, "S-124", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        try
+        {
+            return NavigationalWarningValidity.IsInForce(dataset.Path, instant);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            // The features were picked; only the validity is unknown.
+            return null;
+        }
     }
 
     private static int Rank(S100GeometryType primitive) => primitive switch
