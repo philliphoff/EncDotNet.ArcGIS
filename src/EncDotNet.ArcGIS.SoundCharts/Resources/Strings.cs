@@ -353,6 +353,7 @@ public static class Strings
 
     /// <summary>Gets the scale note's accessible name.</summary>
     public static string ScaleNote_AccessibleName => Get(nameof(ScaleNote_AccessibleName));
+
     /// <summary>Gets the project Options page's heading, the viewer's section name.</summary>
     public static string Settings_ProjectHeading => Get(nameof(Settings_ProjectHeading));
 
