@@ -210,6 +210,108 @@ public static class Strings
     /// <summary>Gets the hint that a notification opens the log.</summary>
     public static string Notification_ShowLog => Get(nameof(Notification_ShowLog));
 
+    /// <summary>Gets the name of the Chart layer.</summary>
+    public static string Layer_Chart => Get(nameof(Layer_Chart));
+
+    /// <summary>Gets the name of the Water level layer (S-104).</summary>
+    public static string Layer_WaterLevel => Get(nameof(Layer_WaterLevel));
+
+    /// <summary>Gets the name of the Surface currents layer (S-111).</summary>
+    public static string Layer_SurfaceCurrents => Get(nameof(Layer_SurfaceCurrents));
+
+    /// <summary>Gets the group layer's name: <c>{0}</c> is the source.</summary>
+    public static string Group_Name => Get(nameof(Group_Name));
+
+    /// <summary>Gets the group's source when several inputs were added: <c>{0}</c> is the dataset count.</summary>
+    public static string Group_DatasetCount => Get(nameof(Group_DatasetCount));
+
+    /// <summary>Gets a layer's description: <c>{0}</c> is the products, <c>{1}</c> the producers.</summary>
+    public static string Credits_Description => Get(nameof(Credits_Description));
+
+    /// <summary>Gets a layer's credits: <c>{0}</c> is the producers, <c>{1}</c> the <c>s100</c> version.</summary>
+    public static string Credits_Attribution => Get(nameof(Credits_Attribution));
+
+    /// <summary>Gets the producer when no dataset names one.</summary>
+    public static string Credits_UnknownProducer => Get(nameof(Credits_UnknownProducer));
+
+    /// <summary>Gets the message for a path that doesn't exist: <c>{0}</c> is the path.</summary>
+    public static string AddData_NotFound => Get(nameof(AddData_NotFound));
+
+    /// <summary>Gets the warning for an input without datasets: <c>{0}</c> is its name.</summary>
+    public static string AddData_NoDatasets => Get(nameof(AddData_NoDatasets));
+
+    /// <summary>Gets the warning for an unreadable file: <c>{0}</c> is its name, <c>{1}</c> the reason.</summary>
+    public static string AddData_Unreadable => Get(nameof(AddData_Unreadable));
+
+    /// <summary>Gets the warning for a file that isn't a dataset: <c>{0}</c> is its name.</summary>
+    public static string AddData_NotADataset => Get(nameof(AddData_NotADataset));
+
+    /// <summary>Gets the warning for an unsupported edition: <c>{0}</c> is the file name, <c>{1}</c> the library's message.</summary>
+    public static string AddData_Edition => Get(nameof(AddData_Edition));
+
+    /// <summary>Gets the warning for a catalogue whose product disagrees with the content: <c>{0}</c> file, <c>{1}</c> catalogue product, <c>{2}</c> content product.</summary>
+    public static string AddData_ProductMismatch => Get(nameof(AddData_ProductMismatch));
+
+    /// <summary>Gets the warning for a catalogue whose edition disagrees with the content: <c>{0}</c> file, <c>{1}</c> catalogue, <c>{2}</c> content.</summary>
+    public static string AddData_EditionMismatch => Get(nameof(AddData_EditionMismatch));
+
+    /// <summary>Gets the warning for a catalogue entry without a file: <c>{0}</c> is its path.</summary>
+    public static string AddData_Missing => Get(nameof(AddData_Missing));
+
+    /// <summary>Gets the note for files skipped in a folder: <c>{0}</c> is the count, <c>{1}</c> the folder.</summary>
+    public static string AddData_SkippedFiles => Get(nameof(AddData_SkippedFiles));
+
+    /// <summary>Gets the file dialog's title.</summary>
+    public static string AddData_FileDialogTitle => Get(nameof(AddData_FileDialogTitle));
+
+    /// <summary>Gets the folder dialog's title.</summary>
+    public static string AddData_FolderDialogTitle => Get(nameof(AddData_FolderDialogTitle));
+
+    /// <summary>Gets the file dialog's filter.</summary>
+    public static string AddData_FileFilter => Get(nameof(AddData_FileFilter));
+
+    /// <summary>Gets the progress dialog's title.</summary>
+    public static string AddData_ProgressTitle => Get(nameof(AddData_ProgressTitle));
+
+    /// <summary>Gets the progress message while datasets are read.</summary>
+    public static string AddData_ProgressReading => Get(nameof(AddData_ProgressReading));
+
+    /// <summary>Gets the progress message while chart servers start.</summary>
+    public static string AddData_ProgressStarting => Get(nameof(AddData_ProgressStarting));
+
+    /// <summary>Gets the summary when no dataset could be added.</summary>
+    public static string AddData_NothingAdded => Get(nameof(AddData_NothingAdded));
+
+    /// <summary>Gets the summary of an add: <c>{0}</c> is the datasets, <c>{1}</c> the group name.</summary>
+    public static string AddData_Added => Get(nameof(AddData_Added));
+
+    /// <summary>Gets a dataset count: <c>{0}</c> is the number.</summary>
+    public static string AddData_DatasetCount => Get(nameof(AddData_DatasetCount));
+
+    /// <summary>Gets a count of one dataset.</summary>
+    public static string AddData_OneDataset => Get(nameof(AddData_OneDataset));
+
+    /// <summary>Gets the heading above add warnings.</summary>
+    public static string AddData_WarningsHeading => Get(nameof(AddData_WarningsHeading));
+
+    /// <summary>Gets the message when there's no active map.</summary>
+    public static string AddData_NoMap => Get(nameof(AddData_NoMap));
+
+    /// <summary>Gets the message when adding fails: <c>{0}</c> is the reason.</summary>
+    public static string AddData_Failed => Get(nameof(AddData_Failed));
+
+    /// <summary>Gets the message when a chart server fails to start: <c>{0}</c> is the layer, <c>{1}</c> the reason.</summary>
+    public static string AddData_ServerFailed => Get(nameof(AddData_ServerFailed));
+
+    /// <summary>Gets the not-for-navigation line in the add summary.</summary>
+    public static string AddData_NotForNavigation => Get(nameof(AddData_NotForNavigation));
+
+    /// <summary>Gets the message when there's nothing to zoom to.</summary>
+    public static string ZoomToData_NoExtent => Get(nameof(ZoomToData_NoExtent));
+
+    /// <summary>Gets the line after the listed warnings: <c>{0}</c> is how many more are in the log.</summary>
+    public static string AddData_MoreInLog => Get(nameof(AddData_MoreInLog));
+
     private static string Get(string name) =>
         Manager.GetString(name, CultureInfo.CurrentUICulture) ?? name;
 }

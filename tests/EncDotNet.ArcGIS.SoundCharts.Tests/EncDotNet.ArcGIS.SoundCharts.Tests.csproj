@@ -29,6 +29,8 @@
     <None Include="Fixtures\**" CopyToOutputDirectory="PreserveNewest" />
     <!-- Synthetic data only: never real ENC data. -->
     <None Include="TestData\**" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The CIM the add-in authors, as .lyrx JSON (ChartLayerDocumentTests). -->
+    <None Include="ChartLayers\Snapshots\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

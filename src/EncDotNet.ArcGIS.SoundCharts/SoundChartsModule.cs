@@ -10,10 +10,11 @@ namespace EncDotNet.SoundCharts;
 /// Pro creates it when it starts, because the module is <c>autoLoad</c>.
 /// </summary>
 /// <remarks>
-/// It logs the versions, tidies session folders a crashed Pro left, and
-/// turns chart server failures into Pro notifications. Chart servers start
-/// on demand (slice A3) and all stop when Pro exits; the kill-on-close job
-/// stops them even if Pro crashes.
+/// It logs the versions, tidies session folders a crashed Pro left, turns
+/// chart server failures into Pro notifications, and starts the chart layer
+/// manager, which starts a chart server for each SoundCharts layer of an open
+/// project. All servers stop when Pro exits; the kill-on-close job stops them
+/// even if Pro crashes.
 /// </remarks>
 internal sealed class SoundChartsModule : Module
 {
@@ -31,6 +32,7 @@ internal sealed class SoundChartsModule : Module
             }
 
             SoundChartsSession.ChartServers.ServerFailed += ChartServerNotification.OnServerFailed;
+            ChartLayerManager.Instance.Start();
         }
         catch (Exception ex)
         {
