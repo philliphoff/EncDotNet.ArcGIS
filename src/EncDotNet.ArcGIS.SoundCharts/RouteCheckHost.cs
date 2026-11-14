@@ -1,4 +1,5 @@
 using EncDotNet.SoundCharts.RouteCheck;
+using EncDotNet.SoundCharts.Settings;
 
 namespace EncDotNet.SoundCharts;
 
@@ -14,5 +15,11 @@ internal static class RouteCheckHost
     /// Gets or sets where the ship parameters come from: the project's
     /// <b>SoundCharts</b> Options page (design brief §5.2, D24).
     /// </summary>
-    public static Func<ShipParameters> Ship { get; set; } = () => ShipParameters.Default;
+    public static Func<ShipParameters> Ship { get; set; } = () => ShipOf(SoundChartsSession.Settings.Project);
+
+    /// <summary>Gets the ship parameters in a project's mariner settings.</summary>
+    /// <param name="settings">The project's settings.</param>
+    /// <returns>The draft, UKC margin, safety contour and safety depth.</returns>
+    public static ShipParameters ShipOf(MarinerSettings settings) =>
+        new(settings.Draft, settings.UkcMargin, settings.SafetyContour, settings.SafetyDepth);
 }

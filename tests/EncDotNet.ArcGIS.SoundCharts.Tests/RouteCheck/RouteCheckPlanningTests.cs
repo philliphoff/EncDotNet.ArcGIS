@@ -75,6 +75,20 @@ public sealed class RouteCheckPlanningTests
         Assert.Equal(Depth.FromMetres(30.0), prepared.Settings.SafetyContour);
     }
 
+    [Fact]
+    public void ShipOf_TakesTheProjectsMarinerSettings()
+    {
+        var settings = EncDotNet.SoundCharts.Settings.MarinerSettings.Default with
+        {
+            Draft = 7.5,
+            UkcMargin = 1.2,
+            SafetyContour = 10,
+            SafetyDepth = 12,
+        };
+
+        Assert.Equal(new ShipParameters(7.5, 1.2, 10, 12), RouteCheckHost.ShipOf(settings));
+    }
+
     [Theory]
     [InlineData(0.0)]
     [InlineData(-1.0)]

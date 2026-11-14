@@ -167,6 +167,32 @@
         </StackPanel>
       </Border>
 
+      <!-- Design brief §5.2, D24: route check inputs, beside a route's own values. -->
+      <TextBlock Text="{x:Static res:Strings.Settings_RouteCheckSection}" Style="{DynamicResource Esri_TextBlockH5}" Margin="0,12,0,2" />
+      <TextBlock Text="{x:Static res:Strings.Settings_RouteCheckNote}" Style="{DynamicResource Esri_TextBlockRegular}" TextWrapping="Wrap" Margin="0,0,0,4" />
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" MinWidth="140" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="{x:Static res:Strings.Settings_Draft}" ToolTip="{x:Static res:Strings.Tooltip_Draft}"
+                   Style="{DynamicResource Esri_TextBlockRegular}" VerticalAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" Width="80" HorizontalAlignment="Left" Margin="0,2"
+                 Text="{Binding Draft, TargetNullValue=''}" ToolTip="{x:Static res:Strings.Tooltip_Draft}"
+                 AutomationProperties.AutomationId="ProjectOptions.Draft"
+                 AutomationProperties.Name="{x:Static res:Strings.Settings_Draft}" />
+        <TextBlock Grid.Row="1" Text="{x:Static res:Strings.Settings_UkcMargin}" ToolTip="{x:Static res:Strings.Tooltip_UkcMargin}"
+                   Style="{DynamicResource Esri_TextBlockRegular}" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Width="80" HorizontalAlignment="Left" Margin="0,2"
+                 Text="{Binding UkcMargin, TargetNullValue=''}" ToolTip="{x:Static res:Strings.Tooltip_UkcMargin}"
+                 AutomationProperties.AutomationId="ProjectOptions.UkcMargin"
+                 AutomationProperties.Name="{x:Static res:Strings.Settings_UkcMargin}" />
+      </Grid>
+
       <TextBlock Text="{Binding Problems}" Style="{DynamicResource Esri_TextBlockRegular}" Foreground="{DynamicResource Esri_TextErrorBrush}"
                  TextWrapping="Wrap" Margin="0,8,0,0" AutomationProperties.AutomationId="ProjectOptions.Problems" />
 

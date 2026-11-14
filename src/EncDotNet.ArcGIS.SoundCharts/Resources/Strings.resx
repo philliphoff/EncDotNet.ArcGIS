@@ -1342,4 +1342,22 @@ Choose No to export without it.</value>
   <data name="RouteCheck_EditName" xml:space="preserve">
     <value>Write route check findings</value>
   </data>
+  <data name="Settings_RouteCheckSection" xml:space="preserve">
+    <value>Route check</value>
+  </data>
+  <data name="Settings_RouteCheckNote" xml:space="preserve">
+    <value>Used by Route check where a route gives none of its own. Leave empty for none.</value>
+  </data>
+  <data name="Settings_Draft" xml:space="preserve">
+    <value>Draft</value>
+  </data>
+  <data name="Tooltip_Draft" xml:space="preserve">
+    <value>The ship's draft in metres. Without a draft, Route check doesn't check clearance (UKC).</value>
+  </data>
+  <data name="Settings_UkcMargin" xml:space="preserve">
+    <value>UKC margin</value>
+  </data>
+  <data name="Tooltip_UkcMargin" xml:space="preserve">
+    <value>The under-keel clearance to keep, in metres. Without one, clearance is checked against 0 m.</value>
+  </data>
 </root>

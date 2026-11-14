@@ -106,6 +106,8 @@ public static class SettingsJson
         ["symbolScale"] = settings.SymbolScale,
         ["textScale"] = settings.TextScale,
         ["nationalLanguage"] = settings.NationalLanguage,
+        ["draft"] = settings.Draft,
+        ["ukcMargin"] = settings.UkcMargin,
     };
 
     private static MarinerSettings ReadMariner(JsonObject node, MarinerSettings defaults)
@@ -129,6 +131,11 @@ public static class SettingsJson
             SymbolScale = Number(node, "symbolScale") ?? defaults.SymbolScale,
             TextScale = Number(node, "textScale") ?? defaults.TextScale,
             NationalLanguage = Text(node, "nationalLanguage") ?? defaults.NationalLanguage,
+
+            // Route check's: an invalid value is dropped on its own, so it
+            // doesn't take the depth group with it.
+            Draft = Optional(node, "draft", defaults.Draft, MarinerSettings.IsDraft),
+            UkcMargin = Optional(node, "ukcMargin", defaults.UkcMargin, MarinerSettings.IsMargin),
         };
 
         // Values that break a rule (contours out of order, a scale too big)
@@ -176,6 +183,23 @@ public static class SettingsJson
     }
 
     private static JsonValue? Value(JsonObject node, string key) => node.TryGetPropertyValue(key, out var value) ? value as JsonValue : null;
+
+    // A setting that may be unset: missing gives the default, null unsets it,
+    // and a value that breaks its rule gives the default.
+    private static double? Optional(JsonObject node, string key, double? fallback, Func<double?, bool> isValid)
+    {
+        if (!node.TryGetPropertyValue(key, out var value))
+        {
+            return fallback;
+        }
+
+        if (value is null)
+        {
+            return null;
+        }
+
+        return Number(node, key) is { } number && isValid(number) ? number : fallback;
+    }
 
     private static double? Number(JsonObject node, string key) =>
         Value(node, key) is { } value && value.TryGetValue<double>(out var number) && double.IsFinite(number) ? number : null;

@@ -79,6 +79,20 @@ internal sealed class ProjectOptionsViewModel : Page
         set => Edit(_draft with { SafetyDepth = value });
     }
 
+    /// <summary>Gets or sets the route check draft in metres, or <c>null</c> for none.</summary>
+    public double? Draft
+    {
+        get => _draft.Draft;
+        set => Edit(_draft with { Draft = value });
+    }
+
+    /// <summary>Gets or sets the route check UKC margin in metres, or <c>null</c> for none.</summary>
+    public double? UkcMargin
+    {
+        get => _draft.UkcMargin;
+        set => Edit(_draft with { UkcMargin = value });
+    }
+
     /// <summary>Gets or sets the shallow contour in metres.</summary>
     public double ShallowContour
     {

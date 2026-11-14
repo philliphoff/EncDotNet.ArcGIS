@@ -1221,6 +1221,24 @@ public static class Strings
     /// <summary>Gets the edit operation's name when findings are written in an edit session.</summary>
     public static string RouteCheck_EditName => Get(nameof(RouteCheck_EditName));
 
+    /// <summary>Gets the Route check section heading on the project Options page.</summary>
+    public static string Settings_RouteCheckSection => Get(nameof(Settings_RouteCheckSection));
+
+    /// <summary>Gets the note under the Route check section heading.</summary>
+    public static string Settings_RouteCheckNote => Get(nameof(Settings_RouteCheckNote));
+
+    /// <summary>Gets the Draft setting label (the viewer says draft).</summary>
+    public static string Settings_Draft => Get(nameof(Settings_Draft));
+
+    /// <summary>Gets the Draft setting tooltip.</summary>
+    public static string Tooltip_Draft => Get(nameof(Tooltip_Draft));
+
+    /// <summary>Gets the UKC margin setting label.</summary>
+    public static string Settings_UkcMargin => Get(nameof(Settings_UkcMargin));
+
+    /// <summary>Gets the UKC margin setting tooltip.</summary>
+    public static string Tooltip_UkcMargin => Get(nameof(Tooltip_UkcMargin));
+
     private static string Get(string name) =>
         Manager.GetString(name, CultureInfo.CurrentUICulture) ?? name;
 }
