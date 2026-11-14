@@ -26,11 +26,13 @@
 
   <!-- SoundCharts Tools, the Python toolbox (A9). Pro copies an add-in's
        Toolboxes folder to %LOCALAPPDATA%\ESRI\ArcGISPro\Toolboxes\{add-in id}
-       and lists the toolboxes in it in the Geoprocessing pane. -->
+       and lists the toolboxes in it in the Geoprocessing pane. Esri's
+       PackageArcGISContents target puts Content at the package root only
+       when it isn't copied to the output folder; copied, it lands under
+       Install\ with the assemblies. CI checks the package. -->
   <ItemGroup>
     <Content Include="Toolboxes\**\*"
-             Exclude="Toolboxes\**\__pycache__\**;Toolboxes\**\*.pyc"
-             CopyToOutputDirectory="Always" />
+             Exclude="Toolboxes\**\__pycache__\**;Toolboxes\**\*.pyc" />
   </ItemGroup>
 
   <ItemGroup>
