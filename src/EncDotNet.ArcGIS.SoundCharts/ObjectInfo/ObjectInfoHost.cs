@@ -1,3 +1,5 @@
+using EncDotNet.SoundCharts.ChartLayers;
+
 namespace EncDotNet.SoundCharts.ObjectInfo;
 
 /// <summary>
@@ -6,15 +8,14 @@ namespace EncDotNet.SoundCharts.ObjectInfo;
 /// </summary>
 /// <remarks>
 /// <para>
-/// <see cref="Resolver"/> is the seam for the chart layer (A3): when SoundCharts
-/// layers and their project registry exist (design brief §3.4, D16), A3 sets it
-/// to a resolver that reads the registry. Until then no layer is a SoundCharts
-/// layer and the tool finds nothing.
+/// <see cref="Resolver"/> reads the chart layers' registry (A3, design brief
+/// §3.4, D16): from the map's visible layers, to the SoundCharts layers among
+/// them by their provenance markers, to their datasets.
 /// </para>
 /// <para>
 /// A Debug build reads <see cref="FixedChartDatasetResolver.EnvironmentVariable"/>
-/// at start-up, so the tool can be tried in Pro on any map before A3 lands.
-/// Release builds, the ones that ship, don't.
+/// at start-up, so the tool can be tried in Pro on any map without adding
+/// data. Release builds, the ones that ship, don't.
 /// </para>
 /// </remarks>
 internal static class ObjectInfoHost
@@ -38,6 +39,6 @@ internal static class ObjectInfoHost
             return debug;
         }
 #endif
-        return NoChartDatasetResolver.Instance;
+        return new RegistryChartDatasetResolver(SoundChartsSession.ChartLayers);
     }
 }

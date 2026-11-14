@@ -11,6 +11,14 @@
     <Date>2026-11-13</Date>
     <Subject>Map Exploration</Subject>
   </AddInInfo>
+  <conditions>
+    <!-- Design brief §2.2: the SoundCharts Layer tab shows while the Contents
+         selection includes a SoundCharts layer. The add-in sets the state from
+         the layers' provenance markers. -->
+    <insertCondition id="SoundCharts_HasChartLayerCondition" caption="A SoundCharts layer is selected">
+      <state id="SoundCharts_ChartLayerSelectedState" />
+    </insertCondition>
+  </conditions>
   <modules>
     <!-- autoLoad: the module logs its versions when Pro starts, and later
          slices start the chart server before a project's SoundCharts layers
@@ -18,11 +26,33 @@
     <insertModule id="SoundCharts_Module" className="SoundChartsModule" autoLoad="true" caption="SoundCharts">
       <tabs>
         <tab id="SoundCharts_Tab" caption="SoundCharts" keytip="SC">
+          <group refID="SoundCharts_DataGroup" />
           <group refID="SoundCharts_InquireGroup" />
           <group refID="SoundCharts_HelpGroup" />
         </tab>
+        <!-- Design brief D2: one tab, SoundCharts, in the SoundCharts Layer tab
+             group. A3 has Zoom to Data and the chart's Log; Datasets...,
+             Coverage, Time and server status come with A7, A8 and later. -->
+        <tab id="SoundCharts_LayerTab" caption="SoundCharts" condition="SoundCharts_HasChartLayerCondition"
+             tabGroupID="SoundCharts_LayerTabGroup" keytip="SL">
+          <group refID="SoundCharts_LayerDatasetsGroup" />
+          <group refID="SoundCharts_LayerServerGroup" />
+        </tab>
       </tabs>
+      <tabGroups>
+        <tabGroup caption="SoundCharts Layer" id="SoundCharts_LayerTabGroup" />
+      </tabGroups>
       <groups>
+        <group id="SoundCharts_DataGroup" caption="Data" appearsOnAddInTab="false" keytip="D">
+          <button refID="SoundCharts_AddData" size="large" />
+          <button refID="SoundCharts_AddFolder" size="middle" />
+        </group>
+        <group id="SoundCharts_LayerDatasetsGroup" caption="Datasets" appearsOnAddInTab="false" keytip="D">
+          <button refID="SoundCharts_ZoomToData" size="large" />
+        </group>
+        <group id="SoundCharts_LayerServerGroup" caption="Server" appearsOnAddInTab="false" keytip="S">
+          <button refID="SoundCharts_ChartLog" size="large" />
+        </group>
         <group id="SoundCharts_InquireGroup" caption="Inquire" appearsOnAddInTab="false" keytip="I">
           <tool refID="SoundCharts_ObjectInfoTool" size="large" />
         </group>
@@ -32,6 +62,24 @@
         </group>
       </groups>
       <controls>
+        <!-- Design brief §2.1: adds to the active map's SoundCharts group (D11).
+             A Windows file dialog: the add-in claims no file types. -->
+        <button id="SoundCharts_AddData" className="AddDataButton" caption="Add SoundCharts Data" keytip="A"
+                loadOnClick="true" condition="esri_mapping_mapPane" largeImage="AddContent32" smallImage="AddContent16">
+          <tooltip heading="Add SoundCharts Data">Add S-57 or S-101 cells, S-1xx HDF5 or GML datasets, or an exchange set (CATALOG.XML, CATALOG.031 or .zip) to the map as a SoundCharts chart. What each file is comes from its content. Not for navigation.<disabledText>Open a map to add SoundCharts data.</disabledText></tooltip>
+        </button>
+        <button id="SoundCharts_AddFolder" className="AddFolderButton" caption="Add Folder" keytip="F"
+                loadOnClick="true" condition="esri_mapping_mapPane" largeImage="FolderOpenState32" smallImage="FolderOpenState16">
+          <tooltip heading="Add SoundCharts Folder">Add an exchange-set folder, or every dataset in a folder, to the map as a SoundCharts chart.<disabledText>Open a map to add SoundCharts data.</disabledText></tooltip>
+        </button>
+        <button id="SoundCharts_ZoomToData" className="ZoomToDataButton" caption="Zoom to Data" keytip="Z"
+                loadOnClick="true" condition="SoundCharts_HasChartLayerCondition" largeImage="ZoomFullExtent32" smallImage="ZoomFullExtent16">
+          <tooltip heading="Zoom to Data">Zoom to the footprints of the selected SoundCharts layer's datasets.<disabledText>Select a SoundCharts layer in Contents.</disabledText></tooltip>
+        </button>
+        <button id="SoundCharts_ChartLog" className="ChartLogButton" caption="Log" keytip="L"
+                loadOnClick="true" condition="SoundCharts_HasChartLayerCondition" largeImage="DiagnosticsMonitor32" smallImage="DiagnosticsMonitor16">
+          <tooltip heading="Chart Log">Show the SoundCharts Log for the selected layer's chart server.<disabledText>Select a SoundCharts layer in Contents.</disabledText></tooltip>
+        </button>
         <button id="SoundCharts_AboutButton" className="AboutButton" caption="About SoundCharts" keytip="A"
                 loadOnClick="true" largeImage="GenericInformation32" smallImage="GenericInformation16">
           <tooltip heading="About SoundCharts">Show the versions of SoundCharts, EncDotNet.S100, ArcGIS Pro and .NET.<disabledText /></tooltip>

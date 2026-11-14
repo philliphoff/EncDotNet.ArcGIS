@@ -1,0 +1,97 @@
+{
+  "type": "CIMLayerDocument",
+  "version": "3.7.0",
+  "build": 0,
+  "layers": [
+    "CIMPATH=soundcharts/soundcharts.json"
+  ],
+  "layerDefinitions": [
+    {
+      "type": "CIMGroupLayer",
+      "name": "SoundCharts · 3 datasets",
+      "uRI": "CIMPATH=soundcharts/soundcharts.json",
+      "description": "SoundCharts portrayal of S-101, S-104, S-57 from US, AA00. Not for navigation.",
+      "layerType": "Operational",
+      "showLegends": true,
+      "visibility": true,
+      "expanded": true,
+      "customProperties": [
+        {
+          "type": "CIMStringMap",
+          "key": "SoundCharts",
+          "value": "{\"version\":1,\"role\":\"group\",\"inputs\":[\"US5MA1BO\",\"S104\"]}"
+        }
+      ],
+      "layers": [
+        "CIMPATH=soundcharts/water-level.json",
+        "CIMPATH=soundcharts/chart.json"
+      ]
+    },
+    {
+      "type": "CIMTiledServiceLayer",
+      "name": "Water level",
+      "uRI": "CIMPATH=soundcharts/water-level.json",
+      "description": "SoundCharts portrayal of S-104 from US. Not for navigation.",
+      "attribution": "Data: US. Portrayal: SoundCharts (0.27.1-main.20261113). Not for navigation.",
+      "layerType": "Operational",
+      "minScale": 288895.277,
+      "showLegends": true,
+      "visibility": true,
+      "displayCacheType": "InSession",
+      "maxDisplayCacheAge": 5,
+      "customProperties": [
+        {
+          "type": "CIMStringMap",
+          "key": "SoundCharts",
+          "value": "{\"version\":1,\"role\":\"layer\",\"kind\":\"water-level\",\"datasets\":[{\"path\":\"C:\\\\Charts\\\\S104\\\\104US004SC1BO_20251217T12Z.h5\",\"product\":\"S-104\",\"edition\":\"2.0.0\",\"producer\":\"US\",\"extent\":[-80.1,32.6,-79.8,32.9]}]}"
+        }
+      ],
+      "serviceConnection": {
+        "type": "CIMWMTSServiceConnection",
+        "serverConnection": {
+          "type": "CIMInternetServerConnection",
+          "anonymous": true,
+          "hideUserProperty": true,
+          "url": "http://127.0.0.1:52100/abc-123/wmts/1.0.0/WMTSCapabilities.xml"
+        },
+        "layerName": "s100",
+        "style": "day",
+        "tileMatrixSet": "WebMercatorQuad",
+        "imageFormat": "image/png"
+      }
+    },
+    {
+      "type": "CIMTiledServiceLayer",
+      "name": "Chart",
+      "uRI": "CIMPATH=soundcharts/chart.json",
+      "description": "SoundCharts portrayal of S-101, S-57 from AA00, US. Not for navigation.",
+      "attribution": "Data: AA00, US. Portrayal: SoundCharts (0.27.1-main.20261113). Not for navigation.",
+      "layerType": "Operational",
+      "minScale": 288895.277,
+      "showLegends": true,
+      "visibility": true,
+      "displayCacheType": "InSession",
+      "maxDisplayCacheAge": 5,
+      "customProperties": [
+        {
+          "type": "CIMStringMap",
+          "key": "SoundCharts",
+          "value": "{\"version\":1,\"role\":\"layer\",\"kind\":\"chart\",\"datasets\":[{\"path\":\"C:\\\\Charts\\\\S101\\\\101AA00DS0003.000\",\"product\":\"S-101\",\"edition\":\"2.0.0\",\"producer\":\"AA00\",\"notForNavigation\":true,\"extent\":[-1,50,0,51]},{\"path\":\"C:\\\\Charts\\\\US5MA1BO\\\\US5MA1BO.000\",\"product\":\"S-57\",\"producer\":\"US\",\"extent\":[-71.06,42.31,-70.94,42.38]}]}"
+        }
+      ],
+      "serviceConnection": {
+        "type": "CIMWMTSServiceConnection",
+        "serverConnection": {
+          "type": "CIMInternetServerConnection",
+          "anonymous": true,
+          "hideUserProperty": true,
+          "url": "http://127.0.0.1:52100/abc-123/wmts/1.0.0/WMTSCapabilities.xml"
+        },
+        "layerName": "s100",
+        "style": "day",
+        "tileMatrixSet": "WebMercatorQuad",
+        "imageFormat": "image/png"
+      }
+    }
+  ]
+}

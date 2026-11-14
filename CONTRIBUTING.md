@@ -103,10 +103,18 @@ shows it loaded without opening the ribbon. The same log, with each chart
 server's output, is in the **SoundCharts Log** pane (**SoundCharts** tab >
 **Log**).
 
-To try **Object information** before a map has SoundCharts layers, build
-the Debug configuration and start Pro with `SOUNDCHARTS_DEBUG_DATASETS` set
-to dataset paths separated by `;`. The tool then looks in those datasets on
-any map. Release builds ignore the variable.
+To try the add-in, open a map and choose **SoundCharts** > **Add
+SoundCharts Data** (or **Add Folder**) with one of EncDotNet.S100's test
+datasets, for example `tests/datasets/S57/US5MA1BO/US5MA1BO.000`. A
+**SoundCharts · US5MA1BO** group appears with a **Chart** layer drawn by its
+own chart server; **Object information** then picks in it. Selecting the
+group or a layer shows the **SoundCharts Layer** tab, with **Zoom to Data**
+and the chart's **Log**.
+
+To try **Object information** on any map without adding data, build the
+Debug configuration and start Pro with `SOUNDCHARTS_DEBUG_DATASETS` set to
+dataset paths separated by `;`. The tool then looks in those datasets
+whatever the map's layers. Release builds ignore the variable.
 
 ## Testing
 
@@ -130,10 +138,16 @@ Test conventions:
 - Tests that need optional external data, such as real S-100 datasets, skip
   dynamically with xunit v3's `Assert.SkipUnless(...)` /
   `Assert.SkipWhen(...)`, so CI doesn't fail without them.
-- The Object information coverage tests (S-102, S-104, S-111) use
-  EncDotNet.S100's own test datasets. Set `SOUNDCHARTS_S100_TEST_DATASETS`
-  to the `tests/datasets` folder of an EncDotNet.S100 clone to run them; CI
-  checks that folder out at the pinned release.
+- The Object information coverage tests (S-102, S-104, S-111) and the
+  content detection tests of Add SoundCharts Data use EncDotNet.S100's own
+  test datasets. Set `SOUNDCHARTS_S100_TEST_DATASETS` to the
+  `tests/datasets` folder of an EncDotNet.S100 clone to run them; CI checks
+  that folder out at the pinned release.
+- The CIM the add-in authors is tested as `.lyrx` JSON snapshots in
+  `tests/EncDotNet.ArcGIS.SoundCharts.Tests/ChartLayers/Snapshots`. After a
+  deliberate change, run the tests with `SOUNDCHARTS_UPDATE_SNAPSHOTS=1`,
+  review the snapshot diff, and load the new `.lyrx` in Pro (or with
+  `arcpy.mp.LayerFile`) before committing it.
 - **Never commit real ENC data files.** Use small synthetic fixtures, or skip
   tests that need live data.
 - Check behaviour in Pro by hand: install the add-in, restart Pro and use it.

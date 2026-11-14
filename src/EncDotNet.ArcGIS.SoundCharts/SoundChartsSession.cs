@@ -1,4 +1,5 @@
 using System.IO;
+using EncDotNet.SoundCharts.ChartLayers;
 using EncDotNet.SoundCharts.Logging;
 using EncDotNet.SoundCharts.Server;
 
@@ -26,10 +27,16 @@ internal static class SoundChartsSession
     public static SoundChartsLog Log => LazyLog.Value;
 
     /// <summary>
-    /// Gets the chart servers. Slice A3 takes a lease per SoundCharts layer
-    /// and repoints the layer on <see cref="ChartServer.EndpointChanged"/>.
+    /// Gets the chart servers. The chart layer manager takes a lease per
+    /// SoundCharts layer and repoints the layer on <see cref="ChartServer.EndpointChanged"/>.
     /// </summary>
     public static ChartServerPool ChartServers => LazyChartServers.Value;
+
+    /// <summary>
+    /// Gets the SoundCharts layers of the open project, by their provenance
+    /// markers (A3). Object information resolves datasets through it.
+    /// </summary>
+    public static ChartLayerRegistry ChartLayers { get; } = new();
 
     /// <summary>Gets whether <see cref="ChartServers"/> has been created.</summary>
     public static bool HasChartServers => LazyChartServers.IsValueCreated;

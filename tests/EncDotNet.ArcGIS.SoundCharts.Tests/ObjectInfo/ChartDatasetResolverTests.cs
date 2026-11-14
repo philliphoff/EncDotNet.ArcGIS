@@ -7,12 +7,6 @@ public class ChartDatasetResolverTests
     private static readonly ChartLayerReference Layer = new("CIMPATH=map/chart.json", "Chart", "CIMPATH=map/map.json");
 
     [Fact]
-    public void NoResolver_FindsNoDatasets()
-    {
-        Assert.Empty(NoChartDatasetResolver.Instance.Resolve([Layer]));
-    }
-
-    [Fact]
     public void FixedResolver_ReturnsItsDatasetsForAnyMap()
     {
         var dataset = new ChartDataset(@"C:\data\a.000");
@@ -48,12 +42,12 @@ public class ChartDatasetResolverTests
     }
 
     [Fact]
-    public void ObjectInfoHost_ReleaseBuildsStartWithNoResolver()
+    public void ObjectInfoHost_ReleaseBuildsUseTheChartLayerRegistry()
     {
 #if DEBUG
         Assert.Skip("Debug builds may read the stop-gap environment variable.");
 #else
-        Assert.Same(NoChartDatasetResolver.Instance, ObjectInfoHost.Resolver);
+        Assert.IsType<EncDotNet.SoundCharts.ChartLayers.RegistryChartDatasetResolver>(ObjectInfoHost.Resolver);
 #endif
     }
 }

@@ -48,6 +48,13 @@ public sealed class SoundChartsFolders
     /// <summary>Gets the log folder.</summary>
     public string Logs => Path.Combine(Root, "logs");
 
+    /// <summary>
+    /// Gets the folder <c>.zip</c> exchange sets are extracted to, one
+    /// subfolder per zip file version, kept across sessions because saved
+    /// SoundCharts layers name the extracted datasets.
+    /// </summary>
+    public string ExchangeSets => Path.Combine(Root, "exchange-sets");
+
     /// <summary>Gets the default folders for the running process.</summary>
     public static SoundChartsFolders ForCurrentProcess() => new(
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SoundCharts", "ArcGIS"),

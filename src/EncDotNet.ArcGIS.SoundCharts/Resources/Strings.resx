@@ -225,4 +225,128 @@
   <data name="Notification_ShowLog" xml:space="preserve">
     <value>Select this notification to show the SoundCharts Log.</value>
   </data>
+  <data name="Layer_Chart" xml:space="preserve">
+    <value>Chart</value>
+    <comment>The SoundCharts layer for datasets that don't change with time.</comment>
+  </data>
+  <data name="Layer_WaterLevel" xml:space="preserve">
+    <value>Water level</value>
+    <comment>The SoundCharts layer for S-104 datasets, the viewer's Timeline name.</comment>
+  </data>
+  <data name="Layer_SurfaceCurrents" xml:space="preserve">
+    <value>Surface currents</value>
+    <comment>The SoundCharts layer for S-111 datasets, the viewer's Timeline name.</comment>
+  </data>
+  <data name="Group_Name" xml:space="preserve">
+    <value>SoundCharts · {0}</value>
+    <comment>{0} is the source: a cell or exchange set name, or Group_DatasetCount.</comment>
+  </data>
+  <data name="Group_DatasetCount" xml:space="preserve">
+    <value>{0} datasets</value>
+    <comment>{0} is the number of datasets in the chart.</comment>
+  </data>
+  <data name="Credits_Description" xml:space="preserve">
+    <value>SoundCharts portrayal of {0} from {1}. Not for navigation.</value>
+    <comment>{0} is the products, {1} the producers.</comment>
+  </data>
+  <data name="Credits_Attribution" xml:space="preserve">
+    <value>Data: {0}. Portrayal: SoundCharts ({1}). Not for navigation.</value>
+    <comment>{0} is the producers, {1} the s100 version.</comment>
+  </data>
+  <data name="Credits_UnknownProducer" xml:space="preserve">
+    <value>unknown producer</value>
+  </data>
+  <data name="AddData_NotFound" xml:space="preserve">
+    <value>{0} doesn't exist.</value>
+    <comment>{0} is a path.</comment>
+  </data>
+  <data name="AddData_NoDatasets" xml:space="preserve">
+    <value>No datasets SoundCharts can draw were found in {0}.</value>
+    <comment>{0} is the name of what was added.</comment>
+  </data>
+  <data name="AddData_Unreadable" xml:space="preserve">
+    <value>{0} couldn't be read: {1}</value>
+    <comment>{0} is a file name, {1} the reason in English.</comment>
+  </data>
+  <data name="AddData_NotADataset" xml:space="preserve">
+    <value>{0} isn't a dataset SoundCharts can draw.</value>
+    <comment>{0} is a file name.</comment>
+  </data>
+  <data name="AddData_Edition" xml:space="preserve">
+    <value>{0}: {1}</value>
+    <comment>{0} is a file name, {1} the library's edition message in English.</comment>
+  </data>
+  <data name="AddData_ProductMismatch" xml:space="preserve">
+    <value>{0}: the exchange set says {1}, but the dataset is {2}. SoundCharts draws it as {2}.</value>
+    <comment>{0} is a file name, {1} and {2} product specifications such as S-101.</comment>
+  </data>
+  <data name="AddData_EditionMismatch" xml:space="preserve">
+    <value>{0}: the exchange set says {1}, but the dataset says {2}.</value>
+    <comment>{0} is a file name, {1} and {2} a product and edition such as S-101 2.0.0.</comment>
+  </data>
+  <data name="AddData_Missing" xml:space="preserve">
+    <value>{0} is in the exchange set's catalogue but not on disk.</value>
+    <comment>{0} is a path relative to the exchange set.</comment>
+  </data>
+  <data name="AddData_SkippedFiles" xml:space="preserve">
+    <value>Skipped {0} files in {1} that aren't datasets.</value>
+    <comment>{0} is a count, {1} a folder name.</comment>
+  </data>
+  <data name="AddData_FileDialogTitle" xml:space="preserve">
+    <value>Add SoundCharts Data</value>
+  </data>
+  <data name="AddData_FolderDialogTitle" xml:space="preserve">
+    <value>Add a SoundCharts Folder or Exchange Set</value>
+  </data>
+  <data name="AddData_FileFilter" xml:space="preserve">
+    <value>SoundCharts data (cells, HDF5, GML, catalogues, zip)|*.000;*.h5;*.hdf5;*.gml;*.xml;*.031;*.zip|All files|*.*</value>
+    <comment>A Win32 file dialog filter: label|patterns pairs. Keep the patterns.</comment>
+  </data>
+  <data name="AddData_ProgressTitle" xml:space="preserve">
+    <value>Add SoundCharts Data</value>
+  </data>
+  <data name="AddData_ProgressReading" xml:space="preserve">
+    <value>Reading datasets...</value>
+  </data>
+  <data name="AddData_ProgressStarting" xml:space="preserve">
+    <value>Starting the chart server...</value>
+  </data>
+  <data name="AddData_NothingAdded" xml:space="preserve">
+    <value>Nothing was added.</value>
+  </data>
+  <data name="AddData_Added" xml:space="preserve">
+    <value>Added {0} to {1}.</value>
+    <comment>{0} is a dataset count text, {1} the group name.</comment>
+  </data>
+  <data name="AddData_DatasetCount" xml:space="preserve">
+    <value>{0} datasets</value>
+    <comment>{0} is a number.</comment>
+  </data>
+  <data name="AddData_OneDataset" xml:space="preserve">
+    <value>1 dataset</value>
+  </data>
+  <data name="AddData_WarningsHeading" xml:space="preserve">
+    <value>Some data needs your attention:</value>
+  </data>
+  <data name="AddData_NoMap" xml:space="preserve">
+    <value>Open a map to add SoundCharts data.</value>
+  </data>
+  <data name="AddData_Failed" xml:space="preserve">
+    <value>SoundCharts data couldn't be added: {0}</value>
+    <comment>{0} is the reason in English.</comment>
+  </data>
+  <data name="AddData_ServerFailed" xml:space="preserve">
+    <value>The chart server for {0} didn't start: {1} Show the SoundCharts Log for details.</value>
+    <comment>{0} is a layer name, {1} the reason.</comment>
+  </data>
+  <data name="AddData_NotForNavigation" xml:space="preserve">
+    <value>SoundCharts charts are for analysis and planning. Not for navigation.</value>
+  </data>
+  <data name="ZoomToData_NoExtent" xml:space="preserve">
+    <value>The selected SoundCharts layers have no dataset footprints to zoom to.</value>
+  </data>
+  <data name="AddData_MoreInLog" xml:space="preserve">
+    <value>...and {0} more. Show the SoundCharts Log for all of them.</value>
+    <comment>{0} is a count.</comment>
+  </data>
 </root>
