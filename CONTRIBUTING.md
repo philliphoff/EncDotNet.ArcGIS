@@ -123,6 +123,14 @@ showing a SoundCharts chart, open it, and choose **SoundCharts** >
 the layout's scale and resolution, and logs each render under the
 `export` source in the SoundCharts log.
 
+**SoundCharts** > **Library** opens the **SoundCharts Library** pane. Add a
+folder, an exchange set or a `.s100collection.json` collection manifest with
+its buttons, by dropping it on the pane, or with **Open with SoundCharts** >
+**Add to Library**; its datasets are indexed without being loaded. Select a
+dataset for its details and **Add to Map**, **Show Footprint**, **Validate**
+(runs `s100 validate` outside Pro) or **Open Containing Folder**. The Library
+is kept in `%LOCALAPPDATA%\SoundCharts\ArcGIS\library\`.
+
 To try **Object information** on any map without adding data, build the
 Debug configuration and start Pro with `SOUNDCHARTS_DEBUG_DATASETS` set to
 dataset paths separated by `;`. The tool then looks in those datasets
