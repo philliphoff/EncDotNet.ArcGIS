@@ -657,4 +657,10 @@
   <data name="RouteCheck_CheckAgainTooltip" xml:space="preserve">
     <value>Check the same route again, with the map's current SoundCharts layers and settings.</value>
   </data>
+  <data name="RouteCheck_LayerDescription" xml:space="preserve">
+    <value>Route check findings from SoundCharts, by severity: MUST REVIEW, CHECK, INFO. Not for navigation.</value>
+  </data>
+  <data name="RouteCheck_EditName" xml:space="preserve">
+    <value>Write route check findings</value>
+  </data>
 </root>

@@ -81,8 +81,9 @@ jobs:
       - name: Check out EncDotNet.S100 test datasets
         # Object information's coverage tests (S-102, S-104, S-111) and Add
         # SoundCharts Data's content detection tests (S-57, S-101 exchange
-        # set and its .zip, S-124) use EncDotNet.S100's own test datasets, so
-        # no real data is committed here. Cone mode also brings the files at
+        # set and its .zip, S-124) and the route check tests (S-57, and the
+        # S-421 and RTZ route fixtures) use EncDotNet.S100's own test
+        # datasets, so no real data is committed here. Cone mode also brings the files at
         # tests/datasets itself, S101.zip among them. Keep the ref in step
         # with EncDotNetS100Version.
         uses: actions/checkout@v7
@@ -97,6 +98,8 @@ jobs:
             tests/datasets/S104
             tests/datasets/S111
             tests/datasets/S124
+            tests/datasets/S421
+            tests/datasets/RTZ
           sparse-checkout-cone-mode: true
 
       - name: Test

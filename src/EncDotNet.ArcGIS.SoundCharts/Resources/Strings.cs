@@ -588,6 +588,12 @@ public static class Strings
     /// <summary>Gets the Check Again button tooltip.</summary>
     public static string RouteCheck_CheckAgainTooltip => Get(nameof(RouteCheck_CheckAgainTooltip));
 
+    /// <summary>Gets the findings layers' description.</summary>
+    public static string RouteCheck_LayerDescription => Get(nameof(RouteCheck_LayerDescription));
+
+    /// <summary>Gets the edit operation's name when findings are written in an edit session.</summary>
+    public static string RouteCheck_EditName => Get(nameof(RouteCheck_EditName));
+
     private static string Get(string name) =>
         Manager.GetString(name, CultureInfo.CurrentUICulture) ?? name;
 }
