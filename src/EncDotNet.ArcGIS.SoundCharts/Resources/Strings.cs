@@ -312,6 +312,234 @@ public static class Strings
     /// <summary>Gets the line after the listed warnings: <c>{0}</c> is how many more are in the log.</summary>
     public static string AddData_MoreInLog => Get(nameof(AddData_MoreInLog));
 
+    /// <summary>Gets the project Options page's heading, the viewer's section name.</summary>
+    public static string Settings_ProjectHeading => Get(nameof(Settings_ProjectHeading));
+
+    /// <summary>Gets the application Options page's heading.</summary>
+    public static string Settings_ApplicationHeading => Get(nameof(Settings_ApplicationHeading));
+
+    /// <summary>Gets the line every settings page carries (D25).</summary>
+    public static string Settings_ScopeNote => Get(nameof(Settings_ScopeNote));
+
+    /// <summary>Gets the line that says where project settings live (D23).</summary>
+    public static string Settings_ProjectNote => Get(nameof(Settings_ProjectNote));
+
+    /// <summary>Gets the note on settings the chart server doesn't apply yet.</summary>
+    public static string Settings_NeedsServer => Get(nameof(Settings_NeedsServer));
+
+    /// <summary>Gets the Palette label.</summary>
+    public static string Settings_Palette => Get(nameof(Settings_Palette));
+
+    /// <summary>Gets the Day palette's label.</summary>
+    public static string Palette_Day => Get(nameof(Palette_Day));
+
+    /// <summary>Gets the Dusk palette's label.</summary>
+    public static string Palette_Dusk => Get(nameof(Palette_Dusk));
+
+    /// <summary>Gets the Night palette's label.</summary>
+    public static string Palette_Night => Get(nameof(Palette_Night));
+
+    /// <summary>Gets the Display category label.</summary>
+    public static string Settings_DisplayCategory => Get(nameof(Settings_DisplayCategory));
+
+    /// <summary>Gets the Display Base category's label.</summary>
+    public static string DisplayCategory_DisplayBase => Get(nameof(DisplayCategory_DisplayBase));
+
+    /// <summary>Gets the Standard category's label.</summary>
+    public static string DisplayCategory_Standard => Get(nameof(DisplayCategory_Standard));
+
+    /// <summary>Gets the Other Information category's label.</summary>
+    public static string DisplayCategory_OtherInformation => Get(nameof(DisplayCategory_OtherInformation));
+
+    /// <summary>Gets the All category's label.</summary>
+    public static string DisplayCategory_All => Get(nameof(DisplayCategory_All));
+
+    /// <summary>Gets the heading over the contour and depth boxes.</summary>
+    public static string Settings_DepthsSection => Get(nameof(Settings_DepthsSection));
+
+    /// <summary>Gets the Safety Contour label.</summary>
+    public static string Settings_SafetyContour => Get(nameof(Settings_SafetyContour));
+
+    /// <summary>Gets the Safety Contour tooltip.</summary>
+    public static string Tooltip_SafetyContour => Get(nameof(Tooltip_SafetyContour));
+
+    /// <summary>Gets the Safety Depth label.</summary>
+    public static string Settings_SafetyDepth => Get(nameof(Settings_SafetyDepth));
+
+    /// <summary>Gets the Safety Depth tooltip.</summary>
+    public static string Tooltip_SafetyDepth => Get(nameof(Tooltip_SafetyDepth));
+
+    /// <summary>Gets the Shallow Contour label.</summary>
+    public static string Settings_ShallowContour => Get(nameof(Settings_ShallowContour));
+
+    /// <summary>Gets the Shallow Contour tooltip.</summary>
+    public static string Tooltip_ShallowContour => Get(nameof(Tooltip_ShallowContour));
+
+    /// <summary>Gets the Deep Contour label.</summary>
+    public static string Settings_DeepContour => Get(nameof(Settings_DeepContour));
+
+    /// <summary>Gets the Deep Contour tooltip.</summary>
+    public static string Tooltip_DeepContour => Get(nameof(Tooltip_DeepContour));
+
+    /// <summary>Gets the Four-shade depth scheme label.</summary>
+    public static string Settings_FourShades => Get(nameof(Settings_FourShades));
+
+    /// <summary>Gets the Four-shade depth scheme tooltip.</summary>
+    public static string Tooltip_FourShades => Get(nameof(Tooltip_FourShades));
+
+    /// <summary>Gets the shallow-water dangers label.</summary>
+    public static string Settings_ShallowWaterDangers => Get(nameof(Settings_ShallowWaterDangers));
+
+    /// <summary>Gets the shallow-water dangers tooltip.</summary>
+    public static string Tooltip_ShallowWaterDangers => Get(nameof(Tooltip_ShallowWaterDangers));
+
+    /// <summary>Gets the Plain boundaries label.</summary>
+    public static string Settings_PlainBoundaries => Get(nameof(Settings_PlainBoundaries));
+
+    /// <summary>Gets the Plain boundaries tooltip.</summary>
+    public static string Tooltip_PlainBoundaries => Get(nameof(Tooltip_PlainBoundaries));
+
+    /// <summary>Gets the Simplified symbols label.</summary>
+    public static string Settings_SimplifiedSymbols => Get(nameof(Settings_SimplifiedSymbols));
+
+    /// <summary>Gets the Simplified symbols tooltip.</summary>
+    public static string Tooltip_SimplifiedSymbols => Get(nameof(Tooltip_SimplifiedSymbols));
+
+    /// <summary>Gets the Full light lines label.</summary>
+    public static string Settings_FullLightLines => Get(nameof(Settings_FullLightLines));
+
+    /// <summary>Gets the Full light lines tooltip.</summary>
+    public static string Tooltip_FullLightLines => Get(nameof(Tooltip_FullLightLines));
+
+    /// <summary>Gets the Ignore scale minimum label.</summary>
+    public static string Settings_IgnoreScaleMinimum => Get(nameof(Settings_IgnoreScaleMinimum));
+
+    /// <summary>Gets the Ignore scale minimum tooltip.</summary>
+    public static string Tooltip_IgnoreScaleMinimum => Get(nameof(Tooltip_IgnoreScaleMinimum));
+
+    /// <summary>Gets the Soundings label.</summary>
+    public static string Settings_Soundings => Get(nameof(Settings_Soundings));
+
+    /// <summary>Gets the Text label.</summary>
+    public static string Settings_Text => Get(nameof(Settings_Text));
+
+    /// <summary>Gets the Text tooltip.</summary>
+    public static string Tooltip_Text => Get(nameof(Tooltip_Text));
+
+    /// <summary>Gets the Symbol Scale label.</summary>
+    public static string Settings_SymbolScale => Get(nameof(Settings_SymbolScale));
+
+    /// <summary>Gets the Symbol Scale tooltip, the viewer's help.</summary>
+    public static string Tooltip_SymbolScale => Get(nameof(Tooltip_SymbolScale));
+
+    /// <summary>Gets the Text Scale label.</summary>
+    public static string Settings_TextScale => Get(nameof(Settings_TextScale));
+
+    /// <summary>Gets the Text Scale tooltip, the viewer's help.</summary>
+    public static string Tooltip_TextScale => Get(nameof(Tooltip_TextScale));
+
+    /// <summary>Gets the format of a scale factor's value.</summary>
+    public static string Settings_ScaleFormat => Get(nameof(Settings_ScaleFormat));
+
+    /// <summary>Gets the National Language label.</summary>
+    public static string Settings_NationalLanguage => Get(nameof(Settings_NationalLanguage));
+
+    /// <summary>Gets the National Language tooltip.</summary>
+    public static string Tooltip_NationalLanguage => Get(nameof(Tooltip_NationalLanguage));
+
+    /// <summary>Gets the button that puts the project's settings back to the defaults for new projects.</summary>
+    public static string Settings_ResetToDefaults => Get(nameof(Settings_ResetToDefaults));
+
+    /// <summary>Gets the Reset to Defaults tooltip.</summary>
+    public static string Tooltip_ResetToDefaults => Get(nameof(Tooltip_ResetToDefaults));
+
+    /// <summary>Gets the button that makes the project's settings the defaults for new projects.</summary>
+    public static string Settings_UseForNewProjects => Get(nameof(Settings_UseForNewProjects));
+
+    /// <summary>Gets the Use for New Projects tooltip.</summary>
+    public static string Tooltip_UseForNewProjects => Get(nameof(Tooltip_UseForNewProjects));
+
+    /// <summary>Gets the line shown after Use for New Projects.</summary>
+    public static string Settings_DefaultsSaved => Get(nameof(Settings_DefaultsSaved));
+
+    /// <summary>Gets the message for a depth out of range.</summary>
+    public static string Settings_Problem_DepthOutOfRange => Get(nameof(Settings_Problem_DepthOutOfRange));
+
+    /// <summary>Gets the message for contours out of order.</summary>
+    public static string Settings_Problem_ContoursOutOfOrder => Get(nameof(Settings_Problem_ContoursOutOfOrder));
+
+    /// <summary>Gets the message for a scale out of range.</summary>
+    public static string Settings_Problem_ScaleOutOfRange => Get(nameof(Settings_Problem_ScaleOutOfRange));
+
+    /// <summary>Gets the message for a national language that isn't a code.</summary>
+    public static string Settings_Problem_NationalLanguageInvalid => Get(nameof(Settings_Problem_NationalLanguageInvalid));
+
+    /// <summary>Gets the message for an unknown value.</summary>
+    public static string Settings_Problem_UnknownValue => Get(nameof(Settings_Problem_UnknownValue));
+
+    /// <summary>Gets the heading of the application page's palette section.</summary>
+    public static string Settings_AppearanceSection => Get(nameof(Settings_AppearanceSection));
+
+    /// <summary>Gets the Follow Pro theme label.</summary>
+    public static string Settings_FollowProTheme => Get(nameof(Settings_FollowProTheme));
+
+    /// <summary>Gets the Follow Pro theme tooltip.</summary>
+    public static string Tooltip_FollowProTheme => Get(nameof(Tooltip_FollowProTheme));
+
+    /// <summary>Gets the Time Format label.</summary>
+    public static string Settings_TimeFormat => Get(nameof(Settings_TimeFormat));
+
+    /// <summary>Gets the Time Format tooltip.</summary>
+    public static string Tooltip_TimeFormat => Get(nameof(Tooltip_TimeFormat));
+
+    /// <summary>Gets the UTC time format's label.</summary>
+    public static string TimeFormat_Utc => Get(nameof(TimeFormat_Utc));
+
+    /// <summary>Gets the Local time format's label.</summary>
+    public static string TimeFormat_Local => Get(nameof(TimeFormat_Local));
+
+    /// <summary>Gets the Depth Unit label.</summary>
+    public static string Settings_DepthUnit => Get(nameof(Settings_DepthUnit));
+
+    /// <summary>Gets the Depth Unit tooltip.</summary>
+    public static string Tooltip_DepthUnit => Get(nameof(Tooltip_DepthUnit));
+
+    /// <summary>Gets the metres label.</summary>
+    public static string DepthUnit_Metres => Get(nameof(DepthUnit_Metres));
+
+    /// <summary>Gets the feet label.</summary>
+    public static string DepthUnit_Feet => Get(nameof(DepthUnit_Feet));
+
+    /// <summary>Gets the fathoms and feet label.</summary>
+    public static string DepthUnit_FathomsFeet => Get(nameof(DepthUnit_FathomsFeet));
+
+    /// <summary>Gets the fathoms label.</summary>
+    public static string DepthUnit_Fathoms => Get(nameof(DepthUnit_Fathoms));
+
+    /// <summary>Gets the heading of the chart server section.</summary>
+    public static string Settings_ServerSection => Get(nameof(Settings_ServerSection));
+
+    /// <summary>Gets the label of the s100 path box.</summary>
+    public static string Settings_ServerPath => Get(nameof(Settings_ServerPath));
+
+    /// <summary>Gets the s100 path tooltip.</summary>
+    public static string Tooltip_ServerPath => Get(nameof(Tooltip_ServerPath));
+
+    /// <summary>Gets the label of the tile cache size box.</summary>
+    public static string Settings_TileCache => Get(nameof(Settings_TileCache));
+
+    /// <summary>Gets the tile cache tooltip.</summary>
+    public static string Tooltip_TileCache => Get(nameof(Tooltip_TileCache));
+
+    /// <summary>Gets the note under the chart server settings.</summary>
+    public static string Settings_RestartNote => Get(nameof(Settings_RestartNote));
+
+    /// <summary>Gets the message for a tile cache size out of range.</summary>
+    public static string Settings_Problem_TileCache => Get(nameof(Settings_Problem_TileCache));
+
+    /// <summary>Gets the message for an s100 path that doesn't exist.</summary>
+    public static string Settings_Problem_ServerPath => Get(nameof(Settings_Problem_ServerPath));
+
     /// <summary>Gets the name of a dataset's feature layer group: <c>{0}</c> is the dataset.</summary>
     public static string Features_GroupName => Get(nameof(Features_GroupName));
 

@@ -32,6 +32,7 @@ internal sealed class SoundChartsModule : Module
             }
 
             SoundChartsSession.ChartServers.ServerFailed += ChartServerNotification.OnServerFailed;
+            SettingsHost.Start();
             ChartLayerManager.Instance.Start();
 #if DEBUG
             FeatureLayers.FeaturesSelfCheck.RunIfRequested();
@@ -67,6 +68,20 @@ internal sealed class SoundChartsModule : Module
     }
 
     protected override bool CanUnload() => true;
+
+    /// <summary>Reads the project's palette and mariner settings (D23).</summary>
+    protected override Task OnReadSettingsAsync(ModuleSettingsReader settings)
+    {
+        SettingsHost.Read(settings);
+        return Task.CompletedTask;
+    }
+
+    /// <summary>Writes the project's palette and mariner settings with the project.</summary>
+    protected override Task OnWriteSettingsAsync(ModuleSettingsWriter settings)
+    {
+        SettingsHost.Write(settings);
+        return Task.CompletedTask;
+    }
 
     private static void LogServer()
     {

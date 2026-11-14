@@ -349,6 +349,235 @@
     <value>...and {0} more. Show the SoundCharts Log for all of them.</value>
     <comment>{0} is a count.</comment>
   </data>
+  <data name="Settings_ProjectHeading" xml:space="preserve">
+    <value>Mariner Settings</value>
+  </data>
+  <data name="Settings_ApplicationHeading" xml:space="preserve">
+    <value>SoundCharts</value>
+  </data>
+  <data name="Settings_ScopeNote" xml:space="preserve">
+    <value>These settings apply to SoundCharts layers only, not to Esri ENC layers.</value>
+  </data>
+  <data name="Settings_ProjectNote" xml:space="preserve">
+    <value>Saved with this project, and used by every SoundCharts layer in it.</value>
+  </data>
+  <data name="Settings_NeedsServer" xml:space="preserve">
+    <value>Needs a newer chart server: SoundCharts keeps these settings with the project, and the chart draws with them once the chart server takes them.</value>
+  </data>
+  <data name="Settings_Palette" xml:space="preserve">
+    <value>Palette</value>
+  </data>
+  <data name="Palette_Day" xml:space="preserve">
+    <value>Day</value>
+  </data>
+  <data name="Palette_Dusk" xml:space="preserve">
+    <value>Dusk</value>
+  </data>
+  <data name="Palette_Night" xml:space="preserve">
+    <value>Night</value>
+  </data>
+  <data name="Settings_DisplayCategory" xml:space="preserve">
+    <value>Display category</value>
+  </data>
+  <data name="DisplayCategory_DisplayBase" xml:space="preserve">
+    <value>Display Base</value>
+  </data>
+  <data name="DisplayCategory_Standard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="DisplayCategory_OtherInformation" xml:space="preserve">
+    <value>Other Information</value>
+  </data>
+  <data name="DisplayCategory_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Settings_DepthsSection" xml:space="preserve">
+    <value>Depths (metres)</value>
+  </data>
+  <data name="Settings_SafetyContour" xml:space="preserve">
+    <value>Safety Contour</value>
+  </data>
+  <data name="Tooltip_SafetyContour" xml:space="preserve">
+    <value>Depth boundary between safe and unsafe water for own ship (S-101 / S-102 PC SafetyContour).</value>
+  </data>
+  <data name="Settings_SafetyDepth" xml:space="preserve">
+    <value>Safety Depth</value>
+  </data>
+  <data name="Tooltip_SafetyDepth" xml:space="preserve">
+    <value>Soundings shallower than this are emphasised (S-101 PC SafetyDepth).</value>
+  </data>
+  <data name="Settings_ShallowContour" xml:space="preserve">
+    <value>Shallow Contour</value>
+  </data>
+  <data name="Tooltip_ShallowContour" xml:space="preserve">
+    <value>Inner boundary of the four-shade scheme (S-101 / S-102 PC ShallowContour). Must be ≤ Safety Contour.</value>
+  </data>
+  <data name="Settings_DeepContour" xml:space="preserve">
+    <value>Deep Contour</value>
+  </data>
+  <data name="Tooltip_DeepContour" xml:space="preserve">
+    <value>Outer boundary of the four-shade scheme (S-101 / S-102 PC DeepContour). Must be ≥ Safety Contour.</value>
+  </data>
+  <data name="Settings_FourShades" xml:space="preserve">
+    <value>Four-shade depth scheme</value>
+  </data>
+  <data name="Tooltip_FourShades" xml:space="preserve">
+    <value>When on, depth areas use four shades using the Shallow/Safety/Deep contours; when off, only two shades are used (S-101 / S-102 PC FourShades).</value>
+  </data>
+  <data name="Settings_ShallowWaterDangers" xml:space="preserve">
+    <value>Highlight shallow-water dangers</value>
+  </data>
+  <data name="Tooltip_ShallowWaterDangers" xml:space="preserve">
+    <value>Emphasise isolated dangers in shallow water (S-101 PC ShallowWaterDangers).</value>
+  </data>
+  <data name="Settings_PlainBoundaries" xml:space="preserve">
+    <value>Plain boundaries</value>
+  </data>
+  <data name="Tooltip_PlainBoundaries" xml:space="preserve">
+    <value>Draw plain (un-symbolised) area boundaries (S-101 PC PlainBoundaries).</value>
+  </data>
+  <data name="Settings_SimplifiedSymbols" xml:space="preserve">
+    <value>Simplified symbols</value>
+  </data>
+  <data name="Tooltip_SimplifiedSymbols" xml:space="preserve">
+    <value>Use simplified point symbols (S-101 PC SimplifiedSymbols).</value>
+  </data>
+  <data name="Settings_FullLightLines" xml:space="preserve">
+    <value>Full light lines</value>
+  </data>
+  <data name="Tooltip_FullLightLines" xml:space="preserve">
+    <value>Draw light sectors as full lines extending to nominal range (S-101 PC FullLightLines).</value>
+  </data>
+  <data name="Settings_IgnoreScaleMinimum" xml:space="preserve">
+    <value>Ignore scale minimum</value>
+  </data>
+  <data name="Tooltip_IgnoreScaleMinimum" xml:space="preserve">
+    <value>Always portray features regardless of cell scale-minimum attribute (S-101 PC IgnoreScaleMinimum).</value>
+  </data>
+  <data name="Settings_Soundings" xml:space="preserve">
+    <value>Soundings</value>
+  </data>
+  <data name="Settings_Text" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="Tooltip_Text" xml:space="preserve">
+    <value>Draw chart text. A change starts new chart servers, and the layers redraw from them.</value>
+  </data>
+  <data name="Settings_SymbolScale" xml:space="preserve">
+    <value>Symbol Scale</value>
+  </data>
+  <data name="Tooltip_SymbolScale" xml:space="preserve">
+    <value>Adjusts the size of all point symbols.</value>
+  </data>
+  <data name="Settings_TextScale" xml:space="preserve">
+    <value>Text Scale</value>
+  </data>
+  <data name="Tooltip_TextScale" xml:space="preserve">
+    <value>Adjusts the size of all text labels.</value>
+  </data>
+  <data name="Settings_ScaleFormat" xml:space="preserve">
+    <value>{0:0.0}×</value>
+    <comment>{0} is the factor, such as 1.5.</comment>
+  </data>
+  <data name="Settings_NationalLanguage" xml:space="preserve">
+    <value>National Language</value>
+  </data>
+  <data name="Tooltip_NationalLanguage" xml:space="preserve">
+    <value>Preferred 3-letter ISO 639-2/B code for chart text (S-101 PC NationalLanguage). Empty = catalogue default.</value>
+  </data>
+  <data name="Settings_ResetToDefaults" xml:space="preserve">
+    <value>Reset to Defaults</value>
+  </data>
+  <data name="Tooltip_ResetToDefaults" xml:space="preserve">
+    <value>Put this project's mariner settings back to the defaults for new projects.</value>
+  </data>
+  <data name="Settings_UseForNewProjects" xml:space="preserve">
+    <value>Use for New Projects</value>
+  </data>
+  <data name="Tooltip_UseForNewProjects" xml:space="preserve">
+    <value>Start new projects with these mariner settings.</value>
+  </data>
+  <data name="Settings_DefaultsSaved" xml:space="preserve">
+    <value>New projects will start with these settings.</value>
+  </data>
+  <data name="Settings_Problem_DepthOutOfRange" xml:space="preserve">
+    <value>Contours and depths must be from 0 to 12,000 metres.</value>
+  </data>
+  <data name="Settings_Problem_ContoursOutOfOrder" xml:space="preserve">
+    <value>The shallow contour must be no deeper than the safety contour, and the deep contour no shallower.</value>
+  </data>
+  <data name="Settings_Problem_ScaleOutOfRange" xml:space="preserve">
+    <value>Symbol and text scales must be from 0.5 to 3.</value>
+  </data>
+  <data name="Settings_Problem_NationalLanguageInvalid" xml:space="preserve">
+    <value>The national language must be a three-letter ISO 639-2 code, such as fra, or empty.</value>
+  </data>
+  <data name="Settings_Problem_UnknownValue" xml:space="preserve">
+    <value>A setting has a value SoundCharts doesn't know.</value>
+  </data>
+  <data name="Settings_AppearanceSection" xml:space="preserve">
+    <value>Palette</value>
+  </data>
+  <data name="Settings_FollowProTheme" xml:space="preserve">
+    <value>Follow Pro theme</value>
+  </data>
+  <data name="Tooltip_FollowProTheme" xml:space="preserve">
+    <value>Pro's Light theme shows the Day palette and its Dark theme the Dusk palette. Choosing a palette by hand turns this off. Night is only ever chosen by hand.</value>
+  </data>
+  <data name="Settings_TimeFormat" xml:space="preserve">
+    <value>Time Format</value>
+  </data>
+  <data name="Tooltip_TimeFormat" xml:space="preserve">
+    <value>How SoundCharts shows times. UTC uses an unambiguous form with a "UTC" suffix; Local time uses the system culture.</value>
+  </data>
+  <data name="TimeFormat_Utc" xml:space="preserve">
+    <value>UTC</value>
+  </data>
+  <data name="TimeFormat_Local" xml:space="preserve">
+    <value>Local time</value>
+  </data>
+  <data name="Settings_DepthUnit" xml:space="preserve">
+    <value>Depth Unit</value>
+  </data>
+  <data name="Tooltip_DepthUnit" xml:space="preserve">
+    <value>Display unit for depth values. Internal storage is always metres.</value>
+  </data>
+  <data name="DepthUnit_Metres" xml:space="preserve">
+    <value>Metres (m)</value>
+  </data>
+  <data name="DepthUnit_Feet" xml:space="preserve">
+    <value>Feet (ft)</value>
+  </data>
+  <data name="DepthUnit_FathomsFeet" xml:space="preserve">
+    <value>Fathoms and feet (fm/ft)</value>
+  </data>
+  <data name="DepthUnit_Fathoms" xml:space="preserve">
+    <value>Fathoms (fm)</value>
+  </data>
+  <data name="Settings_ServerSection" xml:space="preserve">
+    <value>Chart server</value>
+  </data>
+  <data name="Settings_ServerPath" xml:space="preserve">
+    <value>s100 program</value>
+  </data>
+  <data name="Tooltip_ServerPath" xml:space="preserve">
+    <value>The s100.exe to run instead of the one that comes with SoundCharts, for trying a newer build. Leave empty for the bundled one.</value>
+  </data>
+  <data name="Settings_TileCache" xml:space="preserve">
+    <value>Tile cache (MB)</value>
+  </data>
+  <data name="Tooltip_TileCache" xml:space="preserve">
+    <value>The most disk space the chart servers' shared tile cache takes, in megabytes.</value>
+  </data>
+  <data name="Settings_RestartNote" xml:space="preserve">
+    <value>The chart server settings take effect when ArcGIS Pro restarts.</value>
+  </data>
+  <data name="Settings_Problem_TileCache" xml:space="preserve">
+    <value>The tile cache must be from 64 to 1,048,576 MB.</value>
+  </data>
+  <data name="Settings_Problem_ServerPath" xml:space="preserve">
+    <value>There's no file at that s100 path.</value>
+  </data>
   <data name="Features_GroupName" xml:space="preserve">
     <value>SoundCharts features · {0}</value>
     <comment>{0} is a dataset name.</comment>

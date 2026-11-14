@@ -45,6 +45,7 @@ src/
     Server/                            # ChartServerPool, ChartServer (supervisor), endpoints, process launch
     Logging/                           # SoundChartsLog: the Log pane's list and the daily file
     Features/                          # DatasetTables: S-1xx features as tables for the plugin datasource
+    Settings/                          # Mariner settings, application settings, the render key's style, settings JSON
   EncDotNet.ArcGIS.SoundCharts.Features/ # The plugin datasource (.esriPlugin, Config.xml): its own package
   ArcGISPro.DotNetBuild.targets        # Skips Esri's packaging under `dotnet build`
 tests/
