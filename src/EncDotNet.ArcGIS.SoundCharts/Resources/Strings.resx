@@ -396,5 +396,1015 @@
   </data>
   <data name="ScaleNote_AccessibleName" xml:space="preserve">
     <value>Scale note</value>
+  <data name="Settings_ProjectHeading" xml:space="preserve">
+    <value>Mariner Settings</value>
+  </data>
+  <data name="Settings_ApplicationHeading" xml:space="preserve">
+    <value>SoundCharts</value>
+  </data>
+  <data name="Settings_ScopeNote" xml:space="preserve">
+    <value>These settings apply to SoundCharts layers only, not to Esri ENC layers.</value>
+  </data>
+  <data name="Settings_ProjectNote" xml:space="preserve">
+    <value>Saved with this project, and used by every SoundCharts layer in it.</value>
+  </data>
+  <data name="Settings_NeedsServer" xml:space="preserve">
+    <value>Needs a newer chart server: SoundCharts keeps these settings with the project, and the chart draws with them once the chart server takes them.</value>
+  </data>
+  <data name="Settings_Palette" xml:space="preserve">
+    <value>Palette</value>
+  </data>
+  <data name="Palette_Day" xml:space="preserve">
+    <value>Day</value>
+  </data>
+  <data name="Palette_Dusk" xml:space="preserve">
+    <value>Dusk</value>
+  </data>
+  <data name="Palette_Night" xml:space="preserve">
+    <value>Night</value>
+  </data>
+  <data name="Settings_DisplayCategory" xml:space="preserve">
+    <value>Display category</value>
+  </data>
+  <data name="DisplayCategory_DisplayBase" xml:space="preserve">
+    <value>Display Base</value>
+  </data>
+  <data name="DisplayCategory_Standard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="DisplayCategory_OtherInformation" xml:space="preserve">
+    <value>Other Information</value>
+  </data>
+  <data name="DisplayCategory_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Settings_DepthsSection" xml:space="preserve">
+    <value>Depths (metres)</value>
+  </data>
+  <data name="Settings_SafetyContour" xml:space="preserve">
+    <value>Safety Contour</value>
+  </data>
+  <data name="Tooltip_SafetyContour" xml:space="preserve">
+    <value>Depth boundary between safe and unsafe water for own ship (S-101 / S-102 PC SafetyContour).</value>
+  </data>
+  <data name="Settings_SafetyDepth" xml:space="preserve">
+    <value>Safety Depth</value>
+  </data>
+  <data name="Tooltip_SafetyDepth" xml:space="preserve">
+    <value>Soundings shallower than this are emphasised (S-101 PC SafetyDepth).</value>
+  </data>
+  <data name="Settings_ShallowContour" xml:space="preserve">
+    <value>Shallow Contour</value>
+  </data>
+  <data name="Tooltip_ShallowContour" xml:space="preserve">
+    <value>Inner boundary of the four-shade scheme (S-101 / S-102 PC ShallowContour). Must be ≤ Safety Contour.</value>
+  </data>
+  <data name="Settings_DeepContour" xml:space="preserve">
+    <value>Deep Contour</value>
+  </data>
+  <data name="Tooltip_DeepContour" xml:space="preserve">
+    <value>Outer boundary of the four-shade scheme (S-101 / S-102 PC DeepContour). Must be ≥ Safety Contour.</value>
+  </data>
+  <data name="Settings_FourShades" xml:space="preserve">
+    <value>Four-shade depth scheme</value>
+  </data>
+  <data name="Tooltip_FourShades" xml:space="preserve">
+    <value>When on, depth areas use four shades using the Shallow/Safety/Deep contours; when off, only two shades are used (S-101 / S-102 PC FourShades).</value>
+  </data>
+  <data name="Settings_ShallowWaterDangers" xml:space="preserve">
+    <value>Highlight shallow-water dangers</value>
+  </data>
+  <data name="Tooltip_ShallowWaterDangers" xml:space="preserve">
+    <value>Emphasise isolated dangers in shallow water (S-101 PC ShallowWaterDangers).</value>
+  </data>
+  <data name="Settings_PlainBoundaries" xml:space="preserve">
+    <value>Plain boundaries</value>
+  </data>
+  <data name="Tooltip_PlainBoundaries" xml:space="preserve">
+    <value>Draw plain (un-symbolised) area boundaries (S-101 PC PlainBoundaries).</value>
+  </data>
+  <data name="Settings_SimplifiedSymbols" xml:space="preserve">
+    <value>Simplified symbols</value>
+  </data>
+  <data name="Tooltip_SimplifiedSymbols" xml:space="preserve">
+    <value>Use simplified point symbols (S-101 PC SimplifiedSymbols).</value>
+  </data>
+  <data name="Settings_FullLightLines" xml:space="preserve">
+    <value>Full light lines</value>
+  </data>
+  <data name="Tooltip_FullLightLines" xml:space="preserve">
+    <value>Draw light sectors as full lines extending to nominal range (S-101 PC FullLightLines).</value>
+  </data>
+  <data name="Settings_IgnoreScaleMinimum" xml:space="preserve">
+    <value>Ignore scale minimum</value>
+  </data>
+  <data name="Tooltip_IgnoreScaleMinimum" xml:space="preserve">
+    <value>Always portray features regardless of cell scale-minimum attribute (S-101 PC IgnoreScaleMinimum).</value>
+  </data>
+  <data name="Settings_Soundings" xml:space="preserve">
+    <value>Soundings</value>
+  </data>
+  <data name="Settings_Text" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="Tooltip_Text" xml:space="preserve">
+    <value>Draw chart text. A change starts new chart servers, and the layers redraw from them.</value>
+  </data>
+  <data name="Settings_SymbolScale" xml:space="preserve">
+    <value>Symbol Scale</value>
+  </data>
+  <data name="Tooltip_SymbolScale" xml:space="preserve">
+    <value>Adjusts the size of all point symbols.</value>
+  </data>
+  <data name="Settings_TextScale" xml:space="preserve">
+    <value>Text Scale</value>
+  </data>
+  <data name="Tooltip_TextScale" xml:space="preserve">
+    <value>Adjusts the size of all text labels.</value>
+  </data>
+  <data name="Settings_ScaleFormat" xml:space="preserve">
+    <value>{0:0.0}×</value>
+    <comment>{0} is the factor, such as 1.5.</comment>
+  </data>
+  <data name="Settings_NationalLanguage" xml:space="preserve">
+    <value>National Language</value>
+  </data>
+  <data name="Tooltip_NationalLanguage" xml:space="preserve">
+    <value>Preferred 3-letter ISO 639-2/B code for chart text (S-101 PC NationalLanguage). Empty = catalogue default.</value>
+  </data>
+  <data name="Settings_ResetToDefaults" xml:space="preserve">
+    <value>Reset to Defaults</value>
+  </data>
+  <data name="Tooltip_ResetToDefaults" xml:space="preserve">
+    <value>Put this project's mariner settings back to the defaults for new projects.</value>
+  </data>
+  <data name="Settings_UseForNewProjects" xml:space="preserve">
+    <value>Use for New Projects</value>
+  </data>
+  <data name="Tooltip_UseForNewProjects" xml:space="preserve">
+    <value>Start new projects with these mariner settings.</value>
+  </data>
+  <data name="Settings_DefaultsSaved" xml:space="preserve">
+    <value>New projects will start with these settings.</value>
+  </data>
+  <data name="Settings_Problem_DepthOutOfRange" xml:space="preserve">
+    <value>Contours and depths must be from 0 to 12,000 metres.</value>
+  </data>
+  <data name="Settings_Problem_ContoursOutOfOrder" xml:space="preserve">
+    <value>The shallow contour must be no deeper than the safety contour, and the deep contour no shallower.</value>
+  </data>
+  <data name="Settings_Problem_ScaleOutOfRange" xml:space="preserve">
+    <value>Symbol and text scales must be from 0.5 to 3.</value>
+  </data>
+  <data name="Settings_Problem_NationalLanguageInvalid" xml:space="preserve">
+    <value>The national language must be a three-letter ISO 639-2 code, such as fra, or empty.</value>
+  </data>
+  <data name="Settings_Problem_UnknownValue" xml:space="preserve">
+    <value>A setting has a value SoundCharts doesn't know.</value>
+  </data>
+  <data name="Settings_AppearanceSection" xml:space="preserve">
+    <value>Palette</value>
+  </data>
+  <data name="Settings_FollowProTheme" xml:space="preserve">
+    <value>Follow Pro theme</value>
+  </data>
+  <data name="Tooltip_FollowProTheme" xml:space="preserve">
+    <value>Pro's Light theme shows the Day palette and its Dark theme the Dusk palette. Choosing a palette by hand turns this off. Night is only ever chosen by hand.</value>
+  </data>
+  <data name="Settings_TimeFormat" xml:space="preserve">
+    <value>Time Format</value>
+  </data>
+  <data name="Tooltip_TimeFormat" xml:space="preserve">
+    <value>How SoundCharts shows times. UTC uses an unambiguous form with a "UTC" suffix; Local time uses the system culture.</value>
+  </data>
+  <data name="TimeFormat_Utc" xml:space="preserve">
+    <value>UTC</value>
+  </data>
+  <data name="TimeFormat_Local" xml:space="preserve">
+    <value>Local time</value>
+  </data>
+  <data name="Settings_DepthUnit" xml:space="preserve">
+    <value>Depth Unit</value>
+  </data>
+  <data name="Tooltip_DepthUnit" xml:space="preserve">
+    <value>Display unit for depth values. Internal storage is always metres.</value>
+  </data>
+  <data name="DepthUnit_Metres" xml:space="preserve">
+    <value>Metres (m)</value>
+  </data>
+  <data name="DepthUnit_Feet" xml:space="preserve">
+    <value>Feet (ft)</value>
+  </data>
+  <data name="DepthUnit_FathomsFeet" xml:space="preserve">
+    <value>Fathoms and feet (fm/ft)</value>
+  </data>
+  <data name="DepthUnit_Fathoms" xml:space="preserve">
+    <value>Fathoms (fm)</value>
+  </data>
+  <data name="Settings_ServerSection" xml:space="preserve">
+    <value>Chart server</value>
+  </data>
+  <data name="Settings_ServerPath" xml:space="preserve">
+    <value>s100 program</value>
+  </data>
+  <data name="Tooltip_ServerPath" xml:space="preserve">
+    <value>The s100.exe to run instead of the one that comes with SoundCharts, for trying a newer build. Leave empty for the bundled one.</value>
+  </data>
+  <data name="Settings_TileCache" xml:space="preserve">
+    <value>Tile cache (MB)</value>
+  </data>
+  <data name="Tooltip_TileCache" xml:space="preserve">
+    <value>The most disk space the chart servers' shared tile cache takes, in megabytes.</value>
+  </data>
+  <data name="Settings_RestartNote" xml:space="preserve">
+    <value>The chart server settings take effect when ArcGIS Pro restarts.</value>
+  </data>
+  <data name="Settings_Problem_TileCache" xml:space="preserve">
+    <value>The tile cache must be from 64 to 1,048,576 MB.</value>
+  </data>
+  <data name="Settings_Problem_ServerPath" xml:space="preserve">
+    <value>There's no file at that s100 path.</value>
+  </data>
+  <data name="Features_GroupName" xml:space="preserve">
+    <value>SoundCharts features · {0}</value>
+    <comment>{0} is a dataset name.</comment>
+  </data>
+  <data name="Features_LayerName" xml:space="preserve">
+    <value>{0} · {1}</value>
+    <comment>{0} is a feature type, {1} a dataset name.</comment>
+  </data>
+  <data name="Features_SplitLayerName" xml:space="preserve">
+    <value>{0} ({1}) · {2}</value>
+    <comment>{0} is a feature type, {1} a geometry word (point, line, area), {2} a dataset name.</comment>
+  </data>
+  <data name="Features_Point" xml:space="preserve">
+    <value>point</value>
+  </data>
+  <data name="Features_Multipoint" xml:space="preserve">
+    <value>multipoint</value>
+  </data>
+  <data name="Features_Line" xml:space="preserve">
+    <value>line</value>
+  </data>
+  <data name="Features_Area" xml:space="preserve">
+    <value>area</value>
+  </data>
+  <data name="Features_Table" xml:space="preserve">
+    <value>table</value>
+  </data>
+  <data name="Features_Associations" xml:space="preserve">
+    <value>Feature associations</value>
+  </data>
+  <data name="Features_Title" xml:space="preserve">
+    <value>Add as Feature Layers</value>
+  </data>
+  <data name="Features_ProgressReading" xml:space="preserve">
+    <value>Reading features...</value>
+  </data>
+  <data name="Features_NotFeatures" xml:space="preserve">
+    <value>{0} is {1}, which has no features to add as feature layers.</value>
+    <comment>{0} is a dataset name, {1} its product (S-102).</comment>
+  </data>
+  <data name="Features_NoTables" xml:space="preserve">
+    <value>{0} has no features.</value>
+    <comment>{0} is a dataset name.</comment>
+  </data>
+  <data name="Features_PluginMissing" xml:space="preserve">
+    <value>The SoundCharts features plugin isn't installed, so {0} can't be added as feature layers. Install EncDotNet.ArcGIS.SoundCharts.Features.esriPlugin beside the add-in and restart ArcGIS Pro.</value>
+    <comment>{0} is a dataset name. Keep the file name.</comment>
+  </data>
+  <data name="Features_DatasetFailed" xml:space="preserve">
+    <value>{0} couldn't be added as feature layers: {1}</value>
+    <comment>{0} is a dataset name, {1} the reason in English.</comment>
+  </data>
+  <data name="Features_Added" xml:space="preserve">
+    <value>Added {0} as feature layers.</value>
+    <comment>{0} is a dataset count text.</comment>
+  </data>
+  <data name="Library_OneDataset" xml:space="preserve">
+    <value>1 dataset</value>
+  </data>
+  <data name="Library_DatasetCountFormat" xml:space="preserve">
+    <value>{0:N0} datasets</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="Library_EditionFormat" xml:space="preserve">
+    <value>Ed {0}</value>
+    <comment>{0} is an edition number.</comment>
+  </data>
+  <data name="Library_EditionUpdateFormat" xml:space="preserve">
+    <value>Ed {0} Upd {1}</value>
+    <comment>{0} is an edition number, {1} an update number.</comment>
+  </data>
+  <data name="Library_Tag_Missing" xml:space="preserve">
+    <value>Missing</value>
+  </data>
+  <data name="Library_NotForNavigation" xml:space="preserve">
+    <value>Not for navigation</value>
+  </data>
+  <data name="Library_Group_Validation" xml:space="preserve">
+    <value>Validation</value>
+  </data>
+  <data name="Library_Group_Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="Library_Field_Compatibility" xml:space="preserve">
+    <value>Compatibility</value>
+  </data>
+  <data name="Library_Field_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Library_Field_TimeRange" xml:space="preserve">
+    <value>Time range</value>
+  </data>
+  <data name="Library_Field_TimeSteps" xml:space="preserve">
+    <value>Time steps</value>
+  </data>
+  <data name="Library_Compatibility_Supported" xml:space="preserve">
+    <value>Supported</value>
+  </data>
+  <data name="Library_Compatibility_NewerFormat" xml:space="preserve">
+    <value>Supported: read with the newer, compatible edition {0}</value>
+    <comment>{0} is an edition, such as 2.0.0.</comment>
+  </data>
+  <data name="Library_Compatibility_OlderFormat" xml:space="preserve">
+    <value>Partly supported: SoundCharts reads edition {0}, so some features may not draw</value>
+    <comment>{0} is an edition, such as 2.0.0.</comment>
+  </data>
+  <data name="Library_Compatibility_UnsupportedFormat" xml:space="preserve">
+    <value>Not supported: SoundCharts reads edition {0}, so the chart may be incomplete or wrong</value>
+    <comment>{0} is an edition, such as 2.0.0.</comment>
+  </data>
+  <data name="Library_Compatibility_UnknownFormat" xml:space="preserve">
+    <value>Edition not stated; SoundCharts reads edition {0}</value>
+    <comment>{0} is an edition, such as 2.0.0.</comment>
+  </data>
+  <data name="Library_Validation_NotValidated" xml:space="preserve">
+    <value>Not validated</value>
+  </data>
+  <data name="Library_Validation_Running" xml:space="preserve">
+    <value>Validating…</value>
+  </data>
+  <data name="Library_Validation_Valid" xml:space="preserve">
+    <value>Valid</value>
+  </data>
+  <data name="Library_Validation_ValidRulesFormat" xml:space="preserve">
+    <value>Valid · {0:N0} rules checked</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="Library_Validation_Invalid" xml:space="preserve">
+    <value>Not valid</value>
+  </data>
+  <data name="Library_Validation_NoRules" xml:space="preserve">
+    <value>No validation rules for this product</value>
+  </data>
+  <data name="Library_Validation_FailedFormat" xml:space="preserve">
+    <value>Couldn't validate: {0}</value>
+    <comment>{0} is an error message.</comment>
+  </data>
+  <data name="Library_Validation_OneError" xml:space="preserve">
+    <value>1 error</value>
+  </data>
+  <data name="Library_Validation_ErrorsFormat" xml:space="preserve">
+    <value>{0:N0} errors</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="Library_Validation_OneWarning" xml:space="preserve">
+    <value>1 warning</value>
+  </data>
+  <data name="Library_Validation_WarningsFormat" xml:space="preserve">
+    <value>{0:N0} warnings</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="Library_Validation_FindingFormat" xml:space="preserve">
+    <value>{0}: {1}</value>
+    <comment>{0} is Error, Warning or Info; {1} a message.</comment>
+  </data>
+  <data name="Library_ValidationTimedOut" xml:space="preserve">
+    <value>validation took longer than {0:N0} minutes</value>
+    <comment>{0} is a number of minutes.</comment>
+  </data>
+  <data name="Library_ValidationExitCode" xml:space="preserve">
+    <value>s100 validate ended with code {0}</value>
+    <comment>{0} is a number.</comment>
+  </data>
+  <data name="Library_ValidationNotStarted" xml:space="preserve">
+    <value>{0} didn't start</value>
+    <comment>{0} is a file path.</comment>
+  </data>
+  <data name="Library_ValidationNoServer" xml:space="preserve">
+    <value>The s100 program isn't installed, so datasets can't be validated.</value>
+  </data>
+  <data name="Library_ValidationZip" xml:space="preserve">
+    <value>Datasets inside a .zip can't be validated. Extract the exchange set and add its folder to the Library.</value>
+  </data>
+  <data name="Library_TimeSteps_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Library_TimeSteps_One" xml:space="preserve">
+    <value>1 step</value>
+  </data>
+  <data name="Library_TimeSteps_CountFormat" xml:space="preserve">
+    <value>{0:N0} steps</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="Library_TimeSteps_Hourly" xml:space="preserve">
+    <value>hourly</value>
+  </data>
+  <data name="Library_TimeSteps_Daily" xml:space="preserve">
+    <value>daily</value>
+  </data>
+  <data name="Library_TimeSteps_EveryHoursFormat" xml:space="preserve">
+    <value>every {0:N0} h</value>
+    <comment>{0} is a number of hours.</comment>
+  </data>
+  <data name="Library_TimeSteps_EveryMinutesFormat" xml:space="preserve">
+    <value>every {0:N0} min</value>
+    <comment>{0} is a number of minutes.</comment>
+  </data>
+  <data name="Library_TimeSteps_Reading" xml:space="preserve">
+    <value>Reading…</value>
+  </data>
+  <data name="Library_EmptyTitle" xml:space="preserve">
+    <value>Your library is empty</value>
+  </data>
+  <data name="Library_EmptyDescription" xml:space="preserve">
+    <value>Add chart data to browse it. Only an index is kept. Nothing is loaded, copied or downloaded until you ask.</value>
+  </data>
+  <data name="Library_DropHint" xml:space="preserve">
+    <value>Or drop a folder, .zip, CATALOG or collection manifest file here</value>
+  </data>
+  <data name="Library_FilterWatermark" xml:space="preserve">
+    <value>Filter by name, title, product…</value>
+  </data>
+  <data name="Library_Filter" xml:space="preserve">
+    <value>Filter datasets</value>
+  </data>
+  <data name="Library_Tree" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="Library_Details" xml:space="preserve">
+    <value>Dataset details</value>
+  </data>
+  <data name="Library_SelectItemPlaceholder" xml:space="preserve">
+    <value>Select a dataset to see its details</value>
+  </data>
+  <data name="Library_AddFolder" xml:space="preserve">
+    <value>Add a folder…</value>
+  </data>
+  <data name="Library_AddExchangeSet" xml:space="preserve">
+    <value>Add an exchange set…</value>
+  </data>
+  <data name="Library_AddManifest" xml:space="preserve">
+    <value>Add a collection manifest…</value>
+  </data>
+  <data name="Library_Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="Library_Remove" xml:space="preserve">
+    <value>Remove from library</value>
+  </data>
+  <data name="Library_AddToMap" xml:space="preserve">
+    <value>Add to Map</value>
+  </data>
+  <data name="Library_ShowFootprint" xml:space="preserve">
+    <value>Show Footprint</value>
+  </data>
+  <data name="Library_Validate" xml:space="preserve">
+    <value>Validate</value>
+  </data>
+  <data name="Library_OpenContainingFolder" xml:space="preserve">
+    <value>Open Containing Folder</value>
+  </data>
+  <data name="Tooltip_LibraryAddFolder" xml:space="preserve">
+    <value>Add a folder of datasets and exchange sets to the Library. It's scanned recursively and referenced in place.</value>
+  </data>
+  <data name="Tooltip_LibraryAddExchangeSet" xml:space="preserve">
+    <value>Add an exchange set (CATALOG.XML, CATALOG.031 or .zip) to the Library, referenced in place.</value>
+  </data>
+  <data name="Tooltip_LibraryAddManifest" xml:space="preserve">
+    <value>Add named groups of local folders, from a .s100collection.json file.</value>
+  </data>
+  <data name="Tooltip_LibraryRefresh" xml:space="preserve">
+    <value>Re-index the selected collection or source, or the whole Library</value>
+  </data>
+  <data name="Tooltip_LibraryRemove" xml:space="preserve">
+    <value>Remove the selected collection or source from the Library. Its files aren't deleted.</value>
+  </data>
+  <data name="Tooltip_LibraryAddToMap" xml:space="preserve">
+    <value>Add the selected dataset to the active map as a SoundCharts chart. A dataset in a .zip adds its whole exchange set.</value>
+  </data>
+  <data name="Tooltip_LibraryShowFootprint" xml:space="preserve">
+    <value>Show where the selected dataset is on the active map, from the Library's index.</value>
+  </data>
+  <data name="Tooltip_LibraryValidate" xml:space="preserve">
+    <value>Check the selected dataset against its product specification's rules. Runs s100 validate outside ArcGIS Pro.</value>
+  </data>
+  <data name="Tooltip_LibraryOpenContainingFolder" xml:space="preserve">
+    <value>Show the selected dataset's file in File Explorer.</value>
+  </data>
+  <data name="Library_AddFolderTitle" xml:space="preserve">
+    <value>Add Folder to Library</value>
+  </data>
+  <data name="Library_AddExchangeSetTitle" xml:space="preserve">
+    <value>Add Exchange Set to Library</value>
+  </data>
+  <data name="Library_AddManifestTitle" xml:space="preserve">
+    <value>Add Collection Manifest to Library</value>
+  </data>
+  <data name="Library_ExchangeSetFilter" xml:space="preserve">
+    <value>Exchange sets (CATALOG.XML, CATALOG.031, .zip)|CATALOG.XML;CATALOG.031;*.zip</value>
+    <comment>Keep the part after | as it is.</comment>
+  </data>
+  <data name="Library_ManifestFilter" xml:space="preserve">
+    <value>Collection manifests (*.s100collection.json)|*.s100collection.json|JSON files (*.json)|*.json</value>
+    <comment>Keep the parts after each | as they are.</comment>
+  </data>
+  <data name="Library_Caption" xml:space="preserve">
+    <value>SoundCharts Library</value>
+  </data>
+  <data name="Library_ImportProblemsHeading" xml:space="preserve">
+    <value>Some items weren't added to the Library:</value>
+  </data>
+  <data name="Library_Problem_NotFoundFormat" xml:space="preserve">
+    <value>{0}: not found</value>
+    <comment>{0} is a file or folder path.</comment>
+  </data>
+  <data name="Library_Problem_AlreadyInLibraryFormat" xml:space="preserve">
+    <value>{0}: already in the Library</value>
+    <comment>{0} is a file or folder path.</comment>
+  </data>
+  <data name="Library_Problem_UnreadableFormat" xml:space="preserve">
+    <value>{0}: couldn't be read. {1}</value>
+    <comment>{0} is a file or folder path; {1} a reason, possibly empty.</comment>
+  </data>
+  <data name="Library_RemoveConfirmFormat" xml:space="preserve">
+    <value>Remove {0} from the Library? Its files aren't deleted.</value>
+    <comment>{0} is a name.</comment>
+  </data>
+  <data name="Library_NoMap" xml:space="preserve">
+    <value>Open a map to show the footprint.</value>
+  </data>
+  <data name="Library_NoFootprint" xml:space="preserve">
+    <value>The Library's index has no footprint for this dataset.</value>
+  </data>
+  <data name="Library_FileMissingFormat" xml:space="preserve">
+    <value>{0} isn't there any more. Refresh the Library to update it.</value>
+    <comment>{0} is a file path.</comment>
+  </data>
+  <data name="Library_ActionFailedFormat" xml:space="preserve">
+    <value>That didn't work: {0}</value>
+    <comment>{0} is an error message.</comment>
+  </data>
+  <data name="Export_Title" xml:space="preserve">
+    <value>Export SoundCharts Chart</value>
+  </data>
+  <data name="Export_Heading" xml:space="preserve">
+    <value>Export {0}</value>
+    <comment>{0} is the layout's name.</comment>
+  </data>
+  <data name="Export_OneLayer" xml:space="preserve">
+    <value>1 SoundCharts layer is rendered at the layout's scale and resolution.</value>
+  </data>
+  <data name="Export_LayerCount" xml:space="preserve">
+    <value>{0} SoundCharts layers are rendered at the layout's scale and resolution.</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="Export_FileLabel" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Export_FormatLabel" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Export_ResolutionLabel" xml:space="preserve">
+    <value>Resolution</value>
+  </data>
+  <data name="Export_ResolutionFormat" xml:space="preserve">
+    <value>{0} dpi</value>
+    <comment>{0} is dots per inch.</comment>
+  </data>
+  <data name="Export_FormatPdf" xml:space="preserve">
+    <value>PDF (georeferenced)</value>
+  </data>
+  <data name="Export_FormatPng" xml:space="preserve">
+    <value>PNG (with world file)</value>
+  </data>
+  <data name="Export_FormatJpeg" xml:space="preserve">
+    <value>JPEG (with world file)</value>
+  </data>
+  <data name="Export_FormatTiff" xml:space="preserve">
+    <value>TIFF (GeoTIFF)</value>
+  </data>
+  <data name="Export_FilterPdf" xml:space="preserve">
+    <value>PDF (*.pdf)|*.pdf</value>
+    <comment>A Windows file dialog filter: label|pattern.</comment>
+  </data>
+  <data name="Export_FilterPng" xml:space="preserve">
+    <value>PNG (*.png)|*.png</value>
+    <comment>A Windows file dialog filter: label|pattern.</comment>
+  </data>
+  <data name="Export_FilterJpeg" xml:space="preserve">
+    <value>JPEG (*.jpg)|*.jpg;*.jpeg</value>
+    <comment>A Windows file dialog filter: label|pattern.</comment>
+  </data>
+  <data name="Export_FilterTiff" xml:space="preserve">
+    <value>TIFF (*.tif)|*.tif;*.tiff</value>
+    <comment>A Windows file dialog filter: label|pattern.</comment>
+  </data>
+  <data name="Export_FileDialogTitle" xml:space="preserve">
+    <value>Export SoundCharts Chart</value>
+  </data>
+  <data name="Export_Note" xml:space="preserve">
+    <value>SoundCharts layers print with the symbol sizes and the content they show on screen at this scale. Raster formats are georeferenced to the largest map frame with SoundCharts layers. Not for navigation.</value>
+  </data>
+  <data name="Export_NoLayers" xml:space="preserve">
+    <value>The active layout has no visible SoundCharts layers to render. Use Pro's Export Layout for it.</value>
+  </data>
+  <data name="Export_NoticeQuestion" xml:space="preserve">
+    <value>This layout doesn't say that its chart is not for navigation. Add this text at the lower left of the page?
+
+{0}
+
+Choose No to export without it.</value>
+    <comment>{0} is the notice text.</comment>
+  </data>
+  <data name="Export_NoticeText" xml:space="preserve">
+    <value>SoundCharts · Not for navigation · Data: {0}</value>
+    <comment>{0} is the data producers. Design brief §7.1.</comment>
+  </data>
+  <data name="Export_Progress" xml:space="preserve">
+    <value>Rendering SoundCharts layers for the export...</value>
+  </data>
+  <data name="Export_Done" xml:space="preserve">
+    <value>Exported {0}.</value>
+    <comment>{0} is a file path.</comment>
+  </data>
+  <data name="Export_Partial" xml:space="preserve">
+    <value>Exported {0}. {1} SoundCharts layer(s) couldn't be rendered and are drawn from the chart server's tiles. Show the SoundCharts Log for the reason.</value>
+    <comment>{0} is a file path, {1} a count.</comment>
+  </data>
+  <data name="Export_NotWritten" xml:space="preserve">
+    <value>ArcGIS Pro couldn't write {0}. Check that the folder exists and the file isn't open in another program.</value>
+    <comment>{0} is a file path.</comment>
+  </data>
+  <data name="Export_Failed" xml:space="preserve">
+    <value>The SoundCharts chart couldn't be exported: {0}</value>
+    <comment>{0} is the reason.</comment>
+  </data>
+  <data name="Button_Browse" xml:space="preserve">
+    <value>_Browse...</value>
+  </data>
+  <data name="Button_Export" xml:space="preserve">
+    <value>_Export</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Tooltip_ExportBrowse" xml:space="preserve">
+    <value>Choose the file to export to.</value>
+  </data>
+  <data name="Tooltip_ExportFormat" xml:space="preserve">
+    <value>PDF keeps each map frame's coordinate system. PNG, JPEG and TIFF are georeferenced to one map frame.</value>
+  </data>
+  <data name="Tooltip_ExportResolution" xml:space="preserve">
+    <value>Dots per inch on the page. SoundCharts symbols keep their printed size at every resolution.</value>
+  </data>
+  <data name="Library_AddFeatureLayers" xml:space="preserve">
+    <value>Add as Feature Layers</value>
+  </data>
+  <data name="Tooltip_LibraryAddFeatureLayers" xml:space="preserve">
+    <value>Add the selected dataset's features to the active map as feature layers, one per feature type, for selection, attribute tables and geoprocessing. S-101, S-124, S-421 and S-57 only.</value>
+  </data>
+  <data name="RouteCheck_NotARoute" xml:space="preserve">
+    <value>This file isn't an RTZ or S-421 route.</value>
+  </data>
+  <data name="RouteCheck_TooFewWaypoints" xml:space="preserve">
+    <value>The route has fewer than two waypoints.</value>
+  </data>
+  <data name="RouteCheck_DatasetProblemFormat" xml:space="preserve">
+    <value>{0}: {1}</value>
+    <comment>{0} is a dataset name, {1} the reason in English.</comment>
+  </data>
+  <data name="RouteCheck_FooterWeather" xml:space="preserve">
+    <value>weather forecast</value>
+  </data>
+  <data name="RouteCheck_FooterCyclones" xml:space="preserve">
+    <value>NHC advisory</value>
+  </data>
+  <data name="RouteCheck_GroupMustReview" xml:space="preserve">
+    <value>MUST REVIEW</value>
+  </data>
+  <data name="RouteCheck_GroupCheck" xml:space="preserve">
+    <value>CHECK</value>
+  </data>
+  <data name="RouteCheck_GroupInfo" xml:space="preserve">
+    <value>INFO</value>
+  </data>
+  <data name="RouteCheck_TagClearance" xml:space="preserve">
+    <value>Clearance</value>
+  </data>
+  <data name="RouteCheck_TagRouteCheck" xml:space="preserve">
+    <value>Route check</value>
+  </data>
+  <data name="RouteCheck_TagS124" xml:space="preserve">
+    <value>S-124</value>
+  </data>
+  <data name="RouteCheck_TagConfidence" xml:space="preserve">
+    <value>Confidence</value>
+  </data>
+  <data name="RouteCheck_TagWeather" xml:space="preserve">
+    <value>Weather</value>
+  </data>
+  <data name="RouteCheck_TagData" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="RouteCheck_GroupLayerFormat" xml:space="preserve">
+    <value>Route check · {0}</value>
+    <comment>{0} is a route name.</comment>
+  </data>
+  <data name="RouteCheck_FindingsLayerPoints" xml:space="preserve">
+    <value>Findings (points)</value>
+  </data>
+  <data name="RouteCheck_FindingsLayerSegments" xml:space="preserve">
+    <value>Findings (segments)</value>
+  </data>
+  <data name="RouteCheck_EmptyTitle" xml:space="preserve">
+    <value>Check a route</value>
+  </data>
+  <data name="RouteCheck_EmptyDescription" xml:space="preserve">
+    <value>Select a line feature and choose Check Selected Line, draw a route, or open an S-421 or RTZ route. It's checked against the datasets of the map's SoundCharts layers.</value>
+  </data>
+  <data name="RouteCheck_Computing" xml:space="preserve">
+    <value>Checking the passage…</value>
+  </data>
+  <data name="RouteCheck_ErrorFormat" xml:space="preserve">
+    <value>Couldn't check the passage: {0}</value>
+    <comment>{0} is the reason.</comment>
+  </data>
+  <data name="RouteCheck_VerdictWaterLevelEnds" xml:space="preserve">
+    <value>Arrival is after the water-level data ends</value>
+  </data>
+  <data name="RouteCheck_VerdictBelowOne" xml:space="preserve">
+    <value>Below your UKC setting in 1 place</value>
+  </data>
+  <data name="RouteCheck_VerdictBelowFormat" xml:space="preserve">
+    <value>Below your UKC setting in {0} places</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_VerdictIncomplete" xml:space="preserve">
+    <value>No data for part of the passage</value>
+  </data>
+  <data name="RouteCheck_VerdictTight" xml:space="preserve">
+    <value>Meets your settings · tight</value>
+  </data>
+  <data name="RouteCheck_VerdictMeets" xml:space="preserve">
+    <value>Meets your settings</value>
+  </data>
+  <data name="RouteCheck_ConfidenceS101Format" xml:space="preserve">
+    <value>Charted depth from S-101 on {0:0.0} NM</value>
+    <comment>{0} is a distance in nautical miles.</comment>
+  </data>
+  <data name="RouteCheck_ConfidenceDatumUnconfirmed" xml:space="preserve">
+    <value>Vertical datums unconfirmed: depth and water level may not share a reference</value>
+  </data>
+  <data name="RouteCheck_ConfidencePredictedFormat" xml:space="preserve">
+    <value>Water level predicted on {0:0.0} NM: astronomical tide only, not a forecast</value>
+    <comment>{0} is a distance in nautical miles.</comment>
+  </data>
+  <data name="RouteCheck_ToReviewFormat" xml:space="preserve">
+    <value>{0} to review</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_ToCheckFormat" xml:space="preserve">
+    <value>{0} to check</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_MoreFormat" xml:space="preserve">
+    <value>and {0} more</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_VerdictCheckFormat" xml:space="preserve">
+    <value>Meets your settings · {0} to check</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_AndMoreToReviewFormat" xml:space="preserve">
+    <value>{0} · and {1} more to review</value>
+    <comment>{0} is a place, {1} a count.</comment>
+  </data>
+  <data name="RouteCheck_NoDraftVerdictNone" xml:space="preserve">
+    <value>No findings for your settings</value>
+  </data>
+  <data name="RouteCheck_ClearNoDraft" xml:space="preserve">
+    <value>Land, drying, dangers, areas and warnings checked</value>
+  </data>
+  <data name="RouteCheck_Separator" xml:space="preserve">
+    <value> · </value>
+  </data>
+  <data name="RouteCheck_SummaryClearance" xml:space="preserve">
+    <value>Clearance</value>
+  </data>
+  <data name="RouteCheck_SummaryRoute" xml:space="preserve">
+    <value>Route</value>
+  </data>
+  <data name="RouteCheck_SummaryWarnings" xml:space="preserve">
+    <value>Warnings</value>
+  </data>
+  <data name="RouteCheck_SummaryWeather" xml:space="preserve">
+    <value>Weather</value>
+  </data>
+  <data name="RouteCheck_SummaryNotChecked" xml:space="preserve">
+    <value>Not checked</value>
+  </data>
+  <data name="RouteCheck_NoClearance" xml:space="preserve">
+    <value>No clearance could be computed</value>
+  </data>
+  <data name="RouteCheck_SummaryClearanceFormat" xml:space="preserve">
+    <value>min {0} · required {1}</value>
+    <comment>{0} and {1} are depths with units.</comment>
+  </data>
+  <data name="RouteCheck_SummaryClearanceNoMarginFormat" xml:space="preserve">
+    <value>min {0} · no margin set</value>
+    <comment>{0} is a depth with its unit.</comment>
+  </data>
+  <data name="RouteCheck_ChipBelowFormat" xml:space="preserve">
+    <value>{0} below</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_ChipTight" xml:space="preserve">
+    <value>tight</value>
+  </data>
+  <data name="RouteCheck_ChipNoTide" xml:space="preserve">
+    <value>no water level</value>
+  </data>
+  <data name="RouteCheck_ChipMeets" xml:space="preserve">
+    <value>meets</value>
+  </data>
+  <data name="RouteCheck_SummaryNothingFound" xml:space="preserve">
+    <value>Nothing found</value>
+  </data>
+  <data name="RouteCheck_SummaryNothingOnRoute" xml:space="preserve">
+    <value>Nothing on route</value>
+  </data>
+  <data name="RouteCheck_SummaryNearRouteFormat" xml:space="preserve">
+    <value>{0} near route</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_SummaryInForceFormat" xml:space="preserve">
+    <value>{0} in force on route</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_SummaryNearFormat" xml:space="preserve">
+    <value>{0} near</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_SummaryWeatherMustReviewFormat" xml:space="preserve">
+    <value>{0} must review</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_SummaryWeatherAboveFormat" xml:space="preserve">
+    <value>{0} above limits</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_SummaryWeatherToCheckFormat" xml:space="preserve">
+    <value>{0} to check</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_SummaryWeatherNotCheckedFormat" xml:space="preserve">
+    <value>{0} not checked</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="RouteCheck_LegFormat" xml:space="preserve">
+    <value>Leg {0} → {1}</value>
+    <comment>{0} and {1} are waypoint numbers.</comment>
+  </data>
+  <data name="RouteCheck_MinutesBelowFormat" xml:space="preserve">
+    <value>{0} min below</value>
+    <comment>{0} is a number of minutes.</comment>
+  </data>
+  <data name="RouteCheck_FooterFormat" xml:space="preserve">
+    <value>Not for navigation · computed from {0} for your settings</value>
+    <comment>{0} is a list of products, such as "S-101, S-102".</comment>
+  </data>
+  <data name="RouteCheck_FooterNoData" xml:space="preserve">
+    <value>Not for navigation · no data loaded for this route</value>
+  </data>
+  <data name="RouteCheck_ParameterDraftFormat" xml:space="preserve">
+    <value>Draft {0}</value>
+    <comment>{0} is a depth with its unit.</comment>
+  </data>
+  <data name="RouteCheck_ParameterNoDraft" xml:space="preserve">
+    <value>No draft</value>
+  </data>
+  <data name="RouteCheck_ParameterUkcFormat" xml:space="preserve">
+    <value>UKC margin {0}</value>
+    <comment>{0} is a depth with its unit, or "no margin set".</comment>
+  </data>
+  <data name="RouteCheck_NoMarginSet" xml:space="preserve">
+    <value>no margin set</value>
+  </data>
+  <data name="RouteCheck_ParameterSafetyContourFormat" xml:space="preserve">
+    <value>Safety contour {0}</value>
+    <comment>{0} is a depth with its unit.</comment>
+  </data>
+  <data name="RouteCheck_ParameterSafetyDepthFormat" xml:space="preserve">
+    <value>Safety depth {0}</value>
+    <comment>{0} is a depth with its unit.</comment>
+  </data>
+  <data name="RouteCheck_FromRouteFormat" xml:space="preserve">
+    <value>{0} (route)</value>
+    <comment>{0} is a parameter, such as "Draft 7.0 m".</comment>
+  </data>
+  <data name="RouteCheck_CheckSelectedLine" xml:space="preserve">
+    <value>Check Selected Line</value>
+  </data>
+  <data name="RouteCheck_CheckSelectedLineTooltip" xml:space="preserve">
+    <value>Check the line feature selected in the map.</value>
+  </data>
+  <data name="RouteCheck_DrawRoute" xml:space="preserve">
+    <value>Draw Route</value>
+  </data>
+  <data name="RouteCheck_DrawRouteTooltip" xml:space="preserve">
+    <value>Draw a route on the map, then double-click to finish and check it.</value>
+  </data>
+  <data name="RouteCheck_OpenRoute" xml:space="preserve">
+    <value>Open Route...</value>
+  </data>
+  <data name="RouteCheck_OpenRouteTooltip" xml:space="preserve">
+    <value>Check an S-421 or RTZ route file.</value>
+  </data>
+  <data name="RouteCheck_OpenRouteTitle" xml:space="preserve">
+    <value>Open Route</value>
+  </data>
+  <data name="RouteCheck_OpenRouteFilter" xml:space="preserve">
+    <value>Routes (*.rtz;*.gml;*.xml)|*.rtz;*.gml;*.xml|All files (*.*)|*.*</value>
+    <comment>A Windows file dialog filter: label|patterns pairs.</comment>
+  </data>
+  <data name="RouteCheck_NoLineSelected" xml:space="preserve">
+    <value>Select a line feature in the map first.</value>
+  </data>
+  <data name="RouteCheck_NoMap" xml:space="preserve">
+    <value>Open a map to check a route.</value>
+  </data>
+  <data name="RouteCheck_Findings" xml:space="preserve">
+    <value>Findings</value>
+  </data>
+  <data name="RouteCheck_Empty" xml:space="preserve">
+    <value>No findings for this route.</value>
+  </data>
+  <data name="RouteCheck_ObjectInformation" xml:space="preserve">
+    <value>Object information</value>
+  </data>
+  <data name="RouteCheck_ObjectInformationTooltip" xml:space="preserve">
+    <value>List the chart features here in the SoundCharts Object information pane.</value>
+  </data>
+  <data name="RouteCheck_ZoomTooltip" xml:space="preserve">
+    <value>Zoom map to finding location.</value>
+  </data>
+  <data name="RouteCheck_NoPlaceTooltip" xml:space="preserve">
+    <value>This finding has no place on the route.</value>
+  </data>
+  <data name="RouteCheck_FindingsWriteFailedFormat" xml:space="preserve">
+    <value>The findings couldn't be added to the map: {0}</value>
+    <comment>{0} is the reason in English.</comment>
+  </data>
+  <data name="RouteCheck_ProblemsHeading" xml:space="preserve">
+    <value>Some data couldn't be read:</value>
+  </data>
+  <data name="RouteCheck_SketchName" xml:space="preserve">
+    <value>Drawn route</value>
+  </data>
+  <data name="RouteCheck_FeatureNameFormat" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>{0} is a layer name, {1} an object id.</comment>
+  </data>
+  <data name="RouteCheck_CheckAgain" xml:space="preserve">
+    <value>Check Again</value>
+  </data>
+  <data name="RouteCheck_CheckAgainTooltip" xml:space="preserve">
+    <value>Check the same route again, with the map's current SoundCharts layers and settings.</value>
+  </data>
+  <data name="RouteCheck_LayerDescription" xml:space="preserve">
+    <value>Route check findings from SoundCharts, by severity: MUST REVIEW, CHECK, INFO. Not for navigation.</value>
+  </data>
+  <data name="RouteCheck_EditName" xml:space="preserve">
+    <value>Write route check findings</value>
+  </data>
+  <data name="Settings_RouteCheckSection" xml:space="preserve">
+    <value>Route check</value>
+  </data>
+  <data name="Settings_RouteCheckNote" xml:space="preserve">
+    <value>Used by Route check where a route gives none of its own. Leave empty for none.</value>
+  </data>
+  <data name="Settings_Draft" xml:space="preserve">
+    <value>Draft</value>
+  </data>
+  <data name="Tooltip_Draft" xml:space="preserve">
+    <value>The ship's draft in metres. Without a draft, Route check doesn't check clearance (UKC).</value>
+  </data>
+  <data name="Settings_UkcMargin" xml:space="preserve">
+    <value>UKC margin</value>
+  </data>
+  <data name="Tooltip_UkcMargin" xml:space="preserve">
+    <value>The under-keel clearance to keep, in metres. Without one, clearance is checked against 0 m.</value>
   </data>
 </root>

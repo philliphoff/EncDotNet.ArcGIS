@@ -385,8 +385,8 @@ Labels are the viewer's, from `Strings.resx`.
 | **Shallow Contour** | 2 m | Project | None | U1 |
 | **Deep Contour** | 30 m | Project | None | U1 |
 | **Four-shade depth scheme** | Off | Project | None | U1 |
-| **Highlight shallow-water dangers** | Off | Project | None | U1 |
-| **Plain boundaries** | Off | Project | None | U1 |
+| **Highlight shallow-water dangers** | On | Project | None | U1 |
+| **Plain boundaries** | On | Project | None | U1 |
 | **Simplified symbols** | Off | Project | None | U1 |
 | **Full light lines** | Off | Project | None | U1 |
 | Soundings | On | Project | None (`--hide` can't select soundings) | U1 |
@@ -398,9 +398,13 @@ Labels are the viewer's, from `Strings.resx`.
 | **Time format** (**Local time**, **UTC**) | **UTC** | Application | Add-in only | — |
 | Draft, UKC margin | none | Project | Add-in only (route check, in-process) | — |
 
-The defaults shown are the `s100` tool's where it has one (safety contour and
-depth, 30 m) and placeholders otherwise. The rule is the viewer's defaults:
-A5 checks each against the viewer and corrects this table.
+The defaults are the viewer's, checked by A5 against EncDotNet.S100 `main`
+(`MarinerSettings`, `EcdisDisplaySettings`, `ViewerSettings`): highlight
+shallow-water dangers and plain boundaries are on there, and this table
+follows. The viewer's own **Time format** defaults to local time; D28 keeps
+**UTC** here, because a Pro project is shared and printed. The viewer has no
+**Soundings** switch of its own (its text and viewing-group toggles cover
+it), so the label is the brief's.
 
 **Draft** and the UKC margin are route-check inputs (A11), on the
 **SoundCharts** project page under **Route check**, beside a route's own

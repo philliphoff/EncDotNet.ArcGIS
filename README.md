@@ -56,7 +56,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for prerequisites and details.
 |---|---|
 | `src/EncDotNet.ArcGIS.SoundCharts/` | The ArcGIS Pro add-in: `Config.daml`, the module, ribbon controls, panes and windows |
 | `src/EncDotNet.ArcGIS.SoundCharts.Core/` | The add-in's logic that doesn't use the Pro SDK: dataset sets, the chart server and its supervisor, the SoundCharts log |
+| `src/EncDotNet.ArcGIS.SoundCharts/Toolboxes/` | **SoundCharts Tools**, the Python toolbox packaged with the add-in ([docs](docs/toolbox.md)) |
 | `tests/EncDotNet.ArcGIS.SoundCharts.Tests/` | xunit tests for the add-in's logic that doesn't need Pro |
+| `tests/toolbox/` | Python tests for the toolbox, runnable without Pro |
 | `tools/` | Developer scripts: `build-server.ps1` (the pinned chart server, pinned in `s100-server.json`) and `deploy-addin.ps1` |
 | `docs/` | Contributor documentation and design notes |
 

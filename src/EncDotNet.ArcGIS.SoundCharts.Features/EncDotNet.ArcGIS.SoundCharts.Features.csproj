@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The SoundCharts plugin datasource (issue #15): S-1xx features as
+       read-only Pro tables and feature classes. Esri's targets package a
+       PackageType=Plugin project as an .esriPlugin with Config.xml, a package
+       of its own beside the add-in's .esriAddinX; a plugin datasource can't
+       be declared in Config.daml. The table model is in
+       EncDotNet.ArcGIS.SoundCharts.Core (Features/), so it's tested without
+       Pro; this project only adapts it to the Pro SDK's templates. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <PackageType>Plugin</PackageType>
+    <!-- Pro is x64; see the add-in project. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <!-- Pro loads the plugin from the .esriPlugin, so NuGet dependencies are
+         copied next to the plugin assembly to be packaged with it. -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <!-- No ArcGIS segment: it hides the Pro SDK's ArcGIS.* namespaces. -->
+    <RootNamespace>EncDotNet.SoundCharts.PluginDatasource</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Packaged at the root of the .esriPlugin. -->
+    <Content Include="Config.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Esri.ArcGISPro.Extensions30" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EncDotNet.ArcGIS.SoundCharts.Core\EncDotNet.ArcGIS.SoundCharts.Core.csproj" />
+  </ItemGroup>
+
+</Project>
