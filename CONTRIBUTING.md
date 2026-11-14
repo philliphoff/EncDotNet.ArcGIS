@@ -111,6 +111,12 @@ own chart server; **Object information** then picks in it. Selecting the
 group or a layer shows the **SoundCharts Layer** tab, with **Zoom to Data**
 and the chart's **Log**.
 
+In the **Catalog** pane, right-click a folder, folder connection, cell,
+HDF5 dataset or `CATALOG.XML` that holds S-57 or S-1xx data and choose
+**Open with SoundCharts** > **Add to Map** for the same result. The command
+appears only for items whose content is chart data; the SoundCharts log
+records, at Debug level, what it found for each right-click.
+
 To try **Object information** on any map without adding data, build the
 Debug configuration and start Pro with `SOUNDCHARTS_DEBUG_DATASETS` set to
 dataset paths separated by `;`. The tool then looks in those datasets
