@@ -561,6 +561,102 @@ public static class Strings
     /// <summary>Gets the message when an action fails: <c>{0}</c> is why.</summary>
     public static string Library_ActionFailedFormat => Get(nameof(Library_ActionFailedFormat));
 
+    /// <summary>Gets the export window's title.</summary>
+    public static string Export_Title => Get(nameof(Export_Title));
+
+    /// <summary>Gets the export window's heading: <c>{0}</c> is the layout's name.</summary>
+    public static string Export_Heading => Get(nameof(Export_Heading));
+
+    /// <summary>Gets the summary for one rendered layer.</summary>
+    public static string Export_OneLayer => Get(nameof(Export_OneLayer));
+
+    /// <summary>Gets the summary for several rendered layers: <c>{0}</c> is the count.</summary>
+    public static string Export_LayerCount => Get(nameof(Export_LayerCount));
+
+    /// <summary>Gets the label of the output file box.</summary>
+    public static string Export_FileLabel => Get(nameof(Export_FileLabel));
+
+    /// <summary>Gets the label of the format list.</summary>
+    public static string Export_FormatLabel => Get(nameof(Export_FormatLabel));
+
+    /// <summary>Gets the label of the resolution list.</summary>
+    public static string Export_ResolutionLabel => Get(nameof(Export_ResolutionLabel));
+
+    /// <summary>Gets a resolution: <c>{0}</c> is dots per inch.</summary>
+    public static string Export_ResolutionFormat => Get(nameof(Export_ResolutionFormat));
+
+    /// <summary>Gets the PDF format's name.</summary>
+    public static string Export_FormatPdf => Get(nameof(Export_FormatPdf));
+
+    /// <summary>Gets the PNG format's name.</summary>
+    public static string Export_FormatPng => Get(nameof(Export_FormatPng));
+
+    /// <summary>Gets the JPEG format's name.</summary>
+    public static string Export_FormatJpeg => Get(nameof(Export_FormatJpeg));
+
+    /// <summary>Gets the TIFF format's name.</summary>
+    public static string Export_FormatTiff => Get(nameof(Export_FormatTiff));
+
+    /// <summary>Gets the save dialog filter for PDF.</summary>
+    public static string Export_FilterPdf => Get(nameof(Export_FilterPdf));
+
+    /// <summary>Gets the save dialog filter for PNG.</summary>
+    public static string Export_FilterPng => Get(nameof(Export_FilterPng));
+
+    /// <summary>Gets the save dialog filter for JPEG.</summary>
+    public static string Export_FilterJpeg => Get(nameof(Export_FilterJpeg));
+
+    /// <summary>Gets the save dialog filter for TIFF.</summary>
+    public static string Export_FilterTiff => Get(nameof(Export_FilterTiff));
+
+    /// <summary>Gets the save dialog's title.</summary>
+    public static string Export_FileDialogTitle => Get(nameof(Export_FileDialogTitle));
+
+    /// <summary>Gets the note under the export choices.</summary>
+    public static string Export_Note => Get(nameof(Export_Note));
+
+    /// <summary>Gets the message when a layout has no SoundCharts layers to export.</summary>
+    public static string Export_NoLayers => Get(nameof(Export_NoLayers));
+
+    /// <summary>Gets the question offering the not-for-navigation text: <c>{0}</c> is the text.</summary>
+    public static string Export_NoticeQuestion => Get(nameof(Export_NoticeQuestion));
+
+    /// <summary>Gets the not-for-navigation layout text: <c>{0}</c> is the producers.</summary>
+    public static string Export_NoticeText => Get(nameof(Export_NoticeText));
+
+    /// <summary>Gets the progress message while an export renders.</summary>
+    public static string Export_Progress => Get(nameof(Export_Progress));
+
+    /// <summary>Gets the message after an export: <c>{0}</c> is the file.</summary>
+    public static string Export_Done => Get(nameof(Export_Done));
+
+    /// <summary>Gets the message after an export with layers drawn from tiles: <c>{0}</c> is the file, <c>{1}</c> the count.</summary>
+    public static string Export_Partial => Get(nameof(Export_Partial));
+
+    /// <summary>Gets the message when Pro doesn't write the file: <c>{0}</c> is the file.</summary>
+    public static string Export_NotWritten => Get(nameof(Export_NotWritten));
+
+    /// <summary>Gets the message when the export fails: <c>{0}</c> is the reason.</summary>
+    public static string Export_Failed => Get(nameof(Export_Failed));
+
+    /// <summary>Gets the Browse button's text.</summary>
+    public static string Button_Browse => Get(nameof(Button_Browse));
+
+    /// <summary>Gets the Export button's text.</summary>
+    public static string Button_Export => Get(nameof(Button_Export));
+
+    /// <summary>Gets the Cancel button's text.</summary>
+    public static string Button_Cancel => Get(nameof(Button_Cancel));
+
+    /// <summary>Gets the export Browse button's tooltip.</summary>
+    public static string Tooltip_ExportBrowse => Get(nameof(Tooltip_ExportBrowse));
+
+    /// <summary>Gets the format list's tooltip.</summary>
+    public static string Tooltip_ExportFormat => Get(nameof(Tooltip_ExportFormat));
+
+    /// <summary>Gets the resolution list's tooltip.</summary>
+    public static string Tooltip_ExportResolution => Get(nameof(Tooltip_ExportResolution));
+
     private static string Get(string name) =>
         Manager.GetString(name, CultureInfo.CurrentUICulture) ?? name;
 }

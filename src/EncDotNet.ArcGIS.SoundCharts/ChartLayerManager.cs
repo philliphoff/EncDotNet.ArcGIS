@@ -281,6 +281,15 @@ internal sealed class ChartLayerManager
         return present.Count == 0 ? marker.ToDatasetSet() : ChartLayerMarker.ForLayer(marker.Kind!.Value, present).ToDatasetSet();
     }
 
+    /// <summary>
+    /// Gets what an export renders for a chart layer (A10): the dataset set
+    /// and start-up options its chart server serves. Runs on the MCT.
+    /// </summary>
+    /// <param name="layer">The layer.</param>
+    /// <returns>The layer's marker and dataset set, or <see langword="null"/> when it isn't a SoundCharts chart layer.</returns>
+    internal static (ChartLayerMarker Marker, DatasetSet Datasets)? ExportSource(Layer layer) =>
+        ReadMarker(layer) is { IsGroup: false, Kind: not null } marker ? (marker, ServerSet(marker)) : null;
+
     /// <summary>Reads a map's SoundCharts layers. Runs on the MCT.</summary>
     private static MapState ReadMap(Map map)
     {
