@@ -145,6 +145,10 @@
         </Border>
 
         <TextBlock Text="{Binding Title}" Style="{DynamicResource Esri_TextBlockH5}" TextWrapping="Wrap" />
+        <TextBlock Text="{Binding Validity}"
+                   Style="{StaticResource OptionalText}"
+                   FontWeight="SemiBold"
+                   AutomationProperties.AutomationId="ObjectInfo.Validity" />
         <TextBlock Text="{Binding Caption}" Style="{StaticResource OptionalText}" />
         <TextBox Text="{Binding Source, Mode=OneWay}"
                  IsReadOnly="True"

@@ -136,6 +136,26 @@ public class ObjectInfoPresenterTests
         Assert.Equal(Strings.ObjectInfo_FailedTitle, ObjectInfoPresenter.Failed.Heading);
     }
 
+    [Fact]
+    public void Present_SaysWhetherANavigationalWarningIsInForce()
+    {
+        var time = new DateTime(2026, 3, 20, 18, 0, 0, DateTimeKind.Utc);
+        var warning = new ChartDataset(@"C:\data\navwarn.gml", "navwarn");
+        ObjectInfoReport ReportOf(bool? inForce) =>
+            new(1, 2, time, [new(warning, "S-124", [Feature("part")], inForce)], []);
+
+        var inForce = ObjectInfoPresenter.Present(ReportOf(true));
+        Assert.Equal(Strings.ObjectInfo_InForce, inForce.Items.Single().Validity);
+        Assert.Equal(
+            string.Format(CultureInfo.CurrentCulture, Strings.ObjectInfo_MapTimeFormat, ObjectInfoPresenter.FormatUtc(time)),
+            inForce.TimeNote);
+        Assert.Equal(Strings.ObjectInfo_NotInForce, ObjectInfoPresenter.Present(ReportOf(false)).Items.Single().Validity);
+
+        var unknown = ObjectInfoPresenter.Present(ReportOf(null));
+        Assert.Null(unknown.Items.Single().Validity);
+        Assert.Null(unknown.TimeNote);
+    }
+
     private static ObjectInfoReport Report(params ObjectInfoFeature[] features) =>
         new(1, 2, null, [new(Cell, "S-101", features)], []);
 

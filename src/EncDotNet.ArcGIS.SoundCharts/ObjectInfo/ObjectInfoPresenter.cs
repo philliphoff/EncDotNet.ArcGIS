@@ -61,12 +61,19 @@ internal static class ObjectInfoPresenter
         foreach (var dataset in report.Datasets)
         {
             var group = Format(Strings.ObjectInfo_DatasetFormat, dataset.Dataset.Name, dataset.Spec);
+            var validity = dataset.InForce switch
+            {
+                true => Strings.ObjectInfo_InForce,
+                false => Strings.ObjectInfo_NotInForce,
+                null => null,
+            };
             foreach (var feature in dataset.Features)
             {
                 items.Add(new ObjectInfoItem(
                     feature,
                     group,
                     dataset.Dataset.NotForNavigation,
+                    validity,
                     Format(Strings.ObjectInfo_IdFormat, feature.FeatureRef),
                     Format(Strings.ObjectInfo_SourceFormat, dataset.Dataset.Path),
                     [.. feature.Attributes.Select(a => new ObjectInfoAttributeRow(
@@ -90,12 +97,14 @@ internal static class ObjectInfoPresenter
 
         // Only time-varying coverages depend on the time; say which was used
         // whenever the report has a coverage value.
+        // Navigational warnings' validity depends on it too (D33).
         var hasCoverage = report.Datasets.Any(d => d.Features.Any(f => f.Kind == ObjectInfoFeatureKind.Coverage));
-        var timeNote = !hasCoverage
-            ? null
-            : report.Time is { } time
+        var hasValidity = report.Datasets.Any(d => d.InForce is not null);
+        var timeNote = report.Time is { } time
+            ? hasCoverage
                 ? Format(Strings.ObjectInfo_TimeFormat, FormatUtc(time))
-                : Strings.ObjectInfo_TimeDefault;
+                : hasValidity ? Format(Strings.ObjectInfo_MapTimeFormat, FormatUtc(time)) : null
+            : hasCoverage ? Strings.ObjectInfo_TimeDefault : null;
 
         return new ObjectInfoView(
             heading,
@@ -139,6 +148,10 @@ internal sealed record ObjectInfoView(
 /// <param name="Feature">The feature.</param>
 /// <param name="Group">The dataset heading the item is listed under.</param>
 /// <param name="NotForNavigation">Whether the dataset's provider marks it not for navigation.</param>
+/// <param name="Validity">
+/// For a navigational warning, "In force at map time" or "Not in force at
+/// map time" (D33); <c>null</c> otherwise.
+/// </param>
 /// <param name="Caption">The line under the title, its id.</param>
 /// <param name="Source">The dataset's path, as the viewer's "Source:" line.</param>
 /// <param name="Attributes">The attribute rows.</param>
@@ -147,6 +160,7 @@ internal sealed record ObjectInfoItem(
     ObjectInfoFeature Feature,
     string Group,
     bool NotForNavigation,
+    string? Validity,
     string Caption,
     string Source,
     IReadOnlyList<ObjectInfoAttributeRow> Attributes,

@@ -219,6 +219,48 @@ public static class Strings
     /// <summary>Gets the name of the Surface currents layer (S-111).</summary>
     public static string Layer_SurfaceCurrents => Get(nameof(Layer_SurfaceCurrents));
 
+    /// <summary>Gets the line for a navigational warning in force at map time (D33).</summary>
+    public static string ObjectInfo_InForce => Get(nameof(ObjectInfo_InForce));
+
+    /// <summary>Gets the line for a navigational warning not in force at map time (D33).</summary>
+    public static string ObjectInfo_NotInForce => Get(nameof(ObjectInfo_NotInForce));
+
+    /// <summary>Gets the time note when only navigational warnings depend on it: <c>{0}</c> is the time.</summary>
+    public static string ObjectInfo_MapTimeFormat => Get(nameof(ObjectInfo_MapTimeFormat));
+
+    /// <summary>Gets a UTC time (D28): <c>{0}</c> is the time.</summary>
+    public static string Status_UtcFormat => Get(nameof(Status_UtcFormat));
+
+    /// <summary>Gets a span in minutes: <c>{0}</c> is the number.</summary>
+    public static string Status_SpanMinutes => Get(nameof(Status_SpanMinutes));
+
+    /// <summary>Gets a span in hours: <c>{0}</c> is the number.</summary>
+    public static string Status_SpanHours => Get(nameof(Status_SpanHours));
+
+    /// <summary>Gets a span in days: <c>{0}</c> is the number.</summary>
+    public static string Status_SpanDays => Get(nameof(Status_SpanDays));
+
+    /// <summary>Gets a time layer's status with data: <c>{0}</c> the layer, <c>{1}</c> the step.</summary>
+    public static string Status_LayerAtTime => Get(nameof(Status_LayerAtTime));
+
+    /// <summary>Gets a time layer's status without data: <c>{0}</c> the layer, <c>{1}</c> the no-data text.</summary>
+    public static string Status_LayerNoData => Get(nameof(Status_LayerNoData));
+
+    /// <summary>Gets "No data at map time", for a layer with no steps at all.</summary>
+    public static string Status_NoData => Get(nameof(Status_NoData));
+
+    /// <summary>Gets the no-data text pointing back: <c>{0}</c> the last step, <c>{1}</c> the span.</summary>
+    public static string Status_NoDataLast => Get(nameof(Status_NoDataLast));
+
+    /// <summary>Gets the no-data text pointing forward: <c>{0}</c> the next step, <c>{1}</c> the span.</summary>
+    public static string Status_NoDataNext => Get(nameof(Status_NoDataNext));
+
+    /// <summary>Gets the time status when the map has no time layers.</summary>
+    public static string Status_NoTimeLayers => Get(nameof(Status_NoTimeLayers));
+
+    /// <summary>Gets the time status when the map has time layers but no map time.</summary>
+    public static string Status_NoMapTime => Get(nameof(Status_NoMapTime));
+
     /// <summary>Gets the group layer's name: <c>{0}</c> is the source.</summary>
     public static string Group_Name => Get(nameof(Group_Name));
 
