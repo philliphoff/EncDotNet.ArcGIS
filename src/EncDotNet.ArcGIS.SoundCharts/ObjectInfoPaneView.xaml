@@ -1,0 +1,266 @@
+<UserControl x:Class="EncDotNet.SoundCharts.ObjectInfoPaneView"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
+             xmlns:res="clr-namespace:EncDotNet.SoundCharts.Resources"
+             AutomationProperties.AutomationId="ObjectInfo">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+
+      <CollectionViewSource x:Key="GroupedItems" Source="{Binding Items}">
+        <CollectionViewSource.GroupDescriptions>
+          <PropertyGroupDescription PropertyName="Group" />
+        </CollectionViewSource.GroupDescriptions>
+      </CollectionViewSource>
+
+      <!-- Text that collapses when it has nothing to say. -->
+      <!-- Not based on Pro's Esri_TextBlockRegular: BasedOn needs a static
+           resource, which the pane can't count on finding at load time. -->
+      <Style x:Key="OptionalText" TargetType="TextBlock">
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Foreground" Value="{DynamicResource Esri_TextStyleDefaultBrush}" />
+        <Style.Triggers>
+          <Trigger Property="Text" Value="{x:Null}">
+            <Setter Property="Visibility" Value="Collapsed" />
+          </Trigger>
+          <Trigger Property="Text" Value="">
+            <Setter Property="Visibility" Value="Collapsed" />
+          </Trigger>
+        </Style.Triggers>
+      </Style>
+
+      <Style x:Key="SectionHeading" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Margin" Value="0,10,0,4" />
+        <Setter Property="Foreground" Value="{DynamicResource Esri_TextStyleSubduedBrush}" />
+      </Style>
+    </ResourceDictionary>
+  </UserControl.Resources>
+
+  <Grid Margin="8">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" MinHeight="60" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="2*" MinHeight="60" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <!-- Heading, state and position. -->
+    <StackPanel Grid.Row="0" Margin="0,0,0,6">
+      <TextBlock Text="{Binding Heading}"
+                 Style="{DynamicResource Esri_TextBlockH5}"
+                 TextWrapping="Wrap"
+                 AutomationProperties.AutomationId="ObjectInfo.Heading" />
+      <TextBlock Text="{Binding Description}" Style="{StaticResource OptionalText}" Margin="0,2,0,0" />
+      <TextBlock Text="{Binding Location}"
+                 Style="{StaticResource OptionalText}"
+                 Margin="0,2,0,0"
+                 Foreground="{DynamicResource Esri_TextStyleSubduedBrush}"
+                 AutomationProperties.AutomationId="ObjectInfo.Location" />
+    </StackPanel>
+
+    <!-- Every feature and coverage value at the point, grouped by dataset. -->
+    <ListBox Grid.Row="1"
+             ItemsSource="{Binding Source={StaticResource GroupedItems}}"
+             SelectedItem="{Binding SelectedItem}"
+             BorderThickness="0"
+             Background="Transparent"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+             AutomationProperties.AutomationId="ObjectInfo.Features"
+             AutomationProperties.Name="{x:Static res:Strings.ObjectInfo_Features}">
+      <ListBox.GroupStyle>
+        <GroupStyle>
+          <GroupStyle.HeaderTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Name}"
+                         Style="{StaticResource SectionHeading}"
+                         TextTrimming="CharacterEllipsis"
+                         ToolTip="{Binding Name}" />
+            </DataTemplate>
+          </GroupStyle.HeaderTemplate>
+        </GroupStyle>
+      </ListBox.GroupStyle>
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Margin="0,2" AutomationProperties.Name="{Binding Title}">
+            <TextBlock Text="{Binding Title}" Style="{DynamicResource Esri_TextBlockRegular}" FontWeight="SemiBold" />
+            <TextBlock Text="{Binding Caption}"
+                       Style="{DynamicResource Esri_TextBlockRegular}"
+                       Foreground="{DynamicResource Esri_TextStyleSubduedBrush}" />
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <GridSplitter Grid.Row="2"
+                  Height="5"
+                  HorizontalAlignment="Stretch"
+                  Background="{DynamicResource Esri_BorderBrush}"
+                  AutomationProperties.AutomationId="ObjectInfo.Splitter" />
+
+    <!-- The selected feature: attributes and associations. -->
+    <ScrollViewer Grid.Row="3"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Focusable="False"
+                  AutomationProperties.AutomationId="ObjectInfo.Details"
+                  AutomationProperties.Name="{x:Static res:Strings.ObjectInfo_Details}">
+      <StackPanel DataContext="{Binding SelectedItem}" Margin="0,6,0,0">
+        <StackPanel.Style>
+          <Style TargetType="StackPanel">
+            <Style.Triggers>
+              <Trigger Property="DataContext" Value="{x:Null}">
+                <Setter Property="Visibility" Value="Collapsed" />
+              </Trigger>
+            </Style.Triggers>
+          </Style>
+        </StackPanel.Style>
+
+        <Border BorderThickness="1"
+                BorderBrush="{DynamicResource Esri_BorderBrush}"
+                Padding="6,3"
+                Margin="0,0,0,6"
+                HorizontalAlignment="Left"
+                ToolTip="{x:Static res:Strings.ObjectInfo_NotForNavigationToolTip}"
+                AutomationProperties.AutomationId="ObjectInfo.NotForNavigation"
+                AutomationProperties.HelpText="{x:Static res:Strings.ObjectInfo_NotForNavigationToolTip}">
+          <Border.Style>
+            <Style TargetType="Border">
+              <Setter Property="Visibility" Value="Collapsed" />
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding NotForNavigation}" Value="True">
+                  <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </Border.Style>
+          <TextBlock Text="{x:Static res:Strings.ObjectInfo_NotForNavigation}"
+                     Style="{DynamicResource Esri_TextBlockRegular}"
+                     FontWeight="Bold" />
+        </Border>
+
+        <TextBlock Text="{Binding Title}" Style="{DynamicResource Esri_TextBlockH5}" TextWrapping="Wrap" />
+        <TextBlock Text="{Binding Caption}" Style="{StaticResource OptionalText}" />
+        <TextBox Text="{Binding Source, Mode=OneWay}"
+                 IsReadOnly="True"
+                 BorderThickness="0"
+                 Background="Transparent"
+                 Padding="0"
+                 TextWrapping="Wrap"
+                 Foreground="{DynamicResource Esri_TextStyleSubduedBrush}"
+                 AutomationProperties.AutomationId="ObjectInfo.Source"
+                 AutomationProperties.Name="{Binding Source}" />
+
+        <TextBlock Text="{x:Static res:Strings.ObjectInfo_AttributesHeading}" Style="{StaticResource SectionHeading}" />
+        <TextBlock Text="{x:Static res:Strings.ObjectInfo_NoAttributes}">
+          <TextBlock.Style>
+            <Style TargetType="TextBlock">
+              <Setter Property="Foreground" Value="{DynamicResource Esri_TextStyleDefaultBrush}" />
+              <Setter Property="Visibility" Value="Collapsed" />
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding Attributes.Count}" Value="0">
+                  <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </TextBlock.Style>
+        </TextBlock>
+        <ItemsControl ItemsSource="{Binding Attributes}" Focusable="False" Grid.IsSharedSizeScope="True">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Grid Margin="0,1" ToolTip="{Binding ToolTip}">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" SharedSizeGroup="AttributeName" MaxWidth="220" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Text="{Binding Name}"
+                           Style="{DynamicResource Esri_TextBlockRegular}"
+                           Foreground="{DynamicResource Esri_TextStyleSubduedBrush}"
+                           TextWrapping="Wrap"
+                           Margin="0,0,12,0"
+                           Padding="{Binding Indent}" />
+                <!-- A read-only text box so the value can be selected and copied. -->
+                <TextBox Grid.Column="1"
+                         Text="{Binding Value, Mode=OneWay}"
+                         IsReadOnly="True"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         Foreground="{DynamicResource Esri_TextStyleDefaultBrush}"
+                         Padding="0"
+                         TextWrapping="Wrap"
+                         AutomationProperties.Name="{Binding Name}" />
+                <TextBox Grid.Row="1"
+                         Grid.ColumnSpan="2"
+                         Text="{Binding Text, Mode=OneWay}"
+                         IsReadOnly="True"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         Foreground="{DynamicResource Esri_TextStyleDefaultBrush}"
+                         Padding="0,2,0,4"
+                         TextWrapping="Wrap"
+                         AutomationProperties.Name="{Binding Name}">
+                  <TextBox.Style>
+                    <Style TargetType="TextBox">
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding Text}" Value="{x:Null}">
+                          <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </TextBox.Style>
+                </TextBox>
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel>
+          <StackPanel.Style>
+            <Style TargetType="StackPanel">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding References.Count}" Value="0">
+                  <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </StackPanel.Style>
+          <TextBlock Text="{x:Static res:Strings.ObjectInfo_ReferencesHeading}" Style="{StaticResource SectionHeading}" />
+          <ItemsControl ItemsSource="{Binding References}" Focusable="False">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding}" Style="{DynamicResource Esri_TextBlockRegular}" TextWrapping="Wrap" Margin="0,1" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- Time used for water levels and currents, and datasets that couldn't be read. -->
+    <StackPanel Grid.Row="4" Margin="0,6,0,0">
+      <TextBlock Text="{Binding TimeNote}"
+                 Style="{StaticResource OptionalText}"
+                 Foreground="{DynamicResource Esri_TextStyleSubduedBrush}"
+                 AutomationProperties.AutomationId="ObjectInfo.Time" />
+      <ItemsControl ItemsSource="{Binding Problems}"
+                    Focusable="False"
+                    AutomationProperties.AutomationId="ObjectInfo.Problems"
+                    AutomationProperties.Name="{x:Static res:Strings.ObjectInfo_Problems}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding}" Style="{DynamicResource Esri_TextBlockRegular}" TextWrapping="Wrap" Margin="0,2,0,0" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </Grid>
+</UserControl>

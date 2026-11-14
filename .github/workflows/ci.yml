@@ -78,7 +78,24 @@ jobs:
           /nologo
           /bl:msbuild.binlog
 
+      - name: Check out EncDotNet.S100 test datasets
+        # Object information's coverage tests (S-102, S-104, S-111) use
+        # EncDotNet.S100's own test datasets, so no real data is committed
+        # here. Keep the ref in step with EncDotNetS100Version.
+        uses: actions/checkout@v7
+        with:
+          repository: philliphoff/EncDotNet.S100
+          ref: v0.27.0
+          path: s100-datasets
+          sparse-checkout: |
+            tests/datasets/S102
+            tests/datasets/S104
+            tests/datasets/S111
+          sparse-checkout-cone-mode: true
+
       - name: Test
+        env:
+          SOUNDCHARTS_S100_TEST_DATASETS: ${{ github.workspace }}/s100-datasets/tests/datasets
         run: dotnet test EncDotNet.ArcGIS.slnx --no-build --configuration Release --logger trx --results-directory TestResults
 
       - name: Upload test results

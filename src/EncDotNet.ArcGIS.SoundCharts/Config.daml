@@ -18,10 +18,14 @@
     <insertModule id="SoundCharts_Module" className="SoundChartsModule" autoLoad="true" caption="SoundCharts">
       <tabs>
         <tab id="SoundCharts_Tab" caption="SoundCharts" keytip="SC">
+          <group refID="SoundCharts_InquireGroup" />
           <group refID="SoundCharts_HelpGroup" />
         </tab>
       </tabs>
       <groups>
+        <group id="SoundCharts_InquireGroup" caption="Inquire" appearsOnAddInTab="false" keytip="I">
+          <tool refID="SoundCharts_ObjectInfoTool" size="large" />
+        </group>
         <group id="SoundCharts_HelpGroup" caption="Help" appearsOnAddInTab="false" keytip="H">
           <button refID="SoundCharts_LogButton" size="large" />
           <button refID="SoundCharts_AboutButton" size="large" />
@@ -32,12 +36,21 @@
                 loadOnClick="true" largeImage="GenericInformation32" smallImage="GenericInformation16">
           <tooltip heading="About SoundCharts">Show the versions of SoundCharts, EncDotNet.S100, ArcGIS Pro and .NET.<disabledText /></tooltip>
         </button>
+        <!-- Design brief D6: a SoundCharts map tool, not Pro's Explore. -->
+        <tool id="SoundCharts_ObjectInfoTool" className="ObjectInfoTool" caption="Object information" keytip="O"
+              loadOnClick="true" condition="esri_mapping_mapPane" largeImage="Explore32" smallImage="Explore16">
+          <tooltip heading="Object information">Click the map to list every feature and coverage value of the SoundCharts layers there, in the SoundCharts Object information pane.<disabledText>Open a map to use Object information.</disabledText></tooltip>
+        </tool>
         <button id="SoundCharts_LogButton" className="ShowLogButton" caption="Log" keytip="L"
                 loadOnClick="true" largeImage="DiagnosticsMonitor32" smallImage="DiagnosticsMonitor16">
           <tooltip heading="SoundCharts Log">Show add-in events and chart server output, to find out why a chart doesn't draw.<disabledText /></tooltip>
         </button>
       </controls>
       <dockPanes>
+        <dockPane id="SoundCharts_ObjectInfoPane" caption="SoundCharts Object information" className="ObjectInfoPaneViewModel"
+                  dock="group" dockWith="esri_core_projectDockPane" initiallyVisible="false" smallImage="Explore16">
+          <content className="ObjectInfoPaneView" />
+        </dockPane>
         <dockPane id="SoundCharts_LogPane" caption="SoundCharts Log" className="LogPaneViewModel" dock="bottom"
                   keytip="L" autoHide="false">
           <content className="LogPaneView" />

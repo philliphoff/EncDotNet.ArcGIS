@@ -103,6 +103,11 @@ shows it loaded without opening the ribbon. The same log, with each chart
 server's output, is in the **SoundCharts Log** pane (**SoundCharts** tab >
 **Log**).
 
+To try **Object information** before a map has SoundCharts layers, build
+the Debug configuration and start Pro with `SOUNDCHARTS_DEBUG_DATASETS` set
+to dataset paths separated by `;`. The tool then looks in those datasets on
+any map. Release builds ignore the variable.
+
 ## Testing
 
 ```powershell
@@ -125,6 +130,10 @@ Test conventions:
 - Tests that need optional external data, such as real S-100 datasets, skip
   dynamically with xunit v3's `Assert.SkipUnless(...)` /
   `Assert.SkipWhen(...)`, so CI doesn't fail without them.
+- The Object information coverage tests (S-102, S-104, S-111) use
+  EncDotNet.S100's own test datasets. Set `SOUNDCHARTS_S100_TEST_DATASETS`
+  to the `tests/datasets` folder of an EncDotNet.S100 clone to run them; CI
+  checks that folder out at the pinned release.
 - **Never commit real ENC data files.** Use small synthetic fixtures, or skip
   tests that need live data.
 - Check behaviour in Pro by hand: install the add-in, restart Pro and use it.
