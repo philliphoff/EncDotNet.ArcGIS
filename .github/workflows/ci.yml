@@ -44,6 +44,30 @@ jobs:
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Read the chart server pin
+        id: server
+        shell: pwsh
+        run: |
+          $pin = Get-Content -Raw tools/s100-server.json | ConvertFrom-Json
+          "commit=$($pin.commit)" >> $env:GITHUB_OUTPUT
+
+      # The add-in bundles a pinned s100 build (design brief D21): no
+      # EncDotNet.S100 release serves WMTS yet, so tools/build-server.ps1
+      # publishes the CLI from the commit in tools/s100-server.json. It takes
+      # a few minutes, so the result is cached by commit and script.
+      - name: Cache the chart server
+        id: server-cache
+        uses: actions/cache@v4
+        with:
+          path: artifacts/server
+          key: s100-server-${{ steps.server.outputs.commit }}-${{ hashFiles('tools/build-server.ps1', 'tools/s100-server.json') }}
+
+      - name: Build the chart server
+        if: steps.server-cache.outputs.cache-hit != 'true'
+        shell: pwsh
+        # A short source folder: the upstream build writes deep paths.
+        run: tools/build-server.ps1 -SourceDirectory "${{ runner.temp }}\s100"
+
       - name: Build and package
         run: >
           msbuild EncDotNet.ArcGIS.slnx

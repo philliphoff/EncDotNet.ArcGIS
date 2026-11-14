@@ -27,6 +27,8 @@
   <ItemGroup>
     <!-- Small synthetic datasets; never real ENC data. -->
     <None Include="Fixtures\**" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Synthetic data only: never real ENC data. -->
+    <None Include="TestData\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/EncDotNet.ArcGIS.SoundCharts/EncDotNet.ArcGIS.SoundCharts.csproj" />
+    <Project Path="src/EncDotNet.ArcGIS.SoundCharts.Core/EncDotNet.ArcGIS.SoundCharts.Core.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/EncDotNet.ArcGIS.SoundCharts.Tests/EncDotNet.ArcGIS.SoundCharts.Tests.csproj" />

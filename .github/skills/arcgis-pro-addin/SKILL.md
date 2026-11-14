@@ -128,9 +128,11 @@ An agent can't click in Pro. To check a change:
 
 1. Build with Visual Studio's MSBuild, run `tools/deploy-addin.ps1`, and
    start (or restart) Pro: `& "C:\Program Files\ArcGIS\Pro\bin\ArcGISPro.exe"`.
-2. Read `%LOCALAPPDATA%\SoundCharts for ArcGIS\Logs\addin.log`. A new
-   `SoundCharts loaded:` line means Pro created the module; it lists the
-   add-in, EncDotNet.S100, Pro and .NET versions and the architecture.
+2. Read today's `%LOCALAPPDATA%\SoundCharts\ArcGIS\logs\soundcharts-<yyyyMMdd>.log`.
+   A new `SoundCharts loaded:` line means Pro created the module; it lists
+   the add-in, EncDotNet.S100, `s100`, Pro and .NET versions and the
+   architecture. The next line names the chart server found, or warns that
+   none was.
 3. If there's no line: check the package is in the add-in folder, that
    `AddInInfo` `desktopVersion` isn't newer than Pro, and Pro's add-in
    manager (**Project** > **Add-In Manager**) for a load error. Start Pro
