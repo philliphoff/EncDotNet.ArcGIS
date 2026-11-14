@@ -312,6 +312,254 @@ public static class Strings
     /// <summary>Gets the line after the listed warnings: <c>{0}</c> is how many more are in the log.</summary>
     public static string AddData_MoreInLog => Get(nameof(AddData_MoreInLog));
 
+    /// <summary>Gets a count of one dataset.</summary>
+    public static string Library_OneDataset => Get(nameof(Library_OneDataset));
+
+    /// <summary>Gets a count of datasets: <c>{0}</c> is the count.</summary>
+    public static string Library_DatasetCountFormat => Get(nameof(Library_DatasetCountFormat));
+
+    /// <summary>Gets a dataset's edition: <c>{0}</c> is the edition.</summary>
+    public static string Library_EditionFormat => Get(nameof(Library_EditionFormat));
+
+    /// <summary>Gets a dataset's edition and update: <c>{0}</c> is the edition, <c>{1}</c> the update.</summary>
+    public static string Library_EditionUpdateFormat => Get(nameof(Library_EditionUpdateFormat));
+
+    /// <summary>Gets the tag of a dataset whose file is gone.</summary>
+    public static string Library_Tag_Missing => Get(nameof(Library_Tag_Missing));
+
+    /// <summary>Gets the not-for-navigation notice and tag.</summary>
+    public static string Library_NotForNavigation => Get(nameof(Library_NotForNavigation));
+
+    /// <summary>Gets the heading of the validation details.</summary>
+    public static string Library_Group_Validation => Get(nameof(Library_Group_Validation));
+
+    /// <summary>Gets the heading of the time details.</summary>
+    public static string Library_Group_Time => Get(nameof(Library_Group_Time));
+
+    /// <summary>Gets the label of the edition compatibility.</summary>
+    public static string Library_Field_Compatibility => Get(nameof(Library_Field_Compatibility));
+
+    /// <summary>Gets the label of the validation status.</summary>
+    public static string Library_Field_Status => Get(nameof(Library_Field_Status));
+
+    /// <summary>Gets the label of the time a dataset covers.</summary>
+    public static string Library_Field_TimeRange => Get(nameof(Library_Field_TimeRange));
+
+    /// <summary>Gets the label of a dataset's time steps.</summary>
+    public static string Library_Field_TimeSteps => Get(nameof(Library_Field_TimeSteps));
+
+    /// <summary>Gets the compatibility of an edition SoundCharts reads.</summary>
+    public static string Library_Compatibility_Supported => Get(nameof(Library_Compatibility_Supported));
+
+    /// <summary>Gets the compatibility of an older compatible edition: <c>{0}</c> is the edition SoundCharts reads.</summary>
+    public static string Library_Compatibility_NewerFormat => Get(nameof(Library_Compatibility_NewerFormat));
+
+    /// <summary>Gets the compatibility of a newer edition on the same major: <c>{0}</c> is the edition SoundCharts reads.</summary>
+    public static string Library_Compatibility_OlderFormat => Get(nameof(Library_Compatibility_OlderFormat));
+
+    /// <summary>Gets the compatibility of an edition on another major: <c>{0}</c> is the edition SoundCharts reads.</summary>
+    public static string Library_Compatibility_UnsupportedFormat => Get(nameof(Library_Compatibility_UnsupportedFormat));
+
+    /// <summary>Gets the compatibility when the dataset states no edition: <c>{0}</c> is the edition SoundCharts reads.</summary>
+    public static string Library_Compatibility_UnknownFormat => Get(nameof(Library_Compatibility_UnknownFormat));
+
+    /// <summary>Gets the status of a dataset not validated yet.</summary>
+    public static string Library_Validation_NotValidated => Get(nameof(Library_Validation_NotValidated));
+
+    /// <summary>Gets the status while validation runs.</summary>
+    public static string Library_Validation_Running => Get(nameof(Library_Validation_Running));
+
+    /// <summary>Gets the status of a valid dataset.</summary>
+    public static string Library_Validation_Valid => Get(nameof(Library_Validation_Valid));
+
+    /// <summary>Gets the status of a valid dataset: <c>{0}</c> is the number of rules.</summary>
+    public static string Library_Validation_ValidRulesFormat => Get(nameof(Library_Validation_ValidRulesFormat));
+
+    /// <summary>Gets the status of a dataset that failed validation without counted findings.</summary>
+    public static string Library_Validation_Invalid => Get(nameof(Library_Validation_Invalid));
+
+    /// <summary>Gets the status when the product has no rules.</summary>
+    public static string Library_Validation_NoRules => Get(nameof(Library_Validation_NoRules));
+
+    /// <summary>Gets the status when validation couldn't run: <c>{0}</c> is why.</summary>
+    public static string Library_Validation_FailedFormat => Get(nameof(Library_Validation_FailedFormat));
+
+    /// <summary>Gets a count of one error.</summary>
+    public static string Library_Validation_OneError => Get(nameof(Library_Validation_OneError));
+
+    /// <summary>Gets a count of errors: <c>{0}</c> is the count.</summary>
+    public static string Library_Validation_ErrorsFormat => Get(nameof(Library_Validation_ErrorsFormat));
+
+    /// <summary>Gets a count of one warning.</summary>
+    public static string Library_Validation_OneWarning => Get(nameof(Library_Validation_OneWarning));
+
+    /// <summary>Gets a count of warnings: <c>{0}</c> is the count.</summary>
+    public static string Library_Validation_WarningsFormat => Get(nameof(Library_Validation_WarningsFormat));
+
+    /// <summary>Gets a finding: <c>{0}</c> is its severity, <c>{1}</c> its message.</summary>
+    public static string Library_Validation_FindingFormat => Get(nameof(Library_Validation_FindingFormat));
+
+    /// <summary>Gets why validation stopped: <c>{0}</c> is the time limit in minutes.</summary>
+    public static string Library_ValidationTimedOut => Get(nameof(Library_ValidationTimedOut));
+
+    /// <summary>Gets why validation failed without a message: <c>{0}</c> is the exit code.</summary>
+    public static string Library_ValidationExitCode => Get(nameof(Library_ValidationExitCode));
+
+    /// <summary>Gets why validation couldn't run: <c>{0}</c> is the program.</summary>
+    public static string Library_ValidationNotStarted => Get(nameof(Library_ValidationNotStarted));
+
+    /// <summary>Gets the message when there's no s100 to validate with.</summary>
+    public static string Library_ValidationNoServer => Get(nameof(Library_ValidationNoServer));
+
+    /// <summary>Gets the message when a zipped dataset is validated.</summary>
+    public static string Library_ValidationZip => Get(nameof(Library_ValidationZip));
+
+    /// <summary>Gets the time steps of a dataset without any.</summary>
+    public static string Library_TimeSteps_None => Get(nameof(Library_TimeSteps_None));
+
+    /// <summary>Gets one time step.</summary>
+    public static string Library_TimeSteps_One => Get(nameof(Library_TimeSteps_One));
+
+    /// <summary>Gets a count of time steps: <c>{0}</c> is the count.</summary>
+    public static string Library_TimeSteps_CountFormat => Get(nameof(Library_TimeSteps_CountFormat));
+
+    /// <summary>Gets an hourly step interval.</summary>
+    public static string Library_TimeSteps_Hourly => Get(nameof(Library_TimeSteps_Hourly));
+
+    /// <summary>Gets a daily step interval.</summary>
+    public static string Library_TimeSteps_Daily => Get(nameof(Library_TimeSteps_Daily));
+
+    /// <summary>Gets a step interval in hours: <c>{0}</c> is the hours.</summary>
+    public static string Library_TimeSteps_EveryHoursFormat => Get(nameof(Library_TimeSteps_EveryHoursFormat));
+
+    /// <summary>Gets a step interval in minutes: <c>{0}</c> is the minutes.</summary>
+    public static string Library_TimeSteps_EveryMinutesFormat => Get(nameof(Library_TimeSteps_EveryMinutesFormat));
+
+    /// <summary>Gets the time steps while they're read.</summary>
+    public static string Library_TimeSteps_Reading => Get(nameof(Library_TimeSteps_Reading));
+
+    /// <summary>Gets the heading of the empty Library.</summary>
+    public static string Library_EmptyTitle => Get(nameof(Library_EmptyTitle));
+
+    /// <summary>Gets the text of the empty Library.</summary>
+    public static string Library_EmptyDescription => Get(nameof(Library_EmptyDescription));
+
+    /// <summary>Gets the hint that files can be dropped on the pane.</summary>
+    public static string Library_DropHint => Get(nameof(Library_DropHint));
+
+    /// <summary>Gets the filter box's placeholder.</summary>
+    public static string Library_FilterWatermark => Get(nameof(Library_FilterWatermark));
+
+    /// <summary>Gets the filter box's accessible name.</summary>
+    public static string Library_Filter => Get(nameof(Library_Filter));
+
+    /// <summary>Gets the tree's accessible name.</summary>
+    public static string Library_Tree => Get(nameof(Library_Tree));
+
+    /// <summary>Gets the details panel's accessible name.</summary>
+    public static string Library_Details => Get(nameof(Library_Details));
+
+    /// <summary>Gets the details panel's text without a selection.</summary>
+    public static string Library_SelectItemPlaceholder => Get(nameof(Library_SelectItemPlaceholder));
+
+    /// <summary>Gets the Add a folder button's text.</summary>
+    public static string Library_AddFolder => Get(nameof(Library_AddFolder));
+
+    /// <summary>Gets the Add an exchange set button's text.</summary>
+    public static string Library_AddExchangeSet => Get(nameof(Library_AddExchangeSet));
+
+    /// <summary>Gets the Add a collection manifest button's text.</summary>
+    public static string Library_AddManifest => Get(nameof(Library_AddManifest));
+
+    /// <summary>Gets the Refresh button's text.</summary>
+    public static string Library_Refresh => Get(nameof(Library_Refresh));
+
+    /// <summary>Gets the Remove button's text.</summary>
+    public static string Library_Remove => Get(nameof(Library_Remove));
+
+    /// <summary>Gets the Add to Map button's text.</summary>
+    public static string Library_AddToMap => Get(nameof(Library_AddToMap));
+
+    /// <summary>Gets the Show Footprint button's text.</summary>
+    public static string Library_ShowFootprint => Get(nameof(Library_ShowFootprint));
+
+    /// <summary>Gets the Validate button's text.</summary>
+    public static string Library_Validate => Get(nameof(Library_Validate));
+
+    /// <summary>Gets the Open Containing Folder button's text.</summary>
+    public static string Library_OpenContainingFolder => Get(nameof(Library_OpenContainingFolder));
+
+    /// <summary>Gets the Add a folder button's tooltip.</summary>
+    public static string Tooltip_LibraryAddFolder => Get(nameof(Tooltip_LibraryAddFolder));
+
+    /// <summary>Gets the Add an exchange set button's tooltip.</summary>
+    public static string Tooltip_LibraryAddExchangeSet => Get(nameof(Tooltip_LibraryAddExchangeSet));
+
+    /// <summary>Gets the Add a collection manifest button's tooltip.</summary>
+    public static string Tooltip_LibraryAddManifest => Get(nameof(Tooltip_LibraryAddManifest));
+
+    /// <summary>Gets the Refresh button's tooltip.</summary>
+    public static string Tooltip_LibraryRefresh => Get(nameof(Tooltip_LibraryRefresh));
+
+    /// <summary>Gets the Remove button's tooltip.</summary>
+    public static string Tooltip_LibraryRemove => Get(nameof(Tooltip_LibraryRemove));
+
+    /// <summary>Gets the Add to Map button's tooltip.</summary>
+    public static string Tooltip_LibraryAddToMap => Get(nameof(Tooltip_LibraryAddToMap));
+
+    /// <summary>Gets the Show Footprint button's tooltip.</summary>
+    public static string Tooltip_LibraryShowFootprint => Get(nameof(Tooltip_LibraryShowFootprint));
+
+    /// <summary>Gets the Validate button's tooltip.</summary>
+    public static string Tooltip_LibraryValidate => Get(nameof(Tooltip_LibraryValidate));
+
+    /// <summary>Gets the Open Containing Folder button's tooltip.</summary>
+    public static string Tooltip_LibraryOpenContainingFolder => Get(nameof(Tooltip_LibraryOpenContainingFolder));
+
+    /// <summary>Gets the folder dialog's title.</summary>
+    public static string Library_AddFolderTitle => Get(nameof(Library_AddFolderTitle));
+
+    /// <summary>Gets the exchange set dialog's title.</summary>
+    public static string Library_AddExchangeSetTitle => Get(nameof(Library_AddExchangeSetTitle));
+
+    /// <summary>Gets the collection manifest dialog's title.</summary>
+    public static string Library_AddManifestTitle => Get(nameof(Library_AddManifestTitle));
+
+    /// <summary>Gets the exchange set dialog's file filter.</summary>
+    public static string Library_ExchangeSetFilter => Get(nameof(Library_ExchangeSetFilter));
+
+    /// <summary>Gets the collection manifest dialog's file filter.</summary>
+    public static string Library_ManifestFilter => Get(nameof(Library_ManifestFilter));
+
+    /// <summary>Gets the caption of messages from the Library.</summary>
+    public static string Library_Caption => Get(nameof(Library_Caption));
+
+    /// <summary>Gets the heading of the list of paths not added.</summary>
+    public static string Library_ImportProblemsHeading => Get(nameof(Library_ImportProblemsHeading));
+
+    /// <summary>Gets why a path wasn't added: <c>{0}</c> is the path.</summary>
+    public static string Library_Problem_NotFoundFormat => Get(nameof(Library_Problem_NotFoundFormat));
+
+    /// <summary>Gets why a path wasn't added: <c>{0}</c> is the path.</summary>
+    public static string Library_Problem_AlreadyInLibraryFormat => Get(nameof(Library_Problem_AlreadyInLibraryFormat));
+
+    /// <summary>Gets why a path wasn't added: <c>{0}</c> is the path, <c>{1}</c> why.</summary>
+    public static string Library_Problem_UnreadableFormat => Get(nameof(Library_Problem_UnreadableFormat));
+
+    /// <summary>Gets the question before removing: <c>{0}</c> is the collection or source.</summary>
+    public static string Library_RemoveConfirmFormat => Get(nameof(Library_RemoveConfirmFormat));
+
+    /// <summary>Gets the message when there's no map for Show Footprint.</summary>
+    public static string Library_NoMap => Get(nameof(Library_NoMap));
+
+    /// <summary>Gets the message when a dataset has no footprint.</summary>
+    public static string Library_NoFootprint => Get(nameof(Library_NoFootprint));
+
+    /// <summary>Gets the message when a dataset's file is gone: <c>{0}</c> is the path.</summary>
+    public static string Library_FileMissingFormat => Get(nameof(Library_FileMissingFormat));
+
+    /// <summary>Gets the message when an action fails: <c>{0}</c> is why.</summary>
+    public static string Library_ActionFailedFormat => Get(nameof(Library_ActionFailedFormat));
     /// <summary>Gets the message for a file that isn't a route (the viewer's).</summary>
     public static string RouteCheck_NotARoute => Get(nameof(RouteCheck_NotARoute));
 
