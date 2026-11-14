@@ -148,6 +148,13 @@ Test conventions:
   deliberate change, run the tests with `SOUNDCHARTS_UPDATE_SNAPSHOTS=1`,
   review the snapshot diff, and load the new `.lyrx` in Pro (or with
   `arcpy.mp.LayerFile`) before committing it.
+- The **SoundCharts Tools** Python toolbox has its own tests in
+  `tests/toolbox`, run with Pro's Python (or any Python 3.9 or later):
+  `"C:\Program Files\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\python.exe" -I -m unittest discover -s tests/toolbox -v`.
+  Keep the toolbox's logic in the arcpy-free `soundcharts_tools` package so
+  it's tested on CI. Its layer file is checked against the snapshots above,
+  so a change to the add-in's CIM needs the same change in
+  `soundcharts_tools/layerfile.py`. See [docs/toolbox.md](docs/toolbox.md#test-the-toolbox).
 - **Never commit real ENC data files.** Use small synthetic fixtures, or skip
   tests that need live data.
 - Check behaviour in Pro by hand: install the add-in, restart Pro and use it.

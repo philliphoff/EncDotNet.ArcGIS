@@ -40,6 +40,7 @@ src/
   EncDotNet.ArcGIS.SoundCharts/        # The add-in: Config.daml, module, ribbon controls, windows
     Config.daml                        # DAML: add-in info, module, tabs, groups, controls
     Resources/Strings.resx             # Localizable UI strings (+ hand-written Strings.cs)
+    Toolboxes/                         # SoundCharts Tools: SoundChartsTools.pyt + arcpy-free soundcharts_tools package
   EncDotNet.ArcGIS.SoundCharts.Core/   # Logic with no Pro reference, for tests and other slices
     Charts/                            # DatasetSet, DatasetSource: what one chart server portrays
     Server/                            # ChartServerPool, ChartServer (supervisor), endpoints, process launch
@@ -47,6 +48,7 @@ src/
   ArcGISPro.DotNetBuild.targets        # Skips Esri's packaging under `dotnet build`
 tests/
   EncDotNet.ArcGIS.SoundCharts.Tests/  # xunit v3 tests for logic that doesn't need Pro
+  toolbox/                             # unittest tests for the Python toolbox (Pro's Python, `-I`)
 tools/
   build-server.ps1                     # Builds the pinned s100 chart server into artifacts/server/
   s100-server.json                     # The pin: EncDotNet.S100 commit and version
@@ -95,6 +97,9 @@ docs/                                  # Coding and docs style guides, design no
 ## Requirements for changes
 
 ### Tests
+- The Python toolbox's logic lives in `Toolboxes/soundcharts_tools` (no
+  arcpy) and is tested in `tests/toolbox`; its layer file must match the
+  add-in's `.lyrx` snapshots byte for byte (docs/toolbox.md).
 - Every bug fix and new piece of logic comes with an xunit test in
   `tests/EncDotNet.ArcGIS.SoundCharts.Tests`.
 - Tests run without Pro: the Pro assemblies are reference-only, so a test

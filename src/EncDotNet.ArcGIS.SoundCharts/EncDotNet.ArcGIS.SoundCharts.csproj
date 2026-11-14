@@ -24,6 +24,15 @@
     <Content Include="Config.daml" />
   </ItemGroup>
 
+  <!-- SoundCharts Tools, the Python toolbox (A9). Pro copies an add-in's
+       Toolboxes folder to %LOCALAPPDATA%\ESRI\ArcGISPro\Toolboxes\{add-in id}
+       and lists the toolboxes in it in the Geoprocessing pane. -->
+  <ItemGroup>
+    <Content Include="Toolboxes\**\*"
+             Exclude="Toolboxes\**\__pycache__\**;Toolboxes\**\*.pyc"
+             CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Esri.ArcGISPro.Extensions30" />
     <PackageReference Include="EncDotNet.S100" />
