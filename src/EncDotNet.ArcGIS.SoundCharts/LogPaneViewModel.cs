@@ -136,7 +136,7 @@ internal sealed class LogPaneViewModel : DockPane
                 return;
             }
 
-            Entries.Add(new LogRow(entry));
+            Entries.Add(new LogRow(entry, SoundChartsSession.Settings.Application.TimeFormat));
             while (Entries.Count > SoundChartsSession.Log.Capacity)
             {
                 Entries.RemoveAt(0);
@@ -151,7 +151,7 @@ internal sealed class LogPaneViewModel : DockPane
         {
             if (_selectedFilter.Filter.Includes(entry, _sourceFilter))
             {
-                Entries.Add(new LogRow(entry));
+                Entries.Add(new LogRow(entry, SoundChartsSession.Settings.Application.TimeFormat));
             }
         }
     }

@@ -70,5 +70,5 @@ Charleston S-104 sample, through a proxy that logged every request.
   isn't filtered by validity; Object information is where it shows.
 - The validity rule combines the library's typed S-124 values; it belongs
   in EncDotNet.S100 once the library says "in force" itself.
-- **‹ Previous data** and **Next data ›** (§6.6) and the **Local time**
-  format (D28, A5's setting) aren't in this slice.
+- **‹ Previous data** and **Next data ›** (§6.6) aren't in this slice.
+  Times in the tab and the log follow A5's **Time format** setting (D28).

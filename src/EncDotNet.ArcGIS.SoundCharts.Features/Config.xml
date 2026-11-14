@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The SoundCharts plugin datasource (issue #15). A plugin datasource is its
+     own package, an .esriPlugin with this Config.xml, not part of the
+     .esriAddinX: Pro loads it through the CLR:PluginDS factory
+     (Pro\bin\AddInSettings.xml maps //AddIn/ArcGISPro/PluginDatasources/* to
+     its workspace factory category). It registers no file extension: the
+     add-in opens datasets through it by plugin id, from SoundCharts commands
+     only. -->
+<ESRI.Configuration xmlns="http://schemas.esri.com/DADF/Registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>SoundCharts features</Name>
+  <AddInID>{7123c783-f07c-4b82-8ad8-23cc2d975711}</AddInID>
+  <Description>S-101, S-124, S-421 and S-57 features as read-only tables, for the SoundCharts add-in. Not for navigation.</Description>
+  <Version>0.0.0</Version>
+  <Author>Phillip Hoff</Author>
+  <Company>EncDotNet.ArcGIS</Company>
+  <Date>2026-11-14</Date>
+  <Targets>
+    <Target name="ArcGISPro" version="3.7" />
+  </Targets>
+  <AddIn language="CLR:PluginDS" library="EncDotNet.ArcGIS.SoundCharts.Features.dll" namespace="EncDotNet.SoundCharts.PluginDatasource">
+    <ArcGISPro>
+      <PluginDatasources>
+        <PluginDatasource id="SoundCharts_FeaturesDatasource" class="FeaturesPluginDatasource" />
+      </PluginDatasources>
+    </ArcGISPro>
+  </AddIn>
+</ESRI.Configuration>

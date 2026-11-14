@@ -12,6 +12,7 @@ using EncDotNet.SoundCharts.Charts;
 using EncDotNet.SoundCharts.Logging;
 using EncDotNet.SoundCharts.MapTime;
 using EncDotNet.SoundCharts.Server;
+using EncDotNet.SoundCharts.Settings;
 
 namespace EncDotNet.SoundCharts;
 
@@ -52,6 +53,8 @@ internal sealed class ChartLayerManager
 
     private static string? ServerVersion => Pool.Host.Executable?.Version;
 
+    private static ChartSettings Settings => SoundChartsSession.Settings;
+
     /// <summary>Subscribes to Pro's project and layer events, and connects the layers of a project already open.</summary>
     public void Start()
     {
@@ -67,6 +70,7 @@ internal sealed class ChartLayerManager
         LayersRemovedEvent.Subscribe(_ => Guard("releasing removed SoundCharts layers", SweepRemovedAsync));
         TOCSelectionChangedEvent.Subscribe(args => UpdateSelectedState(args.MapView));
         ActiveMapViewChangedEvent.Subscribe(args => UpdateSelectedState(args.IncomingView));
+        Settings.Changed += OnSettingsChanged;
 
         if (Project.Current is not null)
         {
@@ -276,12 +280,25 @@ internal sealed class ChartLayerManager
         return ChartLayerMarker.TryParse(value);
     }
 
-    /// <summary>The dataset set a layer's server serves: the marker's datasets that are still on disk.</summary>
+    /// <summary>
+    /// The dataset set a layer's server serves: the marker's datasets that
+    /// are still on disk, with the project's start-up options (A5).
+    /// </summary>
     private static DatasetSet ServerSet(ChartLayerMarker marker)
     {
         var present = marker.Datasets.Where(d => d.Exists).ToList();
-        return present.Count == 0 ? marker.ToDatasetSet() : ChartLayerMarker.ForLayer(marker.Kind!.Value, present).ToDatasetSet();
+        var set = present.Count == 0 ? marker.ToDatasetSet() : ChartLayerMarker.ForLayer(marker.Kind!.Value, present).ToDatasetSet();
+        return set.WithOptions(Settings.Effective.RenderOptions);
     }
+
+    /// <summary>
+    /// Gets what an export renders for a chart layer (A10): the dataset set
+    /// and start-up options its chart server serves. Runs on the MCT.
+    /// </summary>
+    /// <param name="layer">The layer.</param>
+    /// <returns>The layer's marker and dataset set, or <see langword="null"/> when it isn't a SoundCharts chart layer.</returns>
+    internal static (ChartLayerMarker Marker, DatasetSet Datasets)? ExportSource(Layer layer) =>
+        ReadMarker(layer) is { IsGroup: false, Kind: not null } marker ? (marker, ServerSet(marker)) : null;
 
     /// <summary>Reads a map's SoundCharts layers. Runs on the MCT.</summary>
     private static MapState ReadMap(Map map)
@@ -330,7 +347,8 @@ internal sealed class ChartLayerManager
         var tileJson = await ReadTileJsonAsync(endpoint, lease.Server.LogSource).ConfigureAwait(false);
         var minScale = TileJsonZoom.MinScale(ReadMinZoom(tileJson, lease.Server.LogSource));
         var steps = ReadSteps(tileJson, lease.Server.LogSource);
-        var definition = new ChartLayerDefinition(marker, endpoint.WmtsCapabilitiesUri, MinScale: minScale, ServerVersion: ServerVersion);
+        var definition = new ChartLayerDefinition(
+            marker, endpoint.WmtsCapabilitiesUri, Style: Settings.Effective.Style, MinScale: minScale, ServerVersion: ServerVersion);
         return new Prepared(lease, definition, steps);
     }
 
@@ -363,7 +381,7 @@ internal sealed class ChartLayerManager
             SoundChartsSession.Log.Write(
                 LogLevel.Debug,
                 logSource,
-                $"{steps.Steps.Count} time step(s), {TimeText.FormatTime(steps.First)} to {TimeText.FormatTime(steps.Last)}, every {TimeText.FormatSpan(steps.Interval)}.");
+                $"{steps.Steps.Count} time step(s), {MapTimeText.FormatTime(steps.First)} to {MapTimeText.FormatTime(steps.Last)}, every {MapTimeText.FormatSpan(steps.Interval)}.");
         }
 
         return steps;
@@ -451,8 +469,7 @@ internal sealed class ChartLayerManager
             return false;
         }
 
-        var style = (cim.ServiceConnection as CIMWMTSServiceConnection)?.Style;
-        var connection = Connection(definition.CapabilitiesUri, string.IsNullOrWhiteSpace(style) ? definition.Style : style);
+        var connection = Connection(definition.CapabilitiesUri, definition.Style);
         MapTimeController.KeepTime(cim.ServiceConnection, connection);
         cim.ServiceConnection = connection;
         cim.CustomProperties = Marker(definition.Marker);
@@ -549,8 +566,7 @@ internal sealed class ChartLayerManager
                 return false;
             }
 
-            var style = (cim.ServiceConnection as CIMWMTSServiceConnection)?.Style;
-            var connection = Connection(endpoint.WmtsCapabilitiesUri, string.IsNullOrWhiteSpace(style) ? ChartLayerDefinition.DefaultStyle : style);
+            var connection = Connection(endpoint.WmtsCapabilitiesUri, Settings.Effective.Style);
             MapTimeController.KeepTime(cim.ServiceConnection, connection);
             cim.ServiceConnection = connection;
             layer.SetDefinition(cim);
@@ -561,6 +577,115 @@ internal sealed class ChartLayerManager
         {
             SoundChartsSession.Log.Write(LogLevel.Info, lease.Server.LogSource, $"Repointed the layer to {endpoint}.");
         }
+    }
+
+    private void OnSettingsChanged(object? sender, ChartSettingsChangedEventArgs args)
+    {
+        if (args.Change == ChartSettingsChange.None)
+        {
+            return;
+        }
+
+        Guard("applying the mariner settings", ApplySettingsAsync);
+    }
+
+    /// <summary>
+    /// Applies the current settings to every SoundCharts layer (§5.5): a
+    /// palette change sets each layer's WMTS style; a start-up option change
+    /// starts servers with the new options, repoints the layers to them
+    /// (new URLs, so Pro's tile cache can't show old tiles) and releases the
+    /// old servers. A layer whose new server doesn't start keeps its old one.
+    /// </summary>
+    /// <remarks>
+    /// Changes in quick succession each queue a run; every run reads the
+    /// latest settings, so the later ones find nothing left to do.
+    /// </remarks>
+    private async Task ApplySettingsAsync()
+    {
+        await _addGate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            List<Binding> bound;
+            lock (_gate)
+            {
+                bound = [.. _bindings.Values.Where(b => b.Lease is not null)];
+            }
+
+            var style = Settings.Effective.Style;
+            var restarted = 0;
+            var restyled = 0;
+            foreach (var binding in bound)
+            {
+                try
+                {
+                    switch (await ApplySettingsAsync(binding, style).ConfigureAwait(false))
+                    {
+                        case ChartSettingsChange.Restart:
+                            restarted++;
+                            break;
+                        case ChartSettingsChange.Restyle:
+                            restyled++;
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // One layer (say, of a map closing) mustn't stop the rest.
+                    AddInLog.Write(LogLevel.Warning, $"Mariner settings didn't apply to a SoundCharts layer: {ex.Message}");
+                }
+            }
+
+            if (restarted + restyled > 0)
+            {
+                AddInLog.Write($"Mariner settings applied: palette {style}, {restarted} layer(s) on new chart servers, {restyled} restyled.");
+            }
+        }
+        finally
+        {
+            _addGate.Release();
+        }
+    }
+
+    /// <summary>Applies the current settings to one bound layer.</summary>
+    /// <returns>What it took: a new server, a new style, or nothing.</returns>
+    private async Task<ChartSettingsChange> ApplySettingsAsync(Binding binding, string style)
+    {
+        var found = await QueuedTask.Run(() =>
+            binding.Map.FindLayer(binding.LayerUri) is { } layer && ReadMarker(layer) is { IsGroup: false } marker
+                ? (Layer: layer, Marker: marker)
+                : ((Layer Layer, ChartLayerMarker Marker)?)null);
+        if (found is not { } item)
+        {
+            return ChartSettingsChange.None;
+        }
+
+        if (binding.Lease?.Server.Datasets.Equals(ServerSet(item.Marker)) == false)
+        {
+            await ConnectAsync(binding.Map, item.Layer, item.Marker).ConfigureAwait(false);
+            return ChartSettingsChange.Restart;
+        }
+
+        return await QueuedTask.Run(() => Restyle(item.Layer, style)) ? ChartSettingsChange.Restyle : ChartSettingsChange.None;
+    }
+
+    /// <summary>Sets a chart layer's WMTS style. Runs on the MCT.</summary>
+    /// <returns>Whether the style changed.</returns>
+    private static bool Restyle(Layer layer, string style)
+    {
+        if (layer.GetDefinition() is not CIMTiledServiceLayer { ServiceConnection: CIMWMTSServiceConnection connection } cim
+            || string.Equals(connection.Style, style, StringComparison.Ordinal)
+            || connection.ServerConnection is not CIMInternetServerConnection { URL: { } url }
+            || !Uri.TryCreate(url, UriKind.Absolute, out var capabilities))
+        {
+            return false;
+        }
+
+        // A new connection, as a repoint makes, so Pro reconnects rather than patching the old one.
+        var restyled = Connection(capabilities, style);
+        MapTimeController.KeepTime(connection, restyled);
+        cim.ServiceConnection = restyled;
+        layer.SetDefinition(cim);
+        return true;
     }
 
     /// <summary>Finds the SoundCharts layers of every map in the project and starts their servers.</summary>

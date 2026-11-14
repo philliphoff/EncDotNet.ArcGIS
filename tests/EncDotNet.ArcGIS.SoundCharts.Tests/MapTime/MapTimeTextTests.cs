@@ -4,7 +4,7 @@ using EncDotNet.SoundCharts.Resources;
 
 namespace EncDotNet.SoundCharts.Tests.MapTime;
 
-public class TimeTextTests
+public class MapTimeTextTests
 {
     private static readonly DateTime Last = new(2025, 12, 24, 12, 0, 0, DateTimeKind.Utc);
 
@@ -18,15 +18,15 @@ public class TimeTextTests
     public void FormatSpan_UsesMinutesHoursOrDays(int minutes, string expected)
     {
         using var culture = new CultureScope("en-US");
-        Assert.Equal(expected, TimeText.FormatSpan(TimeSpan.FromMinutes(minutes)));
-        Assert.Equal(expected, TimeText.FormatSpan(TimeSpan.FromMinutes(-minutes)));
+        Assert.Equal(expected, MapTimeText.FormatSpan(TimeSpan.FromMinutes(minutes)));
+        Assert.Equal(expected, MapTimeText.FormatSpan(TimeSpan.FromMinutes(-minutes)));
     }
 
     [Fact]
     public void FormatTime_IsUtc()
     {
         using var culture = new CultureScope("en-US");
-        Assert.Equal("24 Dec 2025 12:00 UTC", TimeText.FormatTime(Last));
+        Assert.Equal("24 Dec 2025 12:00 UTC", MapTimeText.FormatTime(Last));
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class TimeTextTests
         using var culture = new CultureScope("en-US");
         var status = new TimeStatus(Last.AddMinutes(10), Last);
 
-        Assert.Equal("Water level · 24 Dec 2025 12:00 UTC", TimeText.Describe("Water level", status));
+        Assert.Equal("Water level · 24 Dec 2025 12:00 UTC", MapTimeText.Describe("Water level", status));
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public class TimeTextTests
 
         Assert.Equal(
             "Water level · No data at map time · last 24 Dec 2025 12:00 UTC, 3 h earlier",
-            TimeText.Describe("Water level", status));
+            MapTimeText.Describe("Water level", status));
     }
 
     [Fact]
@@ -57,20 +57,20 @@ public class TimeTextTests
 
         Assert.Equal(
             "Surface currents · No data at map time · next 24 Dec 2025 12:00 UTC, 2 days later",
-            TimeText.Describe("Surface currents", status));
+            MapTimeText.Describe("Surface currents", status));
     }
 
     [Fact]
     public void Summarize_SaysWhenThereIsNothingToFollow()
     {
-        Assert.Equal(Strings.Status_NoTimeLayers, TimeText.Summarize([]));
-        Assert.Equal(Strings.Status_NoMapTime, TimeText.Summarize([("Water level", null)]));
+        Assert.Equal(Strings.Status_NoTimeLayers, MapTimeText.Summarize([]));
+        Assert.Equal(Strings.Status_NoMapTime, MapTimeText.Summarize([("Water level", null)]));
     }
 
     [Fact]
     public void Summarize_GivesALinePerLayer()
     {
-        var summary = TimeText.Summarize(
+        var summary = MapTimeText.Summarize(
         [
             ("Surface currents", new TimeStatus(Last, Last)),
             ("Water level", new TimeStatus(Last.AddHours(3), null, Previous: Last)),

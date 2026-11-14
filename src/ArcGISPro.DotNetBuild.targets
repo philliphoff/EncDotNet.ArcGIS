@@ -11,9 +11,9 @@
   -->
   <Target Name="ArcGISInstallOutput"
           AfterTargets="Build"
-          Condition="Exists('$(MSBuildProjectDirectory)\Config.daml')">
+          Condition="Exists('$(MSBuildProjectDirectory)\Config.daml') Or Exists('$(MSBuildProjectDirectory)\Config.xml')">
     <Message Importance="High"
-             Text="$(MSBuildProjectName): skipped .esriAddinX packaging, which needs Visual Studio's MSBuild (msbuild /restore)." />
+             Text="$(MSBuildProjectName): skipped .esriAddinX/.esriPlugin packaging, which needs Visual Studio's MSBuild (msbuild /restore)." />
   </Target>
 
   <Target Name="PackageArcGISContents" />

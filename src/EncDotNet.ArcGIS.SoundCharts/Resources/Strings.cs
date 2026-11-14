@@ -228,9 +228,6 @@ public static class Strings
     /// <summary>Gets the time note when only navigational warnings depend on it: <c>{0}</c> is the time.</summary>
     public static string ObjectInfo_MapTimeFormat => Get(nameof(ObjectInfo_MapTimeFormat));
 
-    /// <summary>Gets a UTC time (D28): <c>{0}</c> is the time.</summary>
-    public static string Status_UtcFormat => Get(nameof(Status_UtcFormat));
-
     /// <summary>Gets a span in minutes: <c>{0}</c> is the number.</summary>
     public static string Status_SpanMinutes => Get(nameof(Status_SpanMinutes));
 
@@ -353,6 +350,933 @@ public static class Strings
 
     /// <summary>Gets the line after the listed warnings: <c>{0}</c> is how many more are in the log.</summary>
     public static string AddData_MoreInLog => Get(nameof(AddData_MoreInLog));
+
+    /// <summary>Gets the project Options page's heading, the viewer's section name.</summary>
+    public static string Settings_ProjectHeading => Get(nameof(Settings_ProjectHeading));
+
+    /// <summary>Gets the application Options page's heading.</summary>
+    public static string Settings_ApplicationHeading => Get(nameof(Settings_ApplicationHeading));
+
+    /// <summary>Gets the line every settings page carries (D25).</summary>
+    public static string Settings_ScopeNote => Get(nameof(Settings_ScopeNote));
+
+    /// <summary>Gets the line that says where project settings live (D23).</summary>
+    public static string Settings_ProjectNote => Get(nameof(Settings_ProjectNote));
+
+    /// <summary>Gets the note on settings the chart server doesn't apply yet.</summary>
+    public static string Settings_NeedsServer => Get(nameof(Settings_NeedsServer));
+
+    /// <summary>Gets the Palette label.</summary>
+    public static string Settings_Palette => Get(nameof(Settings_Palette));
+
+    /// <summary>Gets the Day palette's label.</summary>
+    public static string Palette_Day => Get(nameof(Palette_Day));
+
+    /// <summary>Gets the Dusk palette's label.</summary>
+    public static string Palette_Dusk => Get(nameof(Palette_Dusk));
+
+    /// <summary>Gets the Night palette's label.</summary>
+    public static string Palette_Night => Get(nameof(Palette_Night));
+
+    /// <summary>Gets the Display category label.</summary>
+    public static string Settings_DisplayCategory => Get(nameof(Settings_DisplayCategory));
+
+    /// <summary>Gets the Display Base category's label.</summary>
+    public static string DisplayCategory_DisplayBase => Get(nameof(DisplayCategory_DisplayBase));
+
+    /// <summary>Gets the Standard category's label.</summary>
+    public static string DisplayCategory_Standard => Get(nameof(DisplayCategory_Standard));
+
+    /// <summary>Gets the Other Information category's label.</summary>
+    public static string DisplayCategory_OtherInformation => Get(nameof(DisplayCategory_OtherInformation));
+
+    /// <summary>Gets the All category's label.</summary>
+    public static string DisplayCategory_All => Get(nameof(DisplayCategory_All));
+
+    /// <summary>Gets the heading over the contour and depth boxes.</summary>
+    public static string Settings_DepthsSection => Get(nameof(Settings_DepthsSection));
+
+    /// <summary>Gets the Safety Contour label.</summary>
+    public static string Settings_SafetyContour => Get(nameof(Settings_SafetyContour));
+
+    /// <summary>Gets the Safety Contour tooltip.</summary>
+    public static string Tooltip_SafetyContour => Get(nameof(Tooltip_SafetyContour));
+
+    /// <summary>Gets the Safety Depth label.</summary>
+    public static string Settings_SafetyDepth => Get(nameof(Settings_SafetyDepth));
+
+    /// <summary>Gets the Safety Depth tooltip.</summary>
+    public static string Tooltip_SafetyDepth => Get(nameof(Tooltip_SafetyDepth));
+
+    /// <summary>Gets the Shallow Contour label.</summary>
+    public static string Settings_ShallowContour => Get(nameof(Settings_ShallowContour));
+
+    /// <summary>Gets the Shallow Contour tooltip.</summary>
+    public static string Tooltip_ShallowContour => Get(nameof(Tooltip_ShallowContour));
+
+    /// <summary>Gets the Deep Contour label.</summary>
+    public static string Settings_DeepContour => Get(nameof(Settings_DeepContour));
+
+    /// <summary>Gets the Deep Contour tooltip.</summary>
+    public static string Tooltip_DeepContour => Get(nameof(Tooltip_DeepContour));
+
+    /// <summary>Gets the Four-shade depth scheme label.</summary>
+    public static string Settings_FourShades => Get(nameof(Settings_FourShades));
+
+    /// <summary>Gets the Four-shade depth scheme tooltip.</summary>
+    public static string Tooltip_FourShades => Get(nameof(Tooltip_FourShades));
+
+    /// <summary>Gets the shallow-water dangers label.</summary>
+    public static string Settings_ShallowWaterDangers => Get(nameof(Settings_ShallowWaterDangers));
+
+    /// <summary>Gets the shallow-water dangers tooltip.</summary>
+    public static string Tooltip_ShallowWaterDangers => Get(nameof(Tooltip_ShallowWaterDangers));
+
+    /// <summary>Gets the Plain boundaries label.</summary>
+    public static string Settings_PlainBoundaries => Get(nameof(Settings_PlainBoundaries));
+
+    /// <summary>Gets the Plain boundaries tooltip.</summary>
+    public static string Tooltip_PlainBoundaries => Get(nameof(Tooltip_PlainBoundaries));
+
+    /// <summary>Gets the Simplified symbols label.</summary>
+    public static string Settings_SimplifiedSymbols => Get(nameof(Settings_SimplifiedSymbols));
+
+    /// <summary>Gets the Simplified symbols tooltip.</summary>
+    public static string Tooltip_SimplifiedSymbols => Get(nameof(Tooltip_SimplifiedSymbols));
+
+    /// <summary>Gets the Full light lines label.</summary>
+    public static string Settings_FullLightLines => Get(nameof(Settings_FullLightLines));
+
+    /// <summary>Gets the Full light lines tooltip.</summary>
+    public static string Tooltip_FullLightLines => Get(nameof(Tooltip_FullLightLines));
+
+    /// <summary>Gets the Ignore scale minimum label.</summary>
+    public static string Settings_IgnoreScaleMinimum => Get(nameof(Settings_IgnoreScaleMinimum));
+
+    /// <summary>Gets the Ignore scale minimum tooltip.</summary>
+    public static string Tooltip_IgnoreScaleMinimum => Get(nameof(Tooltip_IgnoreScaleMinimum));
+
+    /// <summary>Gets the Soundings label.</summary>
+    public static string Settings_Soundings => Get(nameof(Settings_Soundings));
+
+    /// <summary>Gets the Text label.</summary>
+    public static string Settings_Text => Get(nameof(Settings_Text));
+
+    /// <summary>Gets the Text tooltip.</summary>
+    public static string Tooltip_Text => Get(nameof(Tooltip_Text));
+
+    /// <summary>Gets the Symbol Scale label.</summary>
+    public static string Settings_SymbolScale => Get(nameof(Settings_SymbolScale));
+
+    /// <summary>Gets the Symbol Scale tooltip, the viewer's help.</summary>
+    public static string Tooltip_SymbolScale => Get(nameof(Tooltip_SymbolScale));
+
+    /// <summary>Gets the Text Scale label.</summary>
+    public static string Settings_TextScale => Get(nameof(Settings_TextScale));
+
+    /// <summary>Gets the Text Scale tooltip, the viewer's help.</summary>
+    public static string Tooltip_TextScale => Get(nameof(Tooltip_TextScale));
+
+    /// <summary>Gets the format of a scale factor's value.</summary>
+    public static string Settings_ScaleFormat => Get(nameof(Settings_ScaleFormat));
+
+    /// <summary>Gets the National Language label.</summary>
+    public static string Settings_NationalLanguage => Get(nameof(Settings_NationalLanguage));
+
+    /// <summary>Gets the National Language tooltip.</summary>
+    public static string Tooltip_NationalLanguage => Get(nameof(Tooltip_NationalLanguage));
+
+    /// <summary>Gets the button that puts the project's settings back to the defaults for new projects.</summary>
+    public static string Settings_ResetToDefaults => Get(nameof(Settings_ResetToDefaults));
+
+    /// <summary>Gets the Reset to Defaults tooltip.</summary>
+    public static string Tooltip_ResetToDefaults => Get(nameof(Tooltip_ResetToDefaults));
+
+    /// <summary>Gets the button that makes the project's settings the defaults for new projects.</summary>
+    public static string Settings_UseForNewProjects => Get(nameof(Settings_UseForNewProjects));
+
+    /// <summary>Gets the Use for New Projects tooltip.</summary>
+    public static string Tooltip_UseForNewProjects => Get(nameof(Tooltip_UseForNewProjects));
+
+    /// <summary>Gets the line shown after Use for New Projects.</summary>
+    public static string Settings_DefaultsSaved => Get(nameof(Settings_DefaultsSaved));
+
+    /// <summary>Gets the message for a depth out of range.</summary>
+    public static string Settings_Problem_DepthOutOfRange => Get(nameof(Settings_Problem_DepthOutOfRange));
+
+    /// <summary>Gets the message for contours out of order.</summary>
+    public static string Settings_Problem_ContoursOutOfOrder => Get(nameof(Settings_Problem_ContoursOutOfOrder));
+
+    /// <summary>Gets the message for a scale out of range.</summary>
+    public static string Settings_Problem_ScaleOutOfRange => Get(nameof(Settings_Problem_ScaleOutOfRange));
+
+    /// <summary>Gets the message for a national language that isn't a code.</summary>
+    public static string Settings_Problem_NationalLanguageInvalid => Get(nameof(Settings_Problem_NationalLanguageInvalid));
+
+    /// <summary>Gets the message for an unknown value.</summary>
+    public static string Settings_Problem_UnknownValue => Get(nameof(Settings_Problem_UnknownValue));
+
+    /// <summary>Gets the heading of the application page's palette section.</summary>
+    public static string Settings_AppearanceSection => Get(nameof(Settings_AppearanceSection));
+
+    /// <summary>Gets the Follow Pro theme label.</summary>
+    public static string Settings_FollowProTheme => Get(nameof(Settings_FollowProTheme));
+
+    /// <summary>Gets the Follow Pro theme tooltip.</summary>
+    public static string Tooltip_FollowProTheme => Get(nameof(Tooltip_FollowProTheme));
+
+    /// <summary>Gets the Time Format label.</summary>
+    public static string Settings_TimeFormat => Get(nameof(Settings_TimeFormat));
+
+    /// <summary>Gets the Time Format tooltip.</summary>
+    public static string Tooltip_TimeFormat => Get(nameof(Tooltip_TimeFormat));
+
+    /// <summary>Gets the UTC time format's label.</summary>
+    public static string TimeFormat_Utc => Get(nameof(TimeFormat_Utc));
+
+    /// <summary>Gets the Local time format's label.</summary>
+    public static string TimeFormat_Local => Get(nameof(TimeFormat_Local));
+
+    /// <summary>Gets the Depth Unit label.</summary>
+    public static string Settings_DepthUnit => Get(nameof(Settings_DepthUnit));
+
+    /// <summary>Gets the Depth Unit tooltip.</summary>
+    public static string Tooltip_DepthUnit => Get(nameof(Tooltip_DepthUnit));
+
+    /// <summary>Gets the metres label.</summary>
+    public static string DepthUnit_Metres => Get(nameof(DepthUnit_Metres));
+
+    /// <summary>Gets the feet label.</summary>
+    public static string DepthUnit_Feet => Get(nameof(DepthUnit_Feet));
+
+    /// <summary>Gets the fathoms and feet label.</summary>
+    public static string DepthUnit_FathomsFeet => Get(nameof(DepthUnit_FathomsFeet));
+
+    /// <summary>Gets the fathoms label.</summary>
+    public static string DepthUnit_Fathoms => Get(nameof(DepthUnit_Fathoms));
+
+    /// <summary>Gets the heading of the chart server section.</summary>
+    public static string Settings_ServerSection => Get(nameof(Settings_ServerSection));
+
+    /// <summary>Gets the label of the s100 path box.</summary>
+    public static string Settings_ServerPath => Get(nameof(Settings_ServerPath));
+
+    /// <summary>Gets the s100 path tooltip.</summary>
+    public static string Tooltip_ServerPath => Get(nameof(Tooltip_ServerPath));
+
+    /// <summary>Gets the label of the tile cache size box.</summary>
+    public static string Settings_TileCache => Get(nameof(Settings_TileCache));
+
+    /// <summary>Gets the tile cache tooltip.</summary>
+    public static string Tooltip_TileCache => Get(nameof(Tooltip_TileCache));
+
+    /// <summary>Gets the note under the chart server settings.</summary>
+    public static string Settings_RestartNote => Get(nameof(Settings_RestartNote));
+
+    /// <summary>Gets the message for a tile cache size out of range.</summary>
+    public static string Settings_Problem_TileCache => Get(nameof(Settings_Problem_TileCache));
+
+    /// <summary>Gets the message for an s100 path that doesn't exist.</summary>
+    public static string Settings_Problem_ServerPath => Get(nameof(Settings_Problem_ServerPath));
+
+    /// <summary>Gets the name of a dataset's feature layer group: <c>{0}</c> is the dataset.</summary>
+    public static string Features_GroupName => Get(nameof(Features_GroupName));
+
+    /// <summary>Gets a feature layer's name: <c>{0}</c> is the feature type, <c>{1}</c> the dataset.</summary>
+    public static string Features_LayerName => Get(nameof(Features_LayerName));
+
+    /// <summary>Gets the name of a feature layer of a type found with several geometries: <c>{0}</c> is the feature type, <c>{1}</c> the geometry, <c>{2}</c> the dataset.</summary>
+    public static string Features_SplitLayerName => Get(nameof(Features_SplitLayerName));
+
+    /// <summary>Gets the geometry word for points.</summary>
+    public static string Features_Point => Get(nameof(Features_Point));
+
+    /// <summary>Gets the geometry word for multipoints.</summary>
+    public static string Features_Multipoint => Get(nameof(Features_Multipoint));
+
+    /// <summary>Gets the geometry word for lines.</summary>
+    public static string Features_Line => Get(nameof(Features_Line));
+
+    /// <summary>Gets the geometry word for areas.</summary>
+    public static string Features_Area => Get(nameof(Features_Area));
+
+    /// <summary>Gets the geometry word for features without geometry.</summary>
+    public static string Features_Table => Get(nameof(Features_Table));
+
+    /// <summary>Gets the name of the feature association table.</summary>
+    public static string Features_Associations => Get(nameof(Features_Associations));
+
+    /// <summary>Gets the title of Add as Feature Layers' dialogs and messages.</summary>
+    public static string Features_Title => Get(nameof(Features_Title));
+
+    /// <summary>Gets the progress text while datasets are read.</summary>
+    public static string Features_ProgressReading => Get(nameof(Features_ProgressReading));
+
+    /// <summary>Gets the warning for a dataset without features: <c>{0}</c> is the dataset, <c>{1}</c> its product.</summary>
+    public static string Features_NotFeatures => Get(nameof(Features_NotFeatures));
+
+    /// <summary>Gets the warning for a dataset with no features: <c>{0}</c> is the dataset.</summary>
+    public static string Features_NoTables => Get(nameof(Features_NoTables));
+
+    /// <summary>Gets the message when the plugin datasource isn't installed: <c>{0}</c> is the dataset.</summary>
+    public static string Features_PluginMissing => Get(nameof(Features_PluginMissing));
+
+    /// <summary>Gets the warning when a dataset's layers can't be made: <c>{0}</c> is the dataset, <c>{1}</c> the reason.</summary>
+    public static string Features_DatasetFailed => Get(nameof(Features_DatasetFailed));
+
+    /// <summary>Gets the summary of added feature layers: <c>{0}</c> is a dataset count.</summary>
+    public static string Features_Added => Get(nameof(Features_Added));
+
+    /// <summary>Gets a count of one dataset.</summary>
+    public static string Library_OneDataset => Get(nameof(Library_OneDataset));
+
+    /// <summary>Gets a count of datasets: <c>{0}</c> is the count.</summary>
+    public static string Library_DatasetCountFormat => Get(nameof(Library_DatasetCountFormat));
+
+    /// <summary>Gets a dataset's edition: <c>{0}</c> is the edition.</summary>
+    public static string Library_EditionFormat => Get(nameof(Library_EditionFormat));
+
+    /// <summary>Gets a dataset's edition and update: <c>{0}</c> is the edition, <c>{1}</c> the update.</summary>
+    public static string Library_EditionUpdateFormat => Get(nameof(Library_EditionUpdateFormat));
+
+    /// <summary>Gets the tag of a dataset whose file is gone.</summary>
+    public static string Library_Tag_Missing => Get(nameof(Library_Tag_Missing));
+
+    /// <summary>Gets the not-for-navigation notice and tag.</summary>
+    public static string Library_NotForNavigation => Get(nameof(Library_NotForNavigation));
+
+    /// <summary>Gets the heading of the validation details.</summary>
+    public static string Library_Group_Validation => Get(nameof(Library_Group_Validation));
+
+    /// <summary>Gets the heading of the time details.</summary>
+    public static string Library_Group_Time => Get(nameof(Library_Group_Time));
+
+    /// <summary>Gets the label of the edition compatibility.</summary>
+    public static string Library_Field_Compatibility => Get(nameof(Library_Field_Compatibility));
+
+    /// <summary>Gets the label of the validation status.</summary>
+    public static string Library_Field_Status => Get(nameof(Library_Field_Status));
+
+    /// <summary>Gets the label of the time a dataset covers.</summary>
+    public static string Library_Field_TimeRange => Get(nameof(Library_Field_TimeRange));
+
+    /// <summary>Gets the label of a dataset's time steps.</summary>
+    public static string Library_Field_TimeSteps => Get(nameof(Library_Field_TimeSteps));
+
+    /// <summary>Gets the compatibility of an edition SoundCharts reads.</summary>
+    public static string Library_Compatibility_Supported => Get(nameof(Library_Compatibility_Supported));
+
+    /// <summary>Gets the compatibility of an older compatible edition: <c>{0}</c> is the edition SoundCharts reads.</summary>
+    public static string Library_Compatibility_NewerFormat => Get(nameof(Library_Compatibility_NewerFormat));
+
+    /// <summary>Gets the compatibility of a newer edition on the same major: <c>{0}</c> is the edition SoundCharts reads.</summary>
+    public static string Library_Compatibility_OlderFormat => Get(nameof(Library_Compatibility_OlderFormat));
+
+    /// <summary>Gets the compatibility of an edition on another major: <c>{0}</c> is the edition SoundCharts reads.</summary>
+    public static string Library_Compatibility_UnsupportedFormat => Get(nameof(Library_Compatibility_UnsupportedFormat));
+
+    /// <summary>Gets the compatibility when the dataset states no edition: <c>{0}</c> is the edition SoundCharts reads.</summary>
+    public static string Library_Compatibility_UnknownFormat => Get(nameof(Library_Compatibility_UnknownFormat));
+
+    /// <summary>Gets the status of a dataset not validated yet.</summary>
+    public static string Library_Validation_NotValidated => Get(nameof(Library_Validation_NotValidated));
+
+    /// <summary>Gets the status while validation runs.</summary>
+    public static string Library_Validation_Running => Get(nameof(Library_Validation_Running));
+
+    /// <summary>Gets the status of a valid dataset.</summary>
+    public static string Library_Validation_Valid => Get(nameof(Library_Validation_Valid));
+
+    /// <summary>Gets the status of a valid dataset: <c>{0}</c> is the number of rules.</summary>
+    public static string Library_Validation_ValidRulesFormat => Get(nameof(Library_Validation_ValidRulesFormat));
+
+    /// <summary>Gets the status of a dataset that failed validation without counted findings.</summary>
+    public static string Library_Validation_Invalid => Get(nameof(Library_Validation_Invalid));
+
+    /// <summary>Gets the status when the product has no rules.</summary>
+    public static string Library_Validation_NoRules => Get(nameof(Library_Validation_NoRules));
+
+    /// <summary>Gets the status when validation couldn't run: <c>{0}</c> is why.</summary>
+    public static string Library_Validation_FailedFormat => Get(nameof(Library_Validation_FailedFormat));
+
+    /// <summary>Gets a count of one error.</summary>
+    public static string Library_Validation_OneError => Get(nameof(Library_Validation_OneError));
+
+    /// <summary>Gets a count of errors: <c>{0}</c> is the count.</summary>
+    public static string Library_Validation_ErrorsFormat => Get(nameof(Library_Validation_ErrorsFormat));
+
+    /// <summary>Gets a count of one warning.</summary>
+    public static string Library_Validation_OneWarning => Get(nameof(Library_Validation_OneWarning));
+
+    /// <summary>Gets a count of warnings: <c>{0}</c> is the count.</summary>
+    public static string Library_Validation_WarningsFormat => Get(nameof(Library_Validation_WarningsFormat));
+
+    /// <summary>Gets a finding: <c>{0}</c> is its severity, <c>{1}</c> its message.</summary>
+    public static string Library_Validation_FindingFormat => Get(nameof(Library_Validation_FindingFormat));
+
+    /// <summary>Gets why validation stopped: <c>{0}</c> is the time limit in minutes.</summary>
+    public static string Library_ValidationTimedOut => Get(nameof(Library_ValidationTimedOut));
+
+    /// <summary>Gets why validation failed without a message: <c>{0}</c> is the exit code.</summary>
+    public static string Library_ValidationExitCode => Get(nameof(Library_ValidationExitCode));
+
+    /// <summary>Gets why validation couldn't run: <c>{0}</c> is the program.</summary>
+    public static string Library_ValidationNotStarted => Get(nameof(Library_ValidationNotStarted));
+
+    /// <summary>Gets the message when there's no s100 to validate with.</summary>
+    public static string Library_ValidationNoServer => Get(nameof(Library_ValidationNoServer));
+
+    /// <summary>Gets the message when a zipped dataset is validated.</summary>
+    public static string Library_ValidationZip => Get(nameof(Library_ValidationZip));
+
+    /// <summary>Gets the time steps of a dataset without any.</summary>
+    public static string Library_TimeSteps_None => Get(nameof(Library_TimeSteps_None));
+
+    /// <summary>Gets one time step.</summary>
+    public static string Library_TimeSteps_One => Get(nameof(Library_TimeSteps_One));
+
+    /// <summary>Gets a count of time steps: <c>{0}</c> is the count.</summary>
+    public static string Library_TimeSteps_CountFormat => Get(nameof(Library_TimeSteps_CountFormat));
+
+    /// <summary>Gets an hourly step interval.</summary>
+    public static string Library_TimeSteps_Hourly => Get(nameof(Library_TimeSteps_Hourly));
+
+    /// <summary>Gets a daily step interval.</summary>
+    public static string Library_TimeSteps_Daily => Get(nameof(Library_TimeSteps_Daily));
+
+    /// <summary>Gets a step interval in hours: <c>{0}</c> is the hours.</summary>
+    public static string Library_TimeSteps_EveryHoursFormat => Get(nameof(Library_TimeSteps_EveryHoursFormat));
+
+    /// <summary>Gets a step interval in minutes: <c>{0}</c> is the minutes.</summary>
+    public static string Library_TimeSteps_EveryMinutesFormat => Get(nameof(Library_TimeSteps_EveryMinutesFormat));
+
+    /// <summary>Gets the time steps while they're read.</summary>
+    public static string Library_TimeSteps_Reading => Get(nameof(Library_TimeSteps_Reading));
+
+    /// <summary>Gets the heading of the empty Library.</summary>
+    public static string Library_EmptyTitle => Get(nameof(Library_EmptyTitle));
+
+    /// <summary>Gets the text of the empty Library.</summary>
+    public static string Library_EmptyDescription => Get(nameof(Library_EmptyDescription));
+
+    /// <summary>Gets the hint that files can be dropped on the pane.</summary>
+    public static string Library_DropHint => Get(nameof(Library_DropHint));
+
+    /// <summary>Gets the filter box's placeholder.</summary>
+    public static string Library_FilterWatermark => Get(nameof(Library_FilterWatermark));
+
+    /// <summary>Gets the filter box's accessible name.</summary>
+    public static string Library_Filter => Get(nameof(Library_Filter));
+
+    /// <summary>Gets the tree's accessible name.</summary>
+    public static string Library_Tree => Get(nameof(Library_Tree));
+
+    /// <summary>Gets the details panel's accessible name.</summary>
+    public static string Library_Details => Get(nameof(Library_Details));
+
+    /// <summary>Gets the details panel's text without a selection.</summary>
+    public static string Library_SelectItemPlaceholder => Get(nameof(Library_SelectItemPlaceholder));
+
+    /// <summary>Gets the Add a folder button's text.</summary>
+    public static string Library_AddFolder => Get(nameof(Library_AddFolder));
+
+    /// <summary>Gets the Add an exchange set button's text.</summary>
+    public static string Library_AddExchangeSet => Get(nameof(Library_AddExchangeSet));
+
+    /// <summary>Gets the Add a collection manifest button's text.</summary>
+    public static string Library_AddManifest => Get(nameof(Library_AddManifest));
+
+    /// <summary>Gets the Refresh button's text.</summary>
+    public static string Library_Refresh => Get(nameof(Library_Refresh));
+
+    /// <summary>Gets the Remove button's text.</summary>
+    public static string Library_Remove => Get(nameof(Library_Remove));
+
+    /// <summary>Gets the Add to Map button's text.</summary>
+    public static string Library_AddToMap => Get(nameof(Library_AddToMap));
+
+    /// <summary>Gets the Show Footprint button's text.</summary>
+    public static string Library_ShowFootprint => Get(nameof(Library_ShowFootprint));
+
+    /// <summary>Gets the Validate button's text.</summary>
+    public static string Library_Validate => Get(nameof(Library_Validate));
+
+    /// <summary>Gets the Open Containing Folder button's text.</summary>
+    public static string Library_OpenContainingFolder => Get(nameof(Library_OpenContainingFolder));
+
+    /// <summary>Gets the Add a folder button's tooltip.</summary>
+    public static string Tooltip_LibraryAddFolder => Get(nameof(Tooltip_LibraryAddFolder));
+
+    /// <summary>Gets the Add an exchange set button's tooltip.</summary>
+    public static string Tooltip_LibraryAddExchangeSet => Get(nameof(Tooltip_LibraryAddExchangeSet));
+
+    /// <summary>Gets the Add a collection manifest button's tooltip.</summary>
+    public static string Tooltip_LibraryAddManifest => Get(nameof(Tooltip_LibraryAddManifest));
+
+    /// <summary>Gets the Refresh button's tooltip.</summary>
+    public static string Tooltip_LibraryRefresh => Get(nameof(Tooltip_LibraryRefresh));
+
+    /// <summary>Gets the Remove button's tooltip.</summary>
+    public static string Tooltip_LibraryRemove => Get(nameof(Tooltip_LibraryRemove));
+
+    /// <summary>Gets the Add to Map button's tooltip.</summary>
+    public static string Tooltip_LibraryAddToMap => Get(nameof(Tooltip_LibraryAddToMap));
+
+    /// <summary>Gets the Show Footprint button's tooltip.</summary>
+    public static string Tooltip_LibraryShowFootprint => Get(nameof(Tooltip_LibraryShowFootprint));
+
+    /// <summary>Gets the Validate button's tooltip.</summary>
+    public static string Tooltip_LibraryValidate => Get(nameof(Tooltip_LibraryValidate));
+
+    /// <summary>Gets the Open Containing Folder button's tooltip.</summary>
+    public static string Tooltip_LibraryOpenContainingFolder => Get(nameof(Tooltip_LibraryOpenContainingFolder));
+
+    /// <summary>Gets the folder dialog's title.</summary>
+    public static string Library_AddFolderTitle => Get(nameof(Library_AddFolderTitle));
+
+    /// <summary>Gets the exchange set dialog's title.</summary>
+    public static string Library_AddExchangeSetTitle => Get(nameof(Library_AddExchangeSetTitle));
+
+    /// <summary>Gets the collection manifest dialog's title.</summary>
+    public static string Library_AddManifestTitle => Get(nameof(Library_AddManifestTitle));
+
+    /// <summary>Gets the exchange set dialog's file filter.</summary>
+    public static string Library_ExchangeSetFilter => Get(nameof(Library_ExchangeSetFilter));
+
+    /// <summary>Gets the collection manifest dialog's file filter.</summary>
+    public static string Library_ManifestFilter => Get(nameof(Library_ManifestFilter));
+
+    /// <summary>Gets the caption of messages from the Library.</summary>
+    public static string Library_Caption => Get(nameof(Library_Caption));
+
+    /// <summary>Gets the heading of the list of paths not added.</summary>
+    public static string Library_ImportProblemsHeading => Get(nameof(Library_ImportProblemsHeading));
+
+    /// <summary>Gets why a path wasn't added: <c>{0}</c> is the path.</summary>
+    public static string Library_Problem_NotFoundFormat => Get(nameof(Library_Problem_NotFoundFormat));
+
+    /// <summary>Gets why a path wasn't added: <c>{0}</c> is the path.</summary>
+    public static string Library_Problem_AlreadyInLibraryFormat => Get(nameof(Library_Problem_AlreadyInLibraryFormat));
+
+    /// <summary>Gets why a path wasn't added: <c>{0}</c> is the path, <c>{1}</c> why.</summary>
+    public static string Library_Problem_UnreadableFormat => Get(nameof(Library_Problem_UnreadableFormat));
+
+    /// <summary>Gets the question before removing: <c>{0}</c> is the collection or source.</summary>
+    public static string Library_RemoveConfirmFormat => Get(nameof(Library_RemoveConfirmFormat));
+
+    /// <summary>Gets the message when there's no map for Show Footprint.</summary>
+    public static string Library_NoMap => Get(nameof(Library_NoMap));
+
+    /// <summary>Gets the message when a dataset has no footprint.</summary>
+    public static string Library_NoFootprint => Get(nameof(Library_NoFootprint));
+
+    /// <summary>Gets the message when a dataset's file is gone: <c>{0}</c> is the path.</summary>
+    public static string Library_FileMissingFormat => Get(nameof(Library_FileMissingFormat));
+
+    /// <summary>Gets the message when an action fails: <c>{0}</c> is why.</summary>
+    public static string Library_ActionFailedFormat => Get(nameof(Library_ActionFailedFormat));
+
+    /// <summary>Gets the export window's title.</summary>
+    public static string Export_Title => Get(nameof(Export_Title));
+
+    /// <summary>Gets the export window's heading: <c>{0}</c> is the layout's name.</summary>
+    public static string Export_Heading => Get(nameof(Export_Heading));
+
+    /// <summary>Gets the summary for one rendered layer.</summary>
+    public static string Export_OneLayer => Get(nameof(Export_OneLayer));
+
+    /// <summary>Gets the summary for several rendered layers: <c>{0}</c> is the count.</summary>
+    public static string Export_LayerCount => Get(nameof(Export_LayerCount));
+
+    /// <summary>Gets the label of the output file box.</summary>
+    public static string Export_FileLabel => Get(nameof(Export_FileLabel));
+
+    /// <summary>Gets the label of the format list.</summary>
+    public static string Export_FormatLabel => Get(nameof(Export_FormatLabel));
+
+    /// <summary>Gets the label of the resolution list.</summary>
+    public static string Export_ResolutionLabel => Get(nameof(Export_ResolutionLabel));
+
+    /// <summary>Gets a resolution: <c>{0}</c> is dots per inch.</summary>
+    public static string Export_ResolutionFormat => Get(nameof(Export_ResolutionFormat));
+
+    /// <summary>Gets the PDF format's name.</summary>
+    public static string Export_FormatPdf => Get(nameof(Export_FormatPdf));
+
+    /// <summary>Gets the PNG format's name.</summary>
+    public static string Export_FormatPng => Get(nameof(Export_FormatPng));
+
+    /// <summary>Gets the JPEG format's name.</summary>
+    public static string Export_FormatJpeg => Get(nameof(Export_FormatJpeg));
+
+    /// <summary>Gets the TIFF format's name.</summary>
+    public static string Export_FormatTiff => Get(nameof(Export_FormatTiff));
+
+    /// <summary>Gets the save dialog filter for PDF.</summary>
+    public static string Export_FilterPdf => Get(nameof(Export_FilterPdf));
+
+    /// <summary>Gets the save dialog filter for PNG.</summary>
+    public static string Export_FilterPng => Get(nameof(Export_FilterPng));
+
+    /// <summary>Gets the save dialog filter for JPEG.</summary>
+    public static string Export_FilterJpeg => Get(nameof(Export_FilterJpeg));
+
+    /// <summary>Gets the save dialog filter for TIFF.</summary>
+    public static string Export_FilterTiff => Get(nameof(Export_FilterTiff));
+
+    /// <summary>Gets the save dialog's title.</summary>
+    public static string Export_FileDialogTitle => Get(nameof(Export_FileDialogTitle));
+
+    /// <summary>Gets the note under the export choices.</summary>
+    public static string Export_Note => Get(nameof(Export_Note));
+
+    /// <summary>Gets the message when a layout has no SoundCharts layers to export.</summary>
+    public static string Export_NoLayers => Get(nameof(Export_NoLayers));
+
+    /// <summary>Gets the question offering the not-for-navigation text: <c>{0}</c> is the text.</summary>
+    public static string Export_NoticeQuestion => Get(nameof(Export_NoticeQuestion));
+
+    /// <summary>Gets the not-for-navigation layout text: <c>{0}</c> is the producers.</summary>
+    public static string Export_NoticeText => Get(nameof(Export_NoticeText));
+
+    /// <summary>Gets the progress message while an export renders.</summary>
+    public static string Export_Progress => Get(nameof(Export_Progress));
+
+    /// <summary>Gets the message after an export: <c>{0}</c> is the file.</summary>
+    public static string Export_Done => Get(nameof(Export_Done));
+
+    /// <summary>Gets the message after an export with layers drawn from tiles: <c>{0}</c> is the file, <c>{1}</c> the count.</summary>
+    public static string Export_Partial => Get(nameof(Export_Partial));
+
+    /// <summary>Gets the message when Pro doesn't write the file: <c>{0}</c> is the file.</summary>
+    public static string Export_NotWritten => Get(nameof(Export_NotWritten));
+
+    /// <summary>Gets the message when the export fails: <c>{0}</c> is the reason.</summary>
+    public static string Export_Failed => Get(nameof(Export_Failed));
+
+    /// <summary>Gets the Browse button's text.</summary>
+    public static string Button_Browse => Get(nameof(Button_Browse));
+
+    /// <summary>Gets the Export button's text.</summary>
+    public static string Button_Export => Get(nameof(Button_Export));
+
+    /// <summary>Gets the Cancel button's text.</summary>
+    public static string Button_Cancel => Get(nameof(Button_Cancel));
+
+    /// <summary>Gets the export Browse button's tooltip.</summary>
+    public static string Tooltip_ExportBrowse => Get(nameof(Tooltip_ExportBrowse));
+
+    /// <summary>Gets the format list's tooltip.</summary>
+    public static string Tooltip_ExportFormat => Get(nameof(Tooltip_ExportFormat));
+
+    /// <summary>Gets the resolution list's tooltip.</summary>
+    public static string Tooltip_ExportResolution => Get(nameof(Tooltip_ExportResolution));
+
+    /// <summary>Gets the Library pane's Add as Feature Layers button.</summary>
+    public static string Library_AddFeatureLayers => Get(nameof(Library_AddFeatureLayers));
+
+    /// <summary>Gets the Library pane's Add as Feature Layers tooltip.</summary>
+    public static string Tooltip_LibraryAddFeatureLayers => Get(nameof(Tooltip_LibraryAddFeatureLayers));
+
+    /// <summary>Gets the message for a file that isn't a route (the viewer's).</summary>
+    public static string RouteCheck_NotARoute => Get(nameof(RouteCheck_NotARoute));
+
+    /// <summary>Gets the message for a route with fewer than two waypoints (the viewer's).</summary>
+    public static string RouteCheck_TooFewWaypoints => Get(nameof(RouteCheck_TooFewWaypoints));
+
+    /// <summary>Gets the line for a dataset that couldn't be read: <c>{0}</c> is the dataset, <c>{1}</c> the reason.</summary>
+    public static string RouteCheck_DatasetProblemFormat => Get(nameof(RouteCheck_DatasetProblemFormat));
+
+    /// <summary>Gets the footer's name for weather forecast data (the viewer's).</summary>
+    public static string RouteCheck_FooterWeather => Get(nameof(RouteCheck_FooterWeather));
+
+    /// <summary>Gets the footer's name for tropical cyclone advisories (the viewer's).</summary>
+    public static string RouteCheck_FooterCyclones => Get(nameof(RouteCheck_FooterCyclones));
+
+    /// <summary>Gets the MUST REVIEW group heading (the viewer's).</summary>
+    public static string RouteCheck_GroupMustReview => Get(nameof(RouteCheck_GroupMustReview));
+
+    /// <summary>Gets the CHECK group heading (the viewer's).</summary>
+    public static string RouteCheck_GroupCheck => Get(nameof(RouteCheck_GroupCheck));
+
+    /// <summary>Gets the INFO group heading (the viewer's).</summary>
+    public static string RouteCheck_GroupInfo => Get(nameof(RouteCheck_GroupInfo));
+
+    /// <summary>Gets the Clearance finding tag (the viewer's).</summary>
+    public static string RouteCheck_TagClearance => Get(nameof(RouteCheck_TagClearance));
+
+    /// <summary>Gets the Route check finding tag (the viewer's).</summary>
+    public static string RouteCheck_TagRouteCheck => Get(nameof(RouteCheck_TagRouteCheck));
+
+    /// <summary>Gets the S-124 finding tag (the viewer's).</summary>
+    public static string RouteCheck_TagS124 => Get(nameof(RouteCheck_TagS124));
+
+    /// <summary>Gets the Confidence finding tag (the viewer's).</summary>
+    public static string RouteCheck_TagConfidence => Get(nameof(RouteCheck_TagConfidence));
+
+    /// <summary>Gets the Weather finding tag (the viewer's).</summary>
+    public static string RouteCheck_TagWeather => Get(nameof(RouteCheck_TagWeather));
+
+    /// <summary>Gets the Data finding tag (the viewer's).</summary>
+    public static string RouteCheck_TagData => Get(nameof(RouteCheck_TagData));
+
+    /// <summary>Gets the findings group layer's name: <c>{0}</c> is the route.</summary>
+    public static string RouteCheck_GroupLayerFormat => Get(nameof(RouteCheck_GroupLayerFormat));
+
+    /// <summary>Gets the point findings layer's name.</summary>
+    public static string RouteCheck_FindingsLayerPoints => Get(nameof(RouteCheck_FindingsLayerPoints));
+
+    /// <summary>Gets the segment findings layer's name.</summary>
+    public static string RouteCheck_FindingsLayerSegments => Get(nameof(RouteCheck_FindingsLayerSegments));
+
+    /// <summary>Gets the pane's heading before any check.</summary>
+    public static string RouteCheck_EmptyTitle => Get(nameof(RouteCheck_EmptyTitle));
+
+    /// <summary>Gets the pane's description before any check.</summary>
+    public static string RouteCheck_EmptyDescription => Get(nameof(RouteCheck_EmptyDescription));
+
+    /// <summary>Gets the line while a check runs (the viewer's).</summary>
+    public static string RouteCheck_Computing => Get(nameof(RouteCheck_Computing));
+
+    /// <summary>Gets the line when a check fails: <c>{0}</c> is the reason (the viewer's).</summary>
+    public static string RouteCheck_ErrorFormat => Get(nameof(RouteCheck_ErrorFormat));
+
+    /// <summary>Gets the verdict when water-level data ends before arrival (the viewer's).</summary>
+    public static string RouteCheck_VerdictWaterLevelEnds => Get(nameof(RouteCheck_VerdictWaterLevelEnds));
+
+    /// <summary>Gets the verdict below the UKC setting in one place (the viewer's).</summary>
+    public static string RouteCheck_VerdictBelowOne => Get(nameof(RouteCheck_VerdictBelowOne));
+
+    /// <summary>Gets the verdict below the UKC setting: <c>{0}</c> is how many places (the viewer's).</summary>
+    public static string RouteCheck_VerdictBelowFormat => Get(nameof(RouteCheck_VerdictBelowFormat));
+
+    /// <summary>Gets the verdict with no data for part of the passage (the viewer's).</summary>
+    public static string RouteCheck_VerdictIncomplete => Get(nameof(RouteCheck_VerdictIncomplete));
+
+    /// <summary>Gets the tight verdict (the viewer's).</summary>
+    public static string RouteCheck_VerdictTight => Get(nameof(RouteCheck_VerdictTight));
+
+    /// <summary>Gets the verdict that meets the settings (the viewer's).</summary>
+    public static string RouteCheck_VerdictMeets => Get(nameof(RouteCheck_VerdictMeets));
+
+    /// <summary>Gets the confidence note for S-101 depths: <c>{0}</c> is nautical miles (the viewer's).</summary>
+    public static string RouteCheck_ConfidenceS101Format => Get(nameof(RouteCheck_ConfidenceS101Format));
+
+    /// <summary>Gets the confidence note for unconfirmed datums (the viewer's).</summary>
+    public static string RouteCheck_ConfidenceDatumUnconfirmed => Get(nameof(RouteCheck_ConfidenceDatumUnconfirmed));
+
+    /// <summary>Gets the confidence note for predicted water level: <c>{0}</c> is nautical miles (the viewer's).</summary>
+    public static string RouteCheck_ConfidencePredictedFormat => Get(nameof(RouteCheck_ConfidencePredictedFormat));
+
+    /// <summary>Gets the count to review: <c>{0}</c> (the viewer's).</summary>
+    public static string RouteCheck_ToReviewFormat => Get(nameof(RouteCheck_ToReviewFormat));
+
+    /// <summary>Gets the count to check: <c>{0}</c> (the viewer's).</summary>
+    public static string RouteCheck_ToCheckFormat => Get(nameof(RouteCheck_ToCheckFormat));
+
+    /// <summary>Gets the tail of a list: <c>{0}</c> more (the viewer's).</summary>
+    public static string RouteCheck_MoreFormat => Get(nameof(RouteCheck_MoreFormat));
+
+    /// <summary>Gets the verdict with findings to check: <c>{0}</c> (the viewer's).</summary>
+    public static string RouteCheck_VerdictCheckFormat => Get(nameof(RouteCheck_VerdictCheckFormat));
+
+    /// <summary>Gets the subtitle with more to review: <c>{0}</c> is where, <c>{1}</c> how many more (the viewer's).</summary>
+    public static string RouteCheck_AndMoreToReviewFormat => Get(nameof(RouteCheck_AndMoreToReviewFormat));
+
+    /// <summary>Gets the verdict without a draft and without findings (the viewer's).</summary>
+    public static string RouteCheck_NoDraftVerdictNone => Get(nameof(RouteCheck_NoDraftVerdictNone));
+
+    /// <summary>Gets the subtitle without a draft and without findings (the viewer's).</summary>
+    public static string RouteCheck_ClearNoDraft => Get(nameof(RouteCheck_ClearNoDraft));
+
+    /// <summary>Gets the separator between parts of a line (the viewer's).</summary>
+    public static string RouteCheck_Separator => Get(nameof(RouteCheck_Separator));
+
+    /// <summary>Gets the Clearance summary row label (the viewer's).</summary>
+    public static string RouteCheck_SummaryClearance => Get(nameof(RouteCheck_SummaryClearance));
+
+    /// <summary>Gets the Route summary row label (the viewer's).</summary>
+    public static string RouteCheck_SummaryRoute => Get(nameof(RouteCheck_SummaryRoute));
+
+    /// <summary>Gets the Warnings summary row label (the viewer's).</summary>
+    public static string RouteCheck_SummaryWarnings => Get(nameof(RouteCheck_SummaryWarnings));
+
+    /// <summary>Gets the Weather summary row label (the viewer's).</summary>
+    public static string RouteCheck_SummaryWeather => Get(nameof(RouteCheck_SummaryWeather));
+
+    /// <summary>Gets the clearance row without a draft (the viewer's).</summary>
+    public static string RouteCheck_SummaryNotChecked => Get(nameof(RouteCheck_SummaryNotChecked));
+
+    /// <summary>Gets the clearance row without a minimum (the viewer's).</summary>
+    public static string RouteCheck_NoClearance => Get(nameof(RouteCheck_NoClearance));
+
+    /// <summary>Gets the clearance row: <c>{0}</c> is the minimum UKC, <c>{1}</c> the required (the viewer's).</summary>
+    public static string RouteCheck_SummaryClearanceFormat => Get(nameof(RouteCheck_SummaryClearanceFormat));
+
+    /// <summary>Gets the clearance row without a margin: <c>{0}</c> is the minimum UKC (the viewer's).</summary>
+    public static string RouteCheck_SummaryClearanceNoMarginFormat => Get(nameof(RouteCheck_SummaryClearanceNoMarginFormat));
+
+    /// <summary>Gets the clearance chip: <c>{0}</c> places below (the viewer's).</summary>
+    public static string RouteCheck_ChipBelowFormat => Get(nameof(RouteCheck_ChipBelowFormat));
+
+    /// <summary>Gets the tight clearance chip (the viewer's).</summary>
+    public static string RouteCheck_ChipTight => Get(nameof(RouteCheck_ChipTight));
+
+    /// <summary>Gets the clearance chip without water level (the viewer's).</summary>
+    public static string RouteCheck_ChipNoTide => Get(nameof(RouteCheck_ChipNoTide));
+
+    /// <summary>Gets the clearance chip that meets the settings (the viewer's).</summary>
+    public static string RouteCheck_ChipMeets => Get(nameof(RouteCheck_ChipMeets));
+
+    /// <summary>Gets the route row without findings (the viewer's).</summary>
+    public static string RouteCheck_SummaryNothingFound => Get(nameof(RouteCheck_SummaryNothingFound));
+
+    /// <summary>Gets the warnings row without findings (the viewer's).</summary>
+    public static string RouteCheck_SummaryNothingOnRoute => Get(nameof(RouteCheck_SummaryNothingOnRoute));
+
+    /// <summary>Gets the warnings row: <c>{0}</c> near the route (the viewer's).</summary>
+    public static string RouteCheck_SummaryNearRouteFormat => Get(nameof(RouteCheck_SummaryNearRouteFormat));
+
+    /// <summary>Gets the warnings row: <c>{0}</c> in force on the route (the viewer's).</summary>
+    public static string RouteCheck_SummaryInForceFormat => Get(nameof(RouteCheck_SummaryInForceFormat));
+
+    /// <summary>Gets the warnings row's second part: <c>{0}</c> near (the viewer's).</summary>
+    public static string RouteCheck_SummaryNearFormat => Get(nameof(RouteCheck_SummaryNearFormat));
+
+    /// <summary>Gets the weather row: <c>{0}</c> to review (the viewer's).</summary>
+    public static string RouteCheck_SummaryWeatherMustReviewFormat => Get(nameof(RouteCheck_SummaryWeatherMustReviewFormat));
+
+    /// <summary>Gets the weather row: <c>{0}</c> above limits (the viewer's).</summary>
+    public static string RouteCheck_SummaryWeatherAboveFormat => Get(nameof(RouteCheck_SummaryWeatherAboveFormat));
+
+    /// <summary>Gets the weather row: <c>{0}</c> to check (the viewer's).</summary>
+    public static string RouteCheck_SummaryWeatherToCheckFormat => Get(nameof(RouteCheck_SummaryWeatherToCheckFormat));
+
+    /// <summary>Gets the weather row: <c>{0}</c> not checked (the viewer's).</summary>
+    public static string RouteCheck_SummaryWeatherNotCheckedFormat => Get(nameof(RouteCheck_SummaryWeatherNotCheckedFormat));
+
+    /// <summary>Gets a leg's name: <c>{0}</c> and <c>{1}</c> are its waypoints (the viewer's).</summary>
+    public static string RouteCheck_LegFormat => Get(nameof(RouteCheck_LegFormat));
+
+    /// <summary>Gets the time below the UKC setting: <c>{0}</c> minutes (the viewer's).</summary>
+    public static string RouteCheck_MinutesBelowFormat => Get(nameof(RouteCheck_MinutesBelowFormat));
+
+    /// <summary>Gets the footer: <c>{0}</c> is the products used (the viewer's, design brief §7.1).</summary>
+    public static string RouteCheck_FooterFormat => Get(nameof(RouteCheck_FooterFormat));
+
+    /// <summary>Gets the footer without data (the viewer's).</summary>
+    public static string RouteCheck_FooterNoData => Get(nameof(RouteCheck_FooterNoData));
+
+    /// <summary>Gets the draft used: <c>{0}</c>.</summary>
+    public static string RouteCheck_ParameterDraftFormat => Get(nameof(RouteCheck_ParameterDraftFormat));
+
+    /// <summary>Gets the parameters line without a draft (the viewer's).</summary>
+    public static string RouteCheck_ParameterNoDraft => Get(nameof(RouteCheck_ParameterNoDraft));
+
+    /// <summary>Gets the UKC margin used: <c>{0}</c>.</summary>
+    public static string RouteCheck_ParameterUkcFormat => Get(nameof(RouteCheck_ParameterUkcFormat));
+
+    /// <summary>Gets the UKC margin when none is set (the viewer's).</summary>
+    public static string RouteCheck_NoMarginSet => Get(nameof(RouteCheck_NoMarginSet));
+
+    /// <summary>Gets the safety contour used: <c>{0}</c>.</summary>
+    public static string RouteCheck_ParameterSafetyContourFormat => Get(nameof(RouteCheck_ParameterSafetyContourFormat));
+
+    /// <summary>Gets the safety depth used: <c>{0}</c>.</summary>
+    public static string RouteCheck_ParameterSafetyDepthFormat => Get(nameof(RouteCheck_ParameterSafetyDepthFormat));
+
+    /// <summary>Gets a parameter that came from the route: <c>{0}</c>.</summary>
+    public static string RouteCheck_FromRouteFormat => Get(nameof(RouteCheck_FromRouteFormat));
+
+    /// <summary>Gets the Check Selected Line button text.</summary>
+    public static string RouteCheck_CheckSelectedLine => Get(nameof(RouteCheck_CheckSelectedLine));
+
+    /// <summary>Gets the Check Selected Line button tooltip.</summary>
+    public static string RouteCheck_CheckSelectedLineTooltip => Get(nameof(RouteCheck_CheckSelectedLineTooltip));
+
+    /// <summary>Gets the Draw Route button text.</summary>
+    public static string RouteCheck_DrawRoute => Get(nameof(RouteCheck_DrawRoute));
+
+    /// <summary>Gets the Draw Route button tooltip.</summary>
+    public static string RouteCheck_DrawRouteTooltip => Get(nameof(RouteCheck_DrawRouteTooltip));
+
+    /// <summary>Gets the Open Route button text.</summary>
+    public static string RouteCheck_OpenRoute => Get(nameof(RouteCheck_OpenRoute));
+
+    /// <summary>Gets the Open Route button tooltip.</summary>
+    public static string RouteCheck_OpenRouteTooltip => Get(nameof(RouteCheck_OpenRouteTooltip));
+
+    /// <summary>Gets the Open Route dialog's title.</summary>
+    public static string RouteCheck_OpenRouteTitle => Get(nameof(RouteCheck_OpenRouteTitle));
+
+    /// <summary>Gets the Open Route dialog's file filter.</summary>
+    public static string RouteCheck_OpenRouteFilter => Get(nameof(RouteCheck_OpenRouteFilter));
+
+    /// <summary>Gets the message when no line feature is selected.</summary>
+    public static string RouteCheck_NoLineSelected => Get(nameof(RouteCheck_NoLineSelected));
+
+    /// <summary>Gets the message without a map.</summary>
+    public static string RouteCheck_NoMap => Get(nameof(RouteCheck_NoMap));
+
+    /// <summary>Gets the findings list's accessible name.</summary>
+    public static string RouteCheck_Findings => Get(nameof(RouteCheck_Findings));
+
+    /// <summary>Gets the line when a check found nothing (the viewer's).</summary>
+    public static string RouteCheck_Empty => Get(nameof(RouteCheck_Empty));
+
+    /// <summary>Gets the Object information link text.</summary>
+    public static string RouteCheck_ObjectInformation => Get(nameof(RouteCheck_ObjectInformation));
+
+    /// <summary>Gets the Object information link tooltip.</summary>
+    public static string RouteCheck_ObjectInformationTooltip => Get(nameof(RouteCheck_ObjectInformationTooltip));
+
+    /// <summary>Gets a finding row's tooltip (the viewer's).</summary>
+    public static string RouteCheck_ZoomTooltip => Get(nameof(RouteCheck_ZoomTooltip));
+
+    /// <summary>Gets the tooltip of a finding without a place (the viewer's).</summary>
+    public static string RouteCheck_NoPlaceTooltip => Get(nameof(RouteCheck_NoPlaceTooltip));
+
+    /// <summary>Gets the message when the findings layers can't be written: <c>{0}</c> is the reason.</summary>
+    public static string RouteCheck_FindingsWriteFailedFormat => Get(nameof(RouteCheck_FindingsWriteFailedFormat));
+
+    /// <summary>Gets the heading over datasets that couldn't be read.</summary>
+    public static string RouteCheck_ProblemsHeading => Get(nameof(RouteCheck_ProblemsHeading));
+
+    /// <summary>Gets the name of a drawn route.</summary>
+    public static string RouteCheck_SketchName => Get(nameof(RouteCheck_SketchName));
+
+    /// <summary>Gets a line feature's route name: <c>{0}</c> is the layer, <c>{1}</c> the feature's object id.</summary>
+    public static string RouteCheck_FeatureNameFormat => Get(nameof(RouteCheck_FeatureNameFormat));
+
+    /// <summary>Gets the Check Again button text.</summary>
+    public static string RouteCheck_CheckAgain => Get(nameof(RouteCheck_CheckAgain));
+
+    /// <summary>Gets the Check Again button tooltip.</summary>
+    public static string RouteCheck_CheckAgainTooltip => Get(nameof(RouteCheck_CheckAgainTooltip));
+
+    /// <summary>Gets the findings layers' description.</summary>
+    public static string RouteCheck_LayerDescription => Get(nameof(RouteCheck_LayerDescription));
+
+    /// <summary>Gets the edit operation's name when findings are written in an edit session.</summary>
+    public static string RouteCheck_EditName => Get(nameof(RouteCheck_EditName));
+
+    /// <summary>Gets the Route check section heading on the project Options page.</summary>
+    public static string Settings_RouteCheckSection => Get(nameof(Settings_RouteCheckSection));
+
+    /// <summary>Gets the note under the Route check section heading.</summary>
+    public static string Settings_RouteCheckNote => Get(nameof(Settings_RouteCheckNote));
+
+    /// <summary>Gets the Draft setting label (the viewer says draft).</summary>
+    public static string Settings_Draft => Get(nameof(Settings_Draft));
+
+    /// <summary>Gets the Draft setting tooltip.</summary>
+    public static string Tooltip_Draft => Get(nameof(Tooltip_Draft));
+
+    /// <summary>Gets the UKC margin setting label.</summary>
+    public static string Settings_UkcMargin => Get(nameof(Settings_UkcMargin));
+
+    /// <summary>Gets the UKC margin setting tooltip.</summary>
+    public static string Tooltip_UkcMargin => Get(nameof(Tooltip_UkcMargin));
 
     private static string Get(string name) =>
         Manager.GetString(name, CultureInfo.CurrentUICulture) ?? name;

@@ -310,7 +310,7 @@ internal sealed class MapTimeController
 
             if (layer.Status?.HasData != false && !status.HasData)
             {
-                AddInLog.Write(LogLevel.Info, TimeText.Describe(layer.Name, status));
+                AddInLog.Write(LogLevel.Info, MapTimeText.Describe(layer.Name, status, SoundChartsSession.Settings.Application.TimeFormat));
             }
 
             layer.Status = status;
@@ -344,7 +344,7 @@ internal sealed class MapTimeController
 
         var instant = steps.DefaultTime(DateTime.UtcNow);
         await SetMapTimeAsync(view, instant);
-        AddInLog.Write(LogLevel.Info, $"Set {map.Name}'s map time to {TimeText.FormatTime(instant)}.");
+        AddInLog.Write(LogLevel.Info, $"Set {map.Name}'s map time to {MapTimeText.FormatTime(instant)}.");
         return instant;
     }
 

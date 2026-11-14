@@ -20,7 +20,7 @@ internal sealed class GoToNearestDataButton : Button
         {
             var map = MapView.Active?.Map;
             Enabled = MapTimeController.Instance.NearestData(map) is not null;
-            Tooltip = TimeText.Summarize(MapTimeController.Instance.Statuses(map));
+            Tooltip = MapTimeText.Summarize(MapTimeController.Instance.Statuses(map), SoundChartsSession.Settings.Application.TimeFormat);
             DisabledTooltip = Tooltip;
         }
         catch (Exception ex)
