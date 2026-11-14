@@ -166,8 +166,9 @@ one: unique across a dataset's tables and stable for the same file.
 
 **Add as Feature Layers** opens datasets, exchange sets and folders as
 feature layers: on the SoundCharts tab's **Data** group, and as **Open with
-SoundCharts** > **Add as Feature Layers** in Catalog. The Library pane (A12)
-calls the same `AddSoundChartsFeatures.RunAsync(view, paths)`. Exchange sets
+SoundCharts** > **Add as Feature Layers** in Catalog, and the **Add as
+Feature Layers** button of the SoundCharts Library pane, beside **Add to
+Map**. All three call `AddSoundChartsFeatures.RunAsync(view, paths)`. Exchange sets
 and folders expand through A3's `DatasetInspector`. S-101, S-57, S-124 and
 S-421 datasets open; others (S-102, S-104, S-111) are reported and skipped.
 

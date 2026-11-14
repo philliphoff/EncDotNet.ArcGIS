@@ -405,4 +405,398 @@
     <value>Added {0} as feature layers.</value>
     <comment>{0} is a dataset count text.</comment>
   </data>
+  <data name="Library_OneDataset" xml:space="preserve">
+    <value>1 dataset</value>
+  </data>
+  <data name="Library_DatasetCountFormat" xml:space="preserve">
+    <value>{0:N0} datasets</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="Library_EditionFormat" xml:space="preserve">
+    <value>Ed {0}</value>
+    <comment>{0} is an edition number.</comment>
+  </data>
+  <data name="Library_EditionUpdateFormat" xml:space="preserve">
+    <value>Ed {0} Upd {1}</value>
+    <comment>{0} is an edition number, {1} an update number.</comment>
+  </data>
+  <data name="Library_Tag_Missing" xml:space="preserve">
+    <value>Missing</value>
+  </data>
+  <data name="Library_NotForNavigation" xml:space="preserve">
+    <value>Not for navigation</value>
+  </data>
+  <data name="Library_Group_Validation" xml:space="preserve">
+    <value>Validation</value>
+  </data>
+  <data name="Library_Group_Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="Library_Field_Compatibility" xml:space="preserve">
+    <value>Compatibility</value>
+  </data>
+  <data name="Library_Field_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Library_Field_TimeRange" xml:space="preserve">
+    <value>Time range</value>
+  </data>
+  <data name="Library_Field_TimeSteps" xml:space="preserve">
+    <value>Time steps</value>
+  </data>
+  <data name="Library_Compatibility_Supported" xml:space="preserve">
+    <value>Supported</value>
+  </data>
+  <data name="Library_Compatibility_NewerFormat" xml:space="preserve">
+    <value>Supported: read with the newer, compatible edition {0}</value>
+    <comment>{0} is an edition, such as 2.0.0.</comment>
+  </data>
+  <data name="Library_Compatibility_OlderFormat" xml:space="preserve">
+    <value>Partly supported: SoundCharts reads edition {0}, so some features may not draw</value>
+    <comment>{0} is an edition, such as 2.0.0.</comment>
+  </data>
+  <data name="Library_Compatibility_UnsupportedFormat" xml:space="preserve">
+    <value>Not supported: SoundCharts reads edition {0}, so the chart may be incomplete or wrong</value>
+    <comment>{0} is an edition, such as 2.0.0.</comment>
+  </data>
+  <data name="Library_Compatibility_UnknownFormat" xml:space="preserve">
+    <value>Edition not stated; SoundCharts reads edition {0}</value>
+    <comment>{0} is an edition, such as 2.0.0.</comment>
+  </data>
+  <data name="Library_Validation_NotValidated" xml:space="preserve">
+    <value>Not validated</value>
+  </data>
+  <data name="Library_Validation_Running" xml:space="preserve">
+    <value>Validating…</value>
+  </data>
+  <data name="Library_Validation_Valid" xml:space="preserve">
+    <value>Valid</value>
+  </data>
+  <data name="Library_Validation_ValidRulesFormat" xml:space="preserve">
+    <value>Valid · {0:N0} rules checked</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="Library_Validation_Invalid" xml:space="preserve">
+    <value>Not valid</value>
+  </data>
+  <data name="Library_Validation_NoRules" xml:space="preserve">
+    <value>No validation rules for this product</value>
+  </data>
+  <data name="Library_Validation_FailedFormat" xml:space="preserve">
+    <value>Couldn't validate: {0}</value>
+    <comment>{0} is an error message.</comment>
+  </data>
+  <data name="Library_Validation_OneError" xml:space="preserve">
+    <value>1 error</value>
+  </data>
+  <data name="Library_Validation_ErrorsFormat" xml:space="preserve">
+    <value>{0:N0} errors</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="Library_Validation_OneWarning" xml:space="preserve">
+    <value>1 warning</value>
+  </data>
+  <data name="Library_Validation_WarningsFormat" xml:space="preserve">
+    <value>{0:N0} warnings</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="Library_Validation_FindingFormat" xml:space="preserve">
+    <value>{0}: {1}</value>
+    <comment>{0} is Error, Warning or Info; {1} a message.</comment>
+  </data>
+  <data name="Library_ValidationTimedOut" xml:space="preserve">
+    <value>validation took longer than {0:N0} minutes</value>
+    <comment>{0} is a number of minutes.</comment>
+  </data>
+  <data name="Library_ValidationExitCode" xml:space="preserve">
+    <value>s100 validate ended with code {0}</value>
+    <comment>{0} is a number.</comment>
+  </data>
+  <data name="Library_ValidationNotStarted" xml:space="preserve">
+    <value>{0} didn't start</value>
+    <comment>{0} is a file path.</comment>
+  </data>
+  <data name="Library_ValidationNoServer" xml:space="preserve">
+    <value>The s100 program isn't installed, so datasets can't be validated.</value>
+  </data>
+  <data name="Library_ValidationZip" xml:space="preserve">
+    <value>Datasets inside a .zip can't be validated. Extract the exchange set and add its folder to the Library.</value>
+  </data>
+  <data name="Library_TimeSteps_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Library_TimeSteps_One" xml:space="preserve">
+    <value>1 step</value>
+  </data>
+  <data name="Library_TimeSteps_CountFormat" xml:space="preserve">
+    <value>{0:N0} steps</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="Library_TimeSteps_Hourly" xml:space="preserve">
+    <value>hourly</value>
+  </data>
+  <data name="Library_TimeSteps_Daily" xml:space="preserve">
+    <value>daily</value>
+  </data>
+  <data name="Library_TimeSteps_EveryHoursFormat" xml:space="preserve">
+    <value>every {0:N0} h</value>
+    <comment>{0} is a number of hours.</comment>
+  </data>
+  <data name="Library_TimeSteps_EveryMinutesFormat" xml:space="preserve">
+    <value>every {0:N0} min</value>
+    <comment>{0} is a number of minutes.</comment>
+  </data>
+  <data name="Library_TimeSteps_Reading" xml:space="preserve">
+    <value>Reading…</value>
+  </data>
+  <data name="Library_EmptyTitle" xml:space="preserve">
+    <value>Your library is empty</value>
+  </data>
+  <data name="Library_EmptyDescription" xml:space="preserve">
+    <value>Add chart data to browse it. Only an index is kept. Nothing is loaded, copied or downloaded until you ask.</value>
+  </data>
+  <data name="Library_DropHint" xml:space="preserve">
+    <value>Or drop a folder, .zip, CATALOG or collection manifest file here</value>
+  </data>
+  <data name="Library_FilterWatermark" xml:space="preserve">
+    <value>Filter by name, title, product…</value>
+  </data>
+  <data name="Library_Filter" xml:space="preserve">
+    <value>Filter datasets</value>
+  </data>
+  <data name="Library_Tree" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="Library_Details" xml:space="preserve">
+    <value>Dataset details</value>
+  </data>
+  <data name="Library_SelectItemPlaceholder" xml:space="preserve">
+    <value>Select a dataset to see its details</value>
+  </data>
+  <data name="Library_AddFolder" xml:space="preserve">
+    <value>Add a folder…</value>
+  </data>
+  <data name="Library_AddExchangeSet" xml:space="preserve">
+    <value>Add an exchange set…</value>
+  </data>
+  <data name="Library_AddManifest" xml:space="preserve">
+    <value>Add a collection manifest…</value>
+  </data>
+  <data name="Library_Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="Library_Remove" xml:space="preserve">
+    <value>Remove from library</value>
+  </data>
+  <data name="Library_AddToMap" xml:space="preserve">
+    <value>Add to Map</value>
+  </data>
+  <data name="Library_ShowFootprint" xml:space="preserve">
+    <value>Show Footprint</value>
+  </data>
+  <data name="Library_Validate" xml:space="preserve">
+    <value>Validate</value>
+  </data>
+  <data name="Library_OpenContainingFolder" xml:space="preserve">
+    <value>Open Containing Folder</value>
+  </data>
+  <data name="Tooltip_LibraryAddFolder" xml:space="preserve">
+    <value>Add a folder of datasets and exchange sets to the Library. It's scanned recursively and referenced in place.</value>
+  </data>
+  <data name="Tooltip_LibraryAddExchangeSet" xml:space="preserve">
+    <value>Add an exchange set (CATALOG.XML, CATALOG.031 or .zip) to the Library, referenced in place.</value>
+  </data>
+  <data name="Tooltip_LibraryAddManifest" xml:space="preserve">
+    <value>Add named groups of local folders, from a .s100collection.json file.</value>
+  </data>
+  <data name="Tooltip_LibraryRefresh" xml:space="preserve">
+    <value>Re-index the selected collection or source, or the whole Library</value>
+  </data>
+  <data name="Tooltip_LibraryRemove" xml:space="preserve">
+    <value>Remove the selected collection or source from the Library. Its files aren't deleted.</value>
+  </data>
+  <data name="Tooltip_LibraryAddToMap" xml:space="preserve">
+    <value>Add the selected dataset to the active map as a SoundCharts chart. A dataset in a .zip adds its whole exchange set.</value>
+  </data>
+  <data name="Tooltip_LibraryShowFootprint" xml:space="preserve">
+    <value>Show where the selected dataset is on the active map, from the Library's index.</value>
+  </data>
+  <data name="Tooltip_LibraryValidate" xml:space="preserve">
+    <value>Check the selected dataset against its product specification's rules. Runs s100 validate outside ArcGIS Pro.</value>
+  </data>
+  <data name="Tooltip_LibraryOpenContainingFolder" xml:space="preserve">
+    <value>Show the selected dataset's file in File Explorer.</value>
+  </data>
+  <data name="Library_AddFolderTitle" xml:space="preserve">
+    <value>Add Folder to Library</value>
+  </data>
+  <data name="Library_AddExchangeSetTitle" xml:space="preserve">
+    <value>Add Exchange Set to Library</value>
+  </data>
+  <data name="Library_AddManifestTitle" xml:space="preserve">
+    <value>Add Collection Manifest to Library</value>
+  </data>
+  <data name="Library_ExchangeSetFilter" xml:space="preserve">
+    <value>Exchange sets (CATALOG.XML, CATALOG.031, .zip)|CATALOG.XML;CATALOG.031;*.zip</value>
+    <comment>Keep the part after | as it is.</comment>
+  </data>
+  <data name="Library_ManifestFilter" xml:space="preserve">
+    <value>Collection manifests (*.s100collection.json)|*.s100collection.json|JSON files (*.json)|*.json</value>
+    <comment>Keep the parts after each | as they are.</comment>
+  </data>
+  <data name="Library_Caption" xml:space="preserve">
+    <value>SoundCharts Library</value>
+  </data>
+  <data name="Library_ImportProblemsHeading" xml:space="preserve">
+    <value>Some items weren't added to the Library:</value>
+  </data>
+  <data name="Library_Problem_NotFoundFormat" xml:space="preserve">
+    <value>{0}: not found</value>
+    <comment>{0} is a file or folder path.</comment>
+  </data>
+  <data name="Library_Problem_AlreadyInLibraryFormat" xml:space="preserve">
+    <value>{0}: already in the Library</value>
+    <comment>{0} is a file or folder path.</comment>
+  </data>
+  <data name="Library_Problem_UnreadableFormat" xml:space="preserve">
+    <value>{0}: couldn't be read. {1}</value>
+    <comment>{0} is a file or folder path; {1} a reason, possibly empty.</comment>
+  </data>
+  <data name="Library_RemoveConfirmFormat" xml:space="preserve">
+    <value>Remove {0} from the Library? Its files aren't deleted.</value>
+    <comment>{0} is a name.</comment>
+  </data>
+  <data name="Library_NoMap" xml:space="preserve">
+    <value>Open a map to show the footprint.</value>
+  </data>
+  <data name="Library_NoFootprint" xml:space="preserve">
+    <value>The Library's index has no footprint for this dataset.</value>
+  </data>
+  <data name="Library_FileMissingFormat" xml:space="preserve">
+    <value>{0} isn't there any more. Refresh the Library to update it.</value>
+    <comment>{0} is a file path.</comment>
+  </data>
+  <data name="Library_ActionFailedFormat" xml:space="preserve">
+    <value>That didn't work: {0}</value>
+    <comment>{0} is an error message.</comment>
+  </data>
+  <data name="Export_Title" xml:space="preserve">
+    <value>Export SoundCharts Chart</value>
+  </data>
+  <data name="Export_Heading" xml:space="preserve">
+    <value>Export {0}</value>
+    <comment>{0} is the layout's name.</comment>
+  </data>
+  <data name="Export_OneLayer" xml:space="preserve">
+    <value>1 SoundCharts layer is rendered at the layout's scale and resolution.</value>
+  </data>
+  <data name="Export_LayerCount" xml:space="preserve">
+    <value>{0} SoundCharts layers are rendered at the layout's scale and resolution.</value>
+    <comment>{0} is a count.</comment>
+  </data>
+  <data name="Export_FileLabel" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Export_FormatLabel" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Export_ResolutionLabel" xml:space="preserve">
+    <value>Resolution</value>
+  </data>
+  <data name="Export_ResolutionFormat" xml:space="preserve">
+    <value>{0} dpi</value>
+    <comment>{0} is dots per inch.</comment>
+  </data>
+  <data name="Export_FormatPdf" xml:space="preserve">
+    <value>PDF (georeferenced)</value>
+  </data>
+  <data name="Export_FormatPng" xml:space="preserve">
+    <value>PNG (with world file)</value>
+  </data>
+  <data name="Export_FormatJpeg" xml:space="preserve">
+    <value>JPEG (with world file)</value>
+  </data>
+  <data name="Export_FormatTiff" xml:space="preserve">
+    <value>TIFF (GeoTIFF)</value>
+  </data>
+  <data name="Export_FilterPdf" xml:space="preserve">
+    <value>PDF (*.pdf)|*.pdf</value>
+    <comment>A Windows file dialog filter: label|pattern.</comment>
+  </data>
+  <data name="Export_FilterPng" xml:space="preserve">
+    <value>PNG (*.png)|*.png</value>
+    <comment>A Windows file dialog filter: label|pattern.</comment>
+  </data>
+  <data name="Export_FilterJpeg" xml:space="preserve">
+    <value>JPEG (*.jpg)|*.jpg;*.jpeg</value>
+    <comment>A Windows file dialog filter: label|pattern.</comment>
+  </data>
+  <data name="Export_FilterTiff" xml:space="preserve">
+    <value>TIFF (*.tif)|*.tif;*.tiff</value>
+    <comment>A Windows file dialog filter: label|pattern.</comment>
+  </data>
+  <data name="Export_FileDialogTitle" xml:space="preserve">
+    <value>Export SoundCharts Chart</value>
+  </data>
+  <data name="Export_Note" xml:space="preserve">
+    <value>SoundCharts layers print with the symbol sizes and the content they show on screen at this scale. Raster formats are georeferenced to the largest map frame with SoundCharts layers. Not for navigation.</value>
+  </data>
+  <data name="Export_NoLayers" xml:space="preserve">
+    <value>The active layout has no visible SoundCharts layers to render. Use Pro's Export Layout for it.</value>
+  </data>
+  <data name="Export_NoticeQuestion" xml:space="preserve">
+    <value>This layout doesn't say that its chart is not for navigation. Add this text at the lower left of the page?
+
+{0}
+
+Choose No to export without it.</value>
+    <comment>{0} is the notice text.</comment>
+  </data>
+  <data name="Export_NoticeText" xml:space="preserve">
+    <value>SoundCharts · Not for navigation · Data: {0}</value>
+    <comment>{0} is the data producers. Design brief §7.1.</comment>
+  </data>
+  <data name="Export_Progress" xml:space="preserve">
+    <value>Rendering SoundCharts layers for the export...</value>
+  </data>
+  <data name="Export_Done" xml:space="preserve">
+    <value>Exported {0}.</value>
+    <comment>{0} is a file path.</comment>
+  </data>
+  <data name="Export_Partial" xml:space="preserve">
+    <value>Exported {0}. {1} SoundCharts layer(s) couldn't be rendered and are drawn from the chart server's tiles. Show the SoundCharts Log for the reason.</value>
+    <comment>{0} is a file path, {1} a count.</comment>
+  </data>
+  <data name="Export_NotWritten" xml:space="preserve">
+    <value>ArcGIS Pro couldn't write {0}. Check that the folder exists and the file isn't open in another program.</value>
+    <comment>{0} is a file path.</comment>
+  </data>
+  <data name="Export_Failed" xml:space="preserve">
+    <value>The SoundCharts chart couldn't be exported: {0}</value>
+    <comment>{0} is the reason.</comment>
+  </data>
+  <data name="Button_Browse" xml:space="preserve">
+    <value>_Browse...</value>
+  </data>
+  <data name="Button_Export" xml:space="preserve">
+    <value>_Export</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Tooltip_ExportBrowse" xml:space="preserve">
+    <value>Choose the file to export to.</value>
+  </data>
+  <data name="Tooltip_ExportFormat" xml:space="preserve">
+    <value>PDF keeps each map frame's coordinate system. PNG, JPEG and TIFF are georeferenced to one map frame.</value>
+  </data>
+  <data name="Tooltip_ExportResolution" xml:space="preserve">
+    <value>Dots per inch on the page. SoundCharts symbols keep their printed size at every resolution.</value>
+  </data>
+  <data name="Library_AddFeatureLayers" xml:space="preserve">
+    <value>Add as Feature Layers</value>
+  </data>
+  <data name="Tooltip_LibraryAddFeatureLayers" xml:space="preserve">
+    <value>Add the selected dataset's features to the active map as feature layers, one per feature type, for selection, attribute tables and geoprocessing. S-101, S-124, S-421 and S-57 only.</value>
+  </data>
 </root>

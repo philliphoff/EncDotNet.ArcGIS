@@ -28,6 +28,7 @@
         <tab id="SoundCharts_Tab" caption="SoundCharts" keytip="SC">
           <group refID="SoundCharts_DataGroup" />
           <group refID="SoundCharts_InquireGroup" />
+          <group refID="SoundCharts_OutputGroup" />
           <group refID="SoundCharts_HelpGroup" />
         </tab>
         <!-- Design brief D2: one tab, SoundCharts, in the SoundCharts Layer tab
@@ -47,6 +48,7 @@
           <button refID="SoundCharts_AddData" size="large" />
           <button refID="SoundCharts_AddFolder" size="middle" />
           <button refID="SoundCharts_AddFeatureLayers" size="middle" />
+          <button refID="SoundCharts_LibraryButton" size="large" />
         </group>
         <group id="SoundCharts_LayerDatasetsGroup" caption="Datasets" appearsOnAddInTab="false" keytip="D">
           <button refID="SoundCharts_ZoomToData" size="large" />
@@ -56,6 +58,10 @@
         </group>
         <group id="SoundCharts_InquireGroup" caption="Inquire" appearsOnAddInTab="false" keytip="I">
           <tool refID="SoundCharts_ObjectInfoTool" size="large" />
+        </group>
+        <!-- Design brief §2.1: produce output, after asking questions. -->
+        <group id="SoundCharts_OutputGroup" caption="Output" appearsOnAddInTab="false" keytip="O">
+          <button refID="SoundCharts_ExportChart" size="large" />
         </group>
         <group id="SoundCharts_HelpGroup" caption="Help" appearsOnAddInTab="false" keytip="H">
           <button refID="SoundCharts_LogButton" size="large" />
@@ -75,7 +81,7 @@
         </button>
         <!-- Issue #15: the plugin datasource's feature layers, in a
              SoundCharts features group outside the chart group (D14). -->
-        <button id="SoundCharts_AddFeatureLayers" className="AddFeatureLayersButton" caption="Add as Feature Layers" keytip="E"
+        <button id="SoundCharts_AddFeatureLayers" className="AddFeatureLayersButton" caption="Add as Feature Layers" keytip="T"
                 loadOnClick="true" condition="esri_mapping_mapPane" largeImage="LayerNew32" smallImage="LayerNew16">
           <tooltip heading="Add as Feature Layers">Add the features of S-101, S-124, S-421 or S-57 datasets, or of an exchange set, to the map as feature layers, one per feature type, for selection, attribute tables, joins and geoprocessing. Pro draws them with its default symbols. Not for navigation.<disabledText>Open a map to add SoundCharts data.</disabledText></tooltip>
         </button>
@@ -100,6 +106,12 @@
               loadOnClick="true" condition="esri_mapping_mapPane" largeImage="Explore32" smallImage="Explore16">
           <tooltip heading="Object information">Click the map to list every feature and coverage value of the SoundCharts layers there, in the SoundCharts Object information pane.<disabledText>Open a map to use Object information.</disabledText></tooltip>
         </tool>
+        <!-- Issue #12, D10: renders the layout's SoundCharts layers at its
+             scale and resolution for the export, instead of screen tiles. -->
+        <button id="SoundCharts_ExportChart" className="ExportChartButton" caption="Export SoundCharts Chart..." keytip="E"
+                loadOnClick="true" condition="esri_layouts_layoutPane" largeImage="GenericExport32" smallImage="GenericExport16">
+          <tooltip heading="Export SoundCharts Chart">Export the active layout to PDF, PNG, JPEG or TIFF with its SoundCharts layers rendered at the layout's scale and resolution, so symbols print at their screen size and show the same content. Not for navigation.<disabledText>Open a layout to export a SoundCharts chart.</disabledText></tooltip>
+        </button>
         <button id="SoundCharts_LogButton" className="ShowLogButton" caption="Log" keytip="L"
                 loadOnClick="true" largeImage="DiagnosticsMonitor32" smallImage="DiagnosticsMonitor16">
           <tooltip heading="SoundCharts Log">Show add-in events and chart server output, to find out why a chart doesn't draw.<disabledText /></tooltip>
@@ -117,13 +129,22 @@
                 loadOnClick="true" condition="esri_mapping_mapPane" smallImage="AddContent16" largeImage="AddContent32">
           <tooltip heading="Add to Map">Add this data to the active map as a SoundCharts chart, as Add SoundCharts Data does. Not for navigation.<disabledText>Open a map to add SoundCharts data.</disabledText></tooltip>
         </button>
+        <!-- Design brief §2.1, D9: opens the SoundCharts Library pane (issue #14). -->
+        <button id="SoundCharts_LibraryButton" className="LibraryButton" caption="Library" keytip="B"
+                loadOnClick="true" largeImage="CatalogShowTree32" smallImage="CatalogShowTree16">
+          <tooltip heading="SoundCharts Library">Browse folders, exchange sets and collection manifests of S-57 and S-1xx data without loading them, then add datasets to the map, show their footprints or validate them.<disabledText /></tooltip>
+        </button>
+        <button id="SoundCharts_OpenWithAddToLibrary" className="OpenWithAddToLibraryButton" caption="Add to Library" keytip="L"
+                loadOnClick="true" smallImage="CatalogShowTree16" largeImage="CatalogShowTree32">
+          <tooltip heading="Add to Library">Add this data to the SoundCharts Library, indexed in place without loading it.<disabledText /></tooltip>
+        </button>
       </controls>
       <menus>
-        <!-- A12 adds Add to Library here. -->
         <menu id="SoundCharts_OpenWithMenu" caption="Open with SoundCharts" smallImage="GenericOpen16">
-          <tooltip heading="Open with SoundCharts">Add S-57 or S-1xx data to a map as a SoundCharts chart.<disabledText /></tooltip>
+          <tooltip heading="Open with SoundCharts">Add S-57 or S-1xx data to a map as a SoundCharts chart, or to the SoundCharts Library.<disabledText /></tooltip>
           <button refID="SoundCharts_OpenWithAddToMap" />
           <button refID="SoundCharts_OpenWithAddFeatureLayers" />
+          <button refID="SoundCharts_OpenWithAddToLibrary" />
         </menu>
       </menus>
       <dockPanes>
@@ -134,6 +155,11 @@
         <dockPane id="SoundCharts_LogPane" caption="SoundCharts Log" className="LogPaneViewModel" dock="bottom"
                   keytip="L" autoHide="false">
           <content className="LogPaneView" />
+        </dockPane>
+        <!-- Design brief D3, D9: the viewer's Library model; drops on the pane add to it. -->
+        <dockPane id="SoundCharts_LibraryPane" caption="SoundCharts Library" className="LibraryPaneViewModel"
+                  dock="group" dockWith="esri_core_projectDockPane" smallImage="CatalogShowTree16">
+          <content className="LibraryPaneView" />
         </dockPane>
       </dockPanes>
     </insertModule>
