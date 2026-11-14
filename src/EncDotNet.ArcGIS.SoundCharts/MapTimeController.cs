@@ -98,9 +98,33 @@ internal sealed class MapTimeController
             _layers[layerUri] = new Tracked(map, layerUri, ChartLayerKinds.DisplayName(kind), steps);
         }
 
+        // The Coverage layer may have been time-enabled before these steps were known.
+        Guard("time-enabling the Coverage layer", () => EnableCoverageTimeAsync(map));
+
         if (MapView.Active is { } view && view.Map?.URI == map.URI)
         {
             Guard("following map time", () => UpdateAsync(view));
+        }
+    }
+
+    /// <summary>
+    /// Time-enables <paramref name="map"/>'s <b>Coverage</b> layer (A7) from
+    /// its <c>FirstTime</c> and <c>LastTime</c> fields, with the time layers'
+    /// range and step, so Pro shows the time slider (D29, P2). Does nothing
+    /// without Coverage or without time layers.
+    /// </summary>
+    /// <param name="map">The map.</param>
+    public async Task EnableCoverageTimeAsync(Map map)
+    {
+        ArgumentNullException.ThrowIfNull(map);
+        if (StepsOf(map) is null || await QueuedTask.Run(() => CoverageLayers.Find(map)) is not { } coverage)
+        {
+            return;
+        }
+
+        if (!await EnableTimeAsync(coverage, CoverageTable.FirstTimeField, CoverageTable.LastTimeField))
+        {
+            AddInLog.Write(LogLevel.Warning, $"Pro didn't accept time settings for the Coverage layer of {map.Name}; the time slider may not show.");
         }
     }
 

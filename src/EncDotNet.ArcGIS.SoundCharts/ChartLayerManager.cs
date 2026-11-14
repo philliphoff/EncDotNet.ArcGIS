@@ -1,6 +1,5 @@
 using System.Net.Http;
 using ArcGIS.Core.CIM;
-using ArcGIS.Core.Geometry;
 using ArcGIS.Desktop.Core;
 using ArcGIS.Desktop.Core.Events;
 using ArcGIS.Desktop.Framework;
@@ -27,7 +26,7 @@ namespace EncDotNet.SoundCharts;
 /// Every Pro event handler here is a boundary with Pro: failures are logged,
 /// never thrown (D22).
 /// </remarks>
-internal sealed class ChartLayerManager
+internal sealed partial class ChartLayerManager
 {
     /// <summary>The DAML state on while the Contents selection includes a SoundCharts layer.</summary>
     public const string SelectedState = "SoundCharts_ChartLayerSelectedState";
@@ -150,6 +149,9 @@ internal sealed class ChartLayerManager
 
             var added = prepared.Keys.Sum(kind => inspections.SelectMany(i => i.Datasets).Count(d => d.Kind == kind));
             AddInLog.Write($"Added {added} dataset(s) to {after.GroupName} in {map.Name}.");
+
+            // The footprints follow in the background: reading coverage can take a while for big exchange sets.
+            Guard("updating the Coverage layer", () => SyncCoverageAsync(map, create: true));
             return new AddOutcome(after.GroupName, added, current.Composition.Layers.Count == 0, failures);
         }
         finally
@@ -172,7 +174,7 @@ internal sealed class ChartLayerManager
         {
             switch (Registry.Find(layer.URI))
             {
-                case { IsGroup: true }:
+                case { IsGroup: true } or { IsCoverage: true }:
                     markers.AddRange(Registry.LayersOf(map.URI).Select(pair => pair.Value));
                     break;
                 case { } marker:
@@ -196,7 +198,7 @@ internal sealed class ChartLayerManager
         var uris = new HashSet<string>(StringComparer.Ordinal);
         foreach (var layer in view.GetSelectedLayers())
         {
-            if (Registry.Find(layer.URI) is { IsGroup: true } && view.Map is { } map)
+            if (Registry.Find(layer.URI) is { IsGroup: true } or { IsCoverage: true } && view.Map is { } map)
             {
                 uris.UnionWith(Registry.LayersOf(map.URI).Select(pair => pair.Key));
             }
@@ -215,65 +217,9 @@ internal sealed class ChartLayerManager
         }
     }
 
-    /// <summary>
-    /// Zooms <paramref name="view"/> to the footprints of the selected
-    /// layers' own datasets (§2.2), not the server's union bounds.
-    /// </summary>
-    /// <param name="view">The map view.</param>
-    /// <param name="layers">The selected chart layers' markers.</param>
-    /// <returns>Whether there was a footprint to zoom to.</returns>
-    public static Task<bool> ZoomToDataAsync(MapView view, IReadOnlyList<ChartLayerMarker> layers) =>
-        ZoomToAsync(view, layers.SelectMany(l => l.Datasets));
-
-    /// <summary>
-    /// Zooms <paramref name="view"/> to the union of <paramref name="datasets"/>'
-    /// footprints, then in past the minimum scale of the layers drawing them
-    /// if the footprint alone would leave them out of scale (D13): a small
-    /// cell's footprint can sit just beyond its chart's lowest zoom.
-    /// </summary>
-    /// <param name="view">The map view.</param>
-    /// <param name="datasets">The datasets.</param>
-    /// <returns>Whether there was a footprint to zoom to.</returns>
-    public static async Task<bool> ZoomToAsync(MapView view, IEnumerable<ChartLayerDataset> datasets)
-    {
-        ArgumentNullException.ThrowIfNull(view);
-        var list = datasets.ToList();
-        if (GeoExtent.Union(list.Select(d => d.Extent)) is not { } extent)
-        {
-            return false;
-        }
-
-        var paths = list.Select(d => d.Path).ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var (envelope, minScale) = await QueuedTask.Run(() =>
-        {
-            var box = EnvelopeBuilderEx.CreateEnvelope(extent.West, extent.South, extent.East, extent.North, SpatialReferences.WGS84)
-                .Expand(1.1, 1.1, true);
-
-            // The most zoomed-out scale at which one of these layers still draws.
-            var scale = view.Map.GetLayersAsFlattenedList()
-                .Where(l => ReadMarker(l) is { IsGroup: false } marker && marker.Datasets.Any(d => paths.Contains(d.Path)))
-                .Select(l => l.MinScale)
-                .Where(s => s > 0)
-                .DefaultIfEmpty(0)
-                .Max();
-            return (box, scale);
-        });
-
-        if (!await view.ZoomToAsync(envelope, TimeSpan.Zero))
-        {
-            return false;
-        }
-
-        if (minScale > 0 && view.Camera is { } camera && camera.Scale > minScale)
-        {
-            camera.Scale = minScale * 0.95;
-            await view.ZoomToAsync(camera, TimeSpan.Zero);
-        }
-
-        return true;
-    }
-
-    private static ChartLayerMarker? ReadMarker(Layer layer)
+    /// <summary>Reads a layer's SoundCharts marker, or <see langword="null"/>. Runs on the MCT.</summary>
+    /// <param name="layer">The layer.</param>
+    internal static ChartLayerMarker? ReadMarker(Layer layer)
     {
         var properties = layer.GetDefinition()?.CustomProperties;
         var value = properties?.FirstOrDefault(p => p.Key == ChartLayerMarker.PropertyKey)?.Value;
@@ -717,6 +663,8 @@ internal sealed class ChartLayerManager
         {
             await ConnectAsync(map, layer, marker).ConfigureAwait(false);
         }
+
+        await SyncCoverageAsync(found.Select(f => f.Map)).ConfigureAwait(false);
     }
 
     private async Task OnLayersAddedAsync(IReadOnlyList<Layer> added)
@@ -748,6 +696,8 @@ internal sealed class ChartLayerManager
         {
             await ConnectAsync(map, layer, marker).ConfigureAwait(false);
         }
+
+        await SyncCoverageAsync(found.Where(f => !f.Marker.IsCoverage).Select(f => f.Map)).ConfigureAwait(false);
     }
 
     /// <summary>Registers a layer found by its marker and, for a chart layer, starts its server and repoints it.</summary>
@@ -762,7 +712,7 @@ internal sealed class ChartLayerManager
             }
         }
 
-        if (marker.IsGroup)
+        if (marker.IsGroup || marker.IsCoverage)
         {
             Bind(uri, map, marker, null, null);
             return;
@@ -824,6 +774,8 @@ internal sealed class ChartLayerManager
             await binding.ReleaseAsync().ConfigureAwait(false);
         }
 
+        // A chart layer gone takes its datasets' footprints with it (D12).
+        await SyncCoverageAsync(gone.Where(b => b.Lease is not null).Select(b => b.Map)).ConfigureAwait(false);
         UpdateSelectedState(MapView.Active);
     }
 

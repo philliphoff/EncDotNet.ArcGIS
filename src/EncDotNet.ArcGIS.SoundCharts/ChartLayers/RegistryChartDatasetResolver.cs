@@ -33,7 +33,7 @@ public sealed class RegistryChartDatasetResolver : IChartDatasetResolver
         var datasets = new List<ChartDataset>();
         foreach (var layer in layers)
         {
-            if (_registry.Find(layer.LayerUri) is not { IsGroup: false } marker)
+            if (_registry.Find(layer.LayerUri) is not { IsGroup: false, IsCoverage: false } marker)
             {
                 continue;
             }
