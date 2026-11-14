@@ -51,4 +51,91 @@
   <data name="Tooltip_AboutCopy" xml:space="preserve">
     <value>Copy the versions to the clipboard, to paste into an issue.</value>
   </data>
+  <data name="ObjectInfo_EmptyTitle" xml:space="preserve">
+    <value>No feature picked</value>
+  </data>
+  <data name="ObjectInfo_EmptyDescription" xml:space="preserve">
+    <value>Use the Object information tool on the SoundCharts tab and click the map.</value>
+  </data>
+  <data name="ObjectInfo_NoChartLayersTitle" xml:space="preserve">
+    <value>No SoundCharts layers here</value>
+  </data>
+  <data name="ObjectInfo_NoChartLayersDescription" xml:space="preserve">
+    <value>Object information looks in the visible SoundCharts layers of the active map. Add SoundCharts data, or turn its layers on.</value>
+  </data>
+  <data name="ObjectInfo_Working" xml:space="preserve">
+    <value>Finding features...</value>
+  </data>
+  <data name="ObjectInfo_FailedTitle" xml:space="preserve">
+    <value>Object information didn't finish</value>
+  </data>
+  <data name="ObjectInfo_FailedDescription" xml:space="preserve">
+    <value>The details are in the add-in log.</value>
+  </data>
+  <data name="ObjectInfo_NothingHereTitle" xml:space="preserve">
+    <value>Nothing at this point</value>
+  </data>
+  <data name="ObjectInfo_NothingHereDescription" xml:space="preserve">
+    <value>No feature or coverage value of the SoundCharts layers is at this point.</value>
+  </data>
+  <data name="ObjectInfo_OneFeature" xml:space="preserve">
+    <value>1 FEATURE AT THIS POINT</value>
+  </data>
+  <data name="ObjectInfo_FeatureCountFormat" xml:space="preserve">
+    <value>{0} FEATURES AT THIS POINT</value>
+  </data>
+  <data name="ObjectInfo_LocationFormat" xml:space="preserve">
+    <value>{0:F4}°, {1:F4}°</value>
+  </data>
+  <data name="ObjectInfo_DatasetFormat" xml:space="preserve">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="ObjectInfo_IdFormat" xml:space="preserve">
+    <value>ID {0}</value>
+  </data>
+  <data name="ObjectInfo_SourceFormat" xml:space="preserve">
+    <value>Source: {0}</value>
+  </data>
+  <data name="ObjectInfo_AttributesHeading" xml:space="preserve">
+    <value>ATTRIBUTES</value>
+  </data>
+  <data name="ObjectInfo_NoAttributes" xml:space="preserve">
+    <value>(no attributes)</value>
+  </data>
+  <data name="ObjectInfo_ReferencesHeading" xml:space="preserve">
+    <value>REFERENCES</value>
+  </data>
+  <data name="ObjectInfo_ReferenceFormat" xml:space="preserve">
+    <value>{0} → {1}</value>
+  </data>
+  <data name="ObjectInfo_AttributeTooltipFormat" xml:space="preserve">
+    <value>{0} = {1}</value>
+  </data>
+  <data name="ObjectInfo_NotForNavigation" xml:space="preserve">
+    <value>NOT FOR NAVIGATION</value>
+  </data>
+  <data name="ObjectInfo_NotForNavigationToolTip" xml:space="preserve">
+    <value>The data provider marks this data as not for navigation</value>
+  </data>
+  <data name="ObjectInfo_TimeDefault" xml:space="preserve">
+    <value>Water levels and currents at each dataset's first time step.</value>
+  </data>
+  <data name="ObjectInfo_TimeFormat" xml:space="preserve">
+    <value>Water levels and currents at {0}.</value>
+  </data>
+  <data name="ObjectInfo_UtcFormat" xml:space="preserve">
+    <value>{0:d MMM yyyy HH:mm} UTC</value>
+  </data>
+  <data name="ObjectInfo_ProblemFormat" xml:space="preserve">
+    <value>Couldn't read {0}: {1}</value>
+  </data>
+  <data name="ObjectInfo_Features" xml:space="preserve">
+    <value>Features at this point</value>
+  </data>
+  <data name="ObjectInfo_Details" xml:space="preserve">
+    <value>Feature details</value>
+  </data>
+  <data name="ObjectInfo_Problems" xml:space="preserve">
+    <value>Datasets that couldn't be read</value>
+  </data>
 </root>
