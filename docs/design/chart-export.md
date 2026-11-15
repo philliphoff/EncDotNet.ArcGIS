@@ -114,4 +114,4 @@ at 96 and at 300 dpi, rendered as the add-in renders it, and checks that
 magenta symbols cover the same share of the frame and that the 300 dpi
 frame, averaged down, shows the same marks in the same places. A control
 rendered the way DPI-unaware WMS does fails both. It needs ArcGIS Pro's
-Python, so CI doesn't run it; see [CONTRIBUTING.md](../../CONTRIBUTING.md#testing).
+Python, so CI doesn't run it; see [CONTRIBUTING.md](https://github.com/philliphoff/EncDotNet.ArcGIS/blob/main/CONTRIBUTING.md#testing).

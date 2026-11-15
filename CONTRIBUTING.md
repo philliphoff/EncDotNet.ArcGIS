@@ -293,6 +293,18 @@ dotnet format EncDotNet.ArcGIS.slnx --diagnostics IDE0005 IDE1006 --severity war
   structure, and describe rather than promote. Agents load the
   `docs-writing` skill.
 - Design notes for the add-in live in `docs/design/`.
+- The pages under `docs/` are built with DocFX (`docfx.json`, the **Docs**
+  workflow) into this repository's GitHub Pages site, and the user-facing
+  ones into the soundcharts.app docs with EncDotNet.S100's. Build the site
+  before you push a docs change; a warning fails the **Docs** check:
+
+  ```bash
+  dotnet tool install -g docfx --version 2.78.6
+  docfx docfx.json --warningsAsErrors --serve
+  ```
+
+  See [Publishing](docs/docs-style.md#publishing) for where pages go and how
+  they link.
 - UI text is localizable: strings shown by windows and panes live in
   `src/EncDotNet.ArcGIS.SoundCharts/Resources/Strings.resx`, and ribbon
   captions and tooltips in `Config.daml`. Copy UI labels from there exactly.
@@ -305,8 +317,35 @@ dotnet format EncDotNet.ArcGIS.slnx --diagnostics IDE0005 IDE1006 --severity war
 4. Open a pull request against `main` and fill in the
    [pull request template](.github/pull_request_template.md).
 5. CI must pass before review. It builds the add-in with Visual Studio's
-   MSBuild, runs the tests, and uploads the `.esriAddinX` as the **addin**
-   artifact.
+   MSBuild, runs the tests, and uploads the `.esriAddinX` and `.esriPlugin`
+   as the **addin** artifact. The **Docs** workflow builds the docs site.
+
+## Releases
+
+The git tag is the version. Nothing in the source tree changes for a
+release: `src/Directory.Build.props` keeps `0.0.0-dev`, and `Config.daml`
+and the plugin's `Config.xml` keep `0.0.0`.
+
+1. Run the **Release** workflow from the Actions tab, and choose a
+   **patch**, **minor** or **major** bump. It tags `main`'s head with the
+   next version, such as `v0.2.0`.
+2. CI runs on the tag. It stamps the version into `Config.daml` and
+   `Config.xml` with
+   [`tools/set-addin-version.ps1`](tools/set-addin-version.ps1), builds,
+   tests and packages the add-in, then the **Create release** job publishes
+   a GitHub release with release notes generated from the merged pull
+   requests. The release has both packages and
+   `SoundCharts-for-ArcGIS-<version>.zip` with them; it's the add-in's
+   archive, as CI artifacts expire.
+3. Edit the release notes on GitHub if they need it.
+
+A tag with a suffix, such as `v0.2.0-rc.1`, pushed by hand, makes a
+prerelease. Pro's add-in versions are numeric, so the packages carry
+`0.2.0`.
+
+The **Release** workflow pushes the tag with the `RELEASE_TOKEN` secret, a
+personal access token with `contents: write` on this repository: a tag
+pushed with the workflow's own token doesn't start CI.
 
 ## Reporting bugs and requesting features
 

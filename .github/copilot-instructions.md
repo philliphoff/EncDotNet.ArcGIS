@@ -56,7 +56,8 @@ tools/
   build-server.ps1                     # Builds the pinned s100 chart server into artifacts/server/
   s100-server.json                     # The pin: EncDotNet.S100 commit and version
   deploy-addin.ps1                     # Installs the .esriAddinX for the current user
-docs/                                  # Coding and docs style guides, design notes (docs/design/)
+  set-addin-version.ps1                # Stamps a release version into Config.daml and Config.xml (CI, tag builds)
+docs/                                  # DocFX site (docfx.json, docs/toc.yml): user docs, style guides, design notes (docs/design/)
 ```
 
 ## Technology stack
@@ -70,7 +71,8 @@ docs/                                  # Coding and docs style guides, design no
 | S-100 | `EncDotNet.S100` NuGet packages (one version, `EncDotNetS100Version`) |
 | Testing | xunit v3, coverlet |
 | Package management | Central Package Management via `Directory.Packages.props` |
-| CI | GitHub Actions on `windows-latest` with Visual Studio's MSBuild (`.github/workflows/ci.yml`) |
+| CI | GitHub Actions on `windows-latest` with Visual Studio's MSBuild (`.github/workflows/ci.yml`); a `v*` tag from the Release workflow (`release.yml`) publishes a GitHub release |
+| Docs | DocFX 2.78.6 (`docfx.json`, `.github/workflows/docs.yml`), GitHub Pages; the user pages are also built into EncDotNet.S100's soundcharts.app docs |
 
 ## Building and testing
 

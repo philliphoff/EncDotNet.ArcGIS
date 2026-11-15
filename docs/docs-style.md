@@ -8,7 +8,18 @@ from
 so the two projects read alike. The differences are the names, the UI text
 sources and the build check, below.
 
-The [repository README](../README.md) and [CONTRIBUTING.md](../CONTRIBUTING.md)
+The pages under `docs/` are built with DocFX into this repository's own
+site, and the user-facing ones are also published in the
+[soundcharts.app documentation](https://soundcharts.app/docs/), built
+together with EncDotNet.S100's, as EncDotNet's are. The user-facing pages are
+the ones directly in `docs/`, except this guide and the
+[C# coding style guide](coding-style.md). The contributor pages (those two,
+the design notes in `docs/design/` and the root Markdown files) are
+published only on this repository's site, or not at all. See
+[Publishing](#publishing).
+
+The [repository README](https://github.com/philliphoff/EncDotNet.ArcGIS/blob/main/README.md)
+and [CONTRIBUTING.md](https://github.com/philliphoff/EncDotNet.ArcGIS/blob/main/CONTRIBUTING.md)
 are the reference examples. When this guide doesn't answer a question, do
 what they do, then what EncDotNet.S100's docs do.
 
@@ -172,17 +183,28 @@ support uses that name.
 
 ## Links
 
-- Use relative links between pages and to repository files, so they resolve
-  on GitHub and in a clone: `[CONTRIBUTING.md](../CONTRIBUTING.md)`.
+- Use relative links between pages in `docs/`, so DocFX resolves them in
+  both sites: `[SoundCharts Tools](toolbox.md)`.
+- Use an absolute GitHub URL for repository files that aren't pages, such as
+  scripts, source files, folders and the root Markdown files:
+  `https://github.com/philliphoff/EncDotNet.ArcGIS/blob/main/tools/deploy-addin.ps1`.
+  Relative links to them break when the pages are published inside another
+  site, and DocFX fails the build on them.
+- Don't link from a user-facing page to a contributor page (this guide,
+  `coding-style.md`, a design note or `CONTRIBUTING.md`) with a relative
+  link. Those pages aren't in the combined site, so use an absolute GitHub
+  URL.
+- The root Markdown files aren't built by DocFX, so they use relative links
+  to pages and files: `[SoundCharts Tools](docs/toolbox.md)`.
 - Use absolute URLs for EncDotNet.S100 pages and files.
-- Make link text say where the link goes: "see
-  [CONTRIBUTING.md](../CONTRIBUTING.md)", not "see [here](../CONTRIBUTING.md)".
+- Make link text say where the link goes: "see [SoundCharts Tools](toolbox.md)",
+  not "see [here](toolbox.md)".
 - Link to a page's own topic once, where the reader needs it. Don't repeat the
   same set of links at the top and bottom of a page.
 
 ## Alerts, tables and images
 
-- Use GitHub alerts (`> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`,
+- Use alerts, which GitHub and DocFX both render (`> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`,
   `[!CAUTION]`) only for information the reader must not miss, placed next to
   the step it affects. Don't open a page with one or use one for decoration.
 - Use a table to compare items across the same attributes. Use a list for
@@ -192,15 +214,40 @@ support uses that name.
   it shows.
 - Use Mermaid diagrams for flows and relationships. Keep them to one idea.
 
+## Publishing
+
+[`docfx.json`](https://github.com/philliphoff/EncDotNet.ArcGIS/blob/main/docfx.json)
+builds the pages under `docs/` into this repository's site, and the **Docs**
+workflow builds it on every pull request and deploys it to GitHub Pages from
+`main`. A broken link, anchor or table of contents entry fails the build.
+
+- Add a new page to
+  [`docs/toc.yml`](https://github.com/philliphoff/EncDotNet.ArcGIS/blob/main/docs/toc.yml):
+  user-facing pages above **Contributing**, contributor pages and design
+  notes under it.
+- Put a user-facing page directly in `docs/`, and a design note in
+  `docs/design/`. EncDotNet.S100's site takes the pages directly in `docs/`
+  except `coding-style.md` and `docs-style.md`, from this repository's latest
+  release, so a page goes live there with the next release.
+- Put images in `docs/images/`, or `docs/design/images/` for a design note.
+
 ## Check your page
 
 Before you open a pull request:
 
-1. Preview the page on GitHub (or in an editor that renders GitHub Markdown)
+1. Build the site and fix every warning:
+
+   ```bash
+   dotnet tool install -g docfx --version 2.78.6
+   docfx docfx.json --warningsAsErrors --serve
+   ```
+
+   Then open `http://localhost:8080`. The first command is needed once.
+2. Preview the page on GitHub (or in an editor that renders GitHub Markdown)
    and read it from top to bottom as a new reader. Check every link and
    anchor.
-2. Run each command and code example, or confirm it against the code or a
+3. Run each command and code example, or confirm it against the code or a
    test that does.
-3. Check UI labels against `Config.daml` and `Strings.resx`, and API names
+4. Check UI labels against `Config.daml` and `Strings.resx`, and API names
    against the source.
-4. Search the page for the words in [Voice and tone](#voice-and-tone).
+5. Search the page for the words in [Voice and tone](#voice-and-tone).

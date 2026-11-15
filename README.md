@@ -28,12 +28,25 @@ SoundCharts charts are not for navigation.
 
 ## Install
 
-1. Download `EncDotNet.ArcGIS.SoundCharts.esriAddinX` from the **addin**
-   artifact of a [CI run](https://github.com/philliphoff/EncDotNet.ArcGIS/actions/workflows/ci.yml).
+1. Download `EncDotNet.ArcGIS.SoundCharts.esriAddinX` and
+   `EncDotNet.ArcGIS.SoundCharts.Features.esriPlugin` from the
+   [latest release](https://github.com/philliphoff/EncDotNet.ArcGIS/releases/latest).
 2. Close ArcGIS Pro.
-3. Double-click the `.esriAddinX` file, or run
-   [`tools/deploy-addin.ps1`](tools/deploy-addin.ps1) with `-Path` set to it.
+3. Double-click each file, or run
+   [`tools/deploy-addin.ps1`](tools/deploy-addin.ps1) with `-Path` and
+   `-PluginPath` set to them.
 4. Start ArcGIS Pro and open the **SoundCharts** tab.
+
+See [Install SoundCharts for ArcGIS](docs/install.md) for details. Builds of
+`main` are in the **addin** artifact of each
+[CI run](https://github.com/philliphoff/EncDotNet.ArcGIS/actions/workflows/ci.yml).
+
+## Documentation
+
+The [documentation](docs/index.md) covers installing the add-in and
+[SoundCharts Tools](docs/toolbox.md). It's published to this repository's
+GitHub Pages site, and with EncDotNet.S100's in the
+[soundcharts.app documentation](https://soundcharts.app/docs/).
 
 ## Building
 
@@ -59,8 +72,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for prerequisites and details.
 | `src/EncDotNet.ArcGIS.SoundCharts/Toolboxes/` | **SoundCharts Tools**, the Python toolbox packaged with the add-in ([docs](docs/toolbox.md)) |
 | `tests/EncDotNet.ArcGIS.SoundCharts.Tests/` | xunit tests for the add-in's logic that doesn't need Pro |
 | `tests/toolbox/` | Python tests for the toolbox, runnable without Pro |
-| `tools/` | Developer scripts: `build-server.ps1` (the pinned chart server, pinned in `s100-server.json`) and `deploy-addin.ps1` |
-| `docs/` | Contributor documentation and design notes |
+| `tools/` | Developer scripts: `build-server.ps1` (the pinned chart server, pinned in `s100-server.json`), `deploy-addin.ps1` and `set-addin-version.ps1` (stamps a release version) |
+| `docs/` | The documentation (a DocFX site, `docfx.json`), contributor guides and design notes |
 
 ## License
 

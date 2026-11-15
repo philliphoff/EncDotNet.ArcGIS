@@ -62,8 +62,12 @@ then EncDotNet.S100's docs.
       in a separate block.
 - [ ] UI labels are bold and match `Config.daml` or `Strings.resx` exactly.
       The add-in is SoundCharts, never "S-100".
-- [ ] Links are relative within the repository and absolute for
-      EncDotNet.S100. Link text names the target.
+- [ ] Links between pages in `docs/` are relative; links from `docs/` to
+      anything else in the repository (scripts, source, root Markdown files)
+      and to EncDotNet.S100 are absolute GitHub URLs. Link text names the
+      target.
+- [ ] A new page is in `docs/toc.yml`, and
+      `docfx docfx.json --warningsAsErrors` builds with no warnings.
 - [ ] Alerts are only used for must-not-miss information, next to the step
       they affect.
 - [ ] Renamed headings or removed pages have no remaining inbound links.

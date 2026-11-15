@@ -63,3 +63,6 @@ nunit-*.xml
 # Python
 __pycache__/
 *.pyc
+
+# DocFX output
+_site/
