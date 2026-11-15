@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- A14 spike (#16), experimental: exports one dataset's S-100 portrayal
+       as feature data plus CIM layer files, so ArcGIS Pro can draw it with
+       native symbology. Not part of the add-in or its packages. See
+       docs/design/native-symbology-spike.md. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>EncDotNet.SoundCharts.SymbologySpike</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EncDotNet.S100" />
+  </ItemGroup>
+
+</Project>

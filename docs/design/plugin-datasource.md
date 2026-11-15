@@ -73,7 +73,9 @@ administrator's add-in policy.
 > path, with a `Config.xml` copied from Esri's SimplePointPlugin sample,
 > and with a project open. Pro never unpacked the plugin to its assembly
 > cache. Check on another machine before relying on it (pull request
-> checklist).
+> checklist). A14 found that Pro's native add-in manager, which loads
+> plugin datasources, keeps its own folder list; see
+> [the symbology spike](native-symbology-spike.md#plugin-datasource).
 
 ## Table model
 
