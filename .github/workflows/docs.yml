@@ -1,0 +1,66 @@
+name: Docs
+
+# Builds the DocFX site on every pull request (as a check: broken links,
+# anchors or table of contents entries fail it) and deploys it to GitHub
+# Pages from main. EncDotNet.S100 also builds the user-facing pages into the
+# soundcharts.app docs, as it does EncDotNet's.
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # Pull requests get their own group so they never cancel a Pages deploy.
+  group: ${{ github.event_name == 'pull_request' && format('docs-pr-{0}', github.event.pull_request.number) || 'pages' }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      # Pinned, like EncDotNet.S100's, so a new DocFX release can't
+      # introduce warnings that fail the build below; bump deliberately.
+      - name: Install DocFX
+        run: dotnet tool install -g docfx --version 2.78.6
+
+      # Any warning (for example a broken link or bookmark) fails the build,
+      # on pull requests as well as on main.
+      - name: Build docs
+        run: docfx docfx.json --warningsAsErrors
+
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

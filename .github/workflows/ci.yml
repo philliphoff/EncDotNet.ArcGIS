@@ -44,6 +44,14 @@ jobs:
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Stamp the release version
+        # Pro shows the version from Config.daml and Config.xml, which keep
+        # 0.0.0 in the source tree. On a release tag build, write the tag's
+        # version into both before packaging.
+        if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
+        shell: pwsh
+        run: tools/set-addin-version.ps1 -Version '${{ steps.version.outputs.version }}'
+
       - name: Read the chart server pin
         id: server
         shell: pwsh
@@ -164,6 +172,51 @@ jobs:
             src/EncDotNet.ArcGIS.SoundCharts/bin/Release/net10.0-windows/win-x64/EncDotNet.ArcGIS.SoundCharts.esriAddinX
             src/EncDotNet.ArcGIS.SoundCharts.Features/bin/Release/net10.0-windows/win-x64/EncDotNet.ArcGIS.SoundCharts.Features.esriPlugin
           if-no-files-found: error
+
+  release:
+    name: Create release
+    # A v* tag, pushed by the Release workflow, publishes the packages CI
+    # built and tested as a GitHub release. The release is the add-in's
+    # archive: CI artifacts expire, release assets don't.
+    if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
+    needs: [build, format]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download the add-in
+        uses: actions/download-artifact@v8
+        with:
+          name: addin
+          path: addin
+
+      - name: Archive the add-in
+        # One versioned .zip with both packages, beside the packages
+        # themselves: tools/deploy-addin.ps1 and the install docs use their
+        # unversioned names.
+        env:
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          mkdir release
+          find addin -type f \( -name '*.esriAddinX' -o -name '*.esriPlugin' \) -exec cp {} release/ \;
+          test -f release/EncDotNet.ArcGIS.SoundCharts.esriAddinX
+          test -f release/EncDotNet.ArcGIS.SoundCharts.Features.esriPlugin
+          (cd release && zip -X "SoundCharts-for-ArcGIS-${VERSION}.zip" *.esriAddinX *.esriPlugin)
+          ls -l release
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: SoundCharts for ArcGIS ${{ needs.build.outputs.version }}
+          generate_release_notes: true
+          # A tag with a suffix (v1.2.0-rc.1) is a prerelease.
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          files: |
+            release/SoundCharts-for-ArcGIS-*.zip
+            release/EncDotNet.ArcGIS.SoundCharts.esriAddinX
+            release/EncDotNet.ArcGIS.SoundCharts.Features.esriPlugin
+          fail_on_unmatched_files: true
 
   format:
     name: Format check

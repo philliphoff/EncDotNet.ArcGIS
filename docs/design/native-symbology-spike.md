@@ -7,7 +7,7 @@ EncDotNet.S100's S-100 portrayal can be expressed as ArcGIS Pro symbology
 (CIM) on feature data, so a SoundCharts chart can be a real Pro layer and
 print as vectors. It covers the approach, the measurements, the gaps, a
 recommendation and a slice plan. The prototype is
-[`tools/SymbologySpike`](../../tools/SymbologySpike), outside the add-in.
+[`tools/SymbologySpike`](https://github.com/philliphoff/EncDotNet.ArcGIS/tree/main/tools/SymbologySpike), outside the add-in.
 
 **Recommendation: partial go.** Native symbology reproduces the portrayal
 closely and prints as vectors, but has known gaps and depends on a data path
