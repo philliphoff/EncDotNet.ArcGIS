@@ -12,11 +12,13 @@ a copy of these files in private storage for CI.
 
 ```powershell
 $bin = (Get-ItemProperty 'HKLM:\SOFTWARE\ESRI\ArcGISPro').InstallDir + 'bin'
-& "$bin\ArcGISSignAddIn.exe" /? *> signer-help.txt
+& "$bin\ArcGISSignAddIn.exe" /?
 ```
 
-If that opens a window rather than printing, note it. A signer that shows UI
-can't run in CI unless some switch (perhaps `/s`) suppresses it.
+On Pro 3.7 this prints nothing: it opens an *Esri Digital Signature Wizard*
+message box with the help text, and waits for OK. Copy the text out of the box
+(Ctrl+C in a message box, or UI Automation). There is no switch that turns
+the box off; see `tools/signer-findings.md`.
 
 ## 2. List the dependencies and copy them out
 
@@ -27,12 +29,18 @@ pwsh tools/inspect-signer.ps1 -CopyTo C:\signer-test\signer -Report C:\signer-te
 The script follows assembly references, P/Invokes and native imports from the
 signer, reports where each resolves, and copies the signer plus every
 dependency that lives in Pro's bin. Rows marked `missing` are what to look at:
-they're in a Pro subfolder, the GAC, or loaded another way.
+the `Elsewhere` column says whether each is in a Pro subfolder, another
+framework or the GAC, or not on the machine at all.
+
+The static list is the most the signer could need. With `/n:` or
+`/cert-thumbprint:` it loads only its own three files (`.exe`, `.dll`,
+`.runtimeconfig.json`); the Azure libraries are for `/kvu:` alone. The
+sandbox script's log lists what was actually loaded.
 
 ## 3. Sign with Pro's own signer first
 
 This is the reference result. Make a test certificate (self-signed, so Pro
-reports the result as *Un-trusted* — what matters is that it isn't *Invalid*):
+reports it as verified but not trusted):
 
 ```powershell
 New-SelfSignedCertificate -Type CodeSigningCert -Subject 'CN=SoundCharts signing test' -CertStoreLocation Cert:\CurrentUser\My
@@ -42,12 +50,26 @@ Copy a CI-built `EncDotNet.ArcGIS.SoundCharts.esriAddinX` to
 `C:\signer-test\baseline.esriAddinX` and sign it:
 
 ```powershell
-& "$bin\ArcGISSignAddIn.exe" C:\signer-test\baseline.esriAddinX /n:"SoundCharts signing test" /s
-$LASTEXITCODE
+& "$bin\ArcGISSignAddIn.exe" C:\signer-test\baseline.esriAddinX /n:"SoundCharts signing test"
+```
+
+(There's no `/s`.) The signer reports the result in a message box (*The
+add-in was signed successfully.*, or the error) and exits only after OK, with
+exit code 0 whether it worked or not. So check the package itself: it's an
+OPC package, and `System.IO.Packaging` can verify it:
+
+```powershell
+Add-Type -AssemblyName WindowsBase
+$pkg = [System.IO.Packaging.Package]::Open('C:\signer-test\baseline.esriAddinX', 'Open', 'Read')
+$mgr = [System.IO.Packaging.PackageDigitalSignatureManager]::new($pkg)
+$mgr.IsSigned; $mgr.VerifySignatures($false)   # True, Success
+$pkg.Close()
 ```
 
 Double-click it, or open Pro's Add-In Manager after installing it: the
-signature should show the test certificate and *Un-trusted*.
+signature should show *Verified* checked and *Trusted* unchecked. With a
+self-signed certificate Pro also shows "WARNING: This Add-In file contains
+invalid digital signatures", even though the signature verifies.
 
 ## 4. Sign with the copy, on a clean Windows
 
@@ -58,10 +80,16 @@ on it. Enable it once, as administrator, then restart:
 Enable-WindowsOptionalFeature -Online -FeatureName Containers-DisposableClientVM
 ```
 
-Save this as `C:\signer-test\signer.wsb` and open it:
+In a virtual machine, Sandbox also needs nested virtualization (in VMware,
+*Virtualize Intel VT-x/EPT or AMD-V/RVI* in the VM's processor settings).
+
+Put the unsigned packages in `C:\signer-test\pkg`, copy
+`tools/inspect-signer-sandbox.ps1` to `C:\signer-test\sandbox-run.ps1`, save
+this as `C:\signer-test\signer.wsb` and open it:
 
 ```xml
 <Configuration>
+  <Networking>Enable</Networking>
   <MappedFolders>
     <MappedFolder>
       <HostFolder>C:\signer-test</HostFolder>
@@ -69,10 +97,17 @@ Save this as `C:\signer-test\signer.wsb` and open it:
       <ReadOnly>false</ReadOnly>
     </MappedFolder>
   </MappedFolders>
+  <LogonCommand>
+    <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\signer-test\sandbox-run.ps1</Command>
+  </LogonCommand>
 </Configuration>
 ```
 
-In the sandbox, in Windows PowerShell:
+The script does the steps below on its own (installs the runtimes, makes the
+certificate, signs `sandbox.esriAddinX` and `sandbox.esriPlugin`, closes the
+signer's message boxes, checks each signature) and writes everything to
+`C:\signer-test\sandbox-log.txt`. Wait for `Done.` in the log, then close the
+sandbox. By hand, the steps are, in Windows PowerShell:
 
 1. If step 2 printed a `runtimeconfig.json`, install the runtime it names.
    `Microsoft.WindowsDesktop.App` is the Windows Desktop runtime;
@@ -81,6 +116,7 @@ In the sandbox, in Windows PowerShell:
 
    ```powershell
    Invoke-WebRequest https://dot.net/v1/dotnet-install.ps1 -OutFile $env:TEMP\dotnet-install.ps1
+   & $env:TEMP\dotnet-install.ps1 -Channel 10.0 -Runtime dotnet
    & $env:TEMP\dotnet-install.ps1 -Channel 10.0 -Runtime windowsdesktop
    $env:DOTNET_ROOT = "$env:LOCALAPPDATA\Microsoft\dotnet"
    ```
@@ -94,13 +130,17 @@ In the sandbox, in Windows PowerShell:
 
    ```powershell
    New-SelfSignedCertificate -Type CodeSigningCert -Subject 'CN=SoundCharts signing test' -CertStoreLocation Cert:\CurrentUser\My
-   $p = Start-Process C:\signer-test\signer\ArcGISSignAddIn.exe -ArgumentList 'C:\signer-test\sandbox.esriAddinX','/n:"SoundCharts signing test"','/s' -PassThru -NoNewWindow
-   if (-not $p.WaitForExit(120000)) { 'Timed out: probably waiting on a dialog.'; $p.Kill() } else { "Exit code $($p.ExitCode)" }
+   $p = Start-Process C:\signer-test\signer\ArcGISSignAddIn.exe -ArgumentList 'C:\signer-test\sandbox.esriAddinX','/n:"SoundCharts signing test"' -PassThru
+   if (-not $p.WaitForExit(120000)) { 'Timed out: is the message box still up?'; $p.Kill() } else { "Exit code $($p.ExitCode)" }
    ```
 
+   Press OK on the signer's message box (signing the add-in takes about 45
+   seconds), and check the signature as in step 3: the exit code is 0 either
+   way.
+
 Back on the host, check `sandbox.esriAddinX` the same way as the baseline. It
-passes if Pro shows the signature as *Un-trusted* with the test certificate,
-like the baseline, and not *Invalid*.
+passes if Pro shows it the same way as the baseline: *Verified* checked,
+*Trusted* unchecked.
 
 ## 5. If it fails
 

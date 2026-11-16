@@ -10,10 +10,16 @@
     included. Each is reported by where it resolved:
 
       pro        in Pro's bin folder: has to travel with the signer
-      framework  in a .NET shared framework (the runtime provides it)
-      windows    in System32 or an API set (Windows provides it)
+      framework  in a shared framework the runtimeconfig.json names (the
+                 runtime provides it)
+      windows    in System32 or an API set (Windows provides it, even if
+                 Pro's bin has a local copy of the API set)
       vcredist   the Visual C++ runtime, from System32 (the runner has it)
-      missing    found nowhere: GAC, a Pro subfolder, or loaded another way
+      other-os   a macOS or Linux P/Invoke, never loaded on Windows
+      missing    not on the signer's probing path; the Elsewhere column says
+                 whether it's in a Pro subfolder, another framework or the
+                 GAC, or not on the machine at all (then only a code path
+                 that never runs here can need it)
 
     Anything loaded at run time by name (NativeLibrary.Load, Assembly.Load,
     reflection, satellite resources) or read from the registry won't show
@@ -172,27 +178,58 @@ $exe = Join-Path $ProBin "$Tool.exe"
 $dll = Join-Path $ProBin "$Tool.dll"
 if (-not (Test-Path $exe)) { throw "$exe doesn't exist." }
 
-# Where non-Pro files resolve: every installed shared framework (newest
-# version of each), and System32.
+# Where non-Pro files resolve: the shared frameworks the signer's
+# runtimeconfig.json names (newest installed version of each; only those are
+# on its probing path), and System32. With no runtimeconfig.json, every
+# installed framework.
 $dotnetRoot = if ($env:DOTNET_ROOT) { $env:DOTNET_ROOT } else { Join-Path $env:ProgramFiles 'dotnet' }
+$runtimeConfigPath = Join-Path $ProBin "$Tool.runtimeconfig.json"
+$frameworkNames = if (Test-Path $runtimeConfigPath) {
+    $rc = (Get-Content $runtimeConfigPath -Raw | ConvertFrom-Json).runtimeOptions
+    @(@($rc.frameworks) + @($rc.framework) | Where-Object { $_ } | ForEach-Object name)
+} else {
+    @(Get-ChildItem (Join-Path $dotnetRoot 'shared') -Directory -ErrorAction SilentlyContinue | ForEach-Object Name)
+}
 $frameworkDirs = @(
-    Get-ChildItem (Join-Path $dotnetRoot 'shared') -Directory -ErrorAction SilentlyContinue |
-        ForEach-Object {
-            Get-ChildItem $_.FullName -Directory |
-                Sort-Object { try { [version]($_.Name -replace '-.*$', '') } catch { [version]'0.0' } } |
-                Select-Object -Last 1
-        }
+    foreach ($fw in $frameworkNames) {
+        Get-ChildItem (Join-Path $dotnetRoot "shared\$fw") -Directory -ErrorAction SilentlyContinue |
+            Sort-Object { try { [version]($_.Name -replace '-.*$', '') } catch { [version]'0.0' } } |
+            Select-Object -Last 1
+    }
 )
 $system32 = [Environment]::SystemDirectory
 
+# For "missing" rows: where else the file is on this machine (Pro's other
+# folders, other shared frameworks, the GAC), none of which the signer probes.
+$elsewhereRoots = @(
+    (Split-Path $ProBin -Parent)
+    (Join-Path $dotnetRoot 'shared')
+    (Join-Path $env:windir 'Microsoft.NET\assembly')
+)
+function Find-Elsewhere([string] $file) {
+    $hits = foreach ($r in $elsewhereRoots) {
+        Get-ChildItem $r -Recurse -Filter $file -File -ErrorAction SilentlyContinue |
+            Where-Object { (Split-Path $_.FullName -Parent) -ne $ProBin } |
+            ForEach-Object FullName
+    }
+    if ($hits) { ($hits | Select-Object -First 3) -join '; ' } else { 'not on this machine' }
+}
+
 function Resolve-Dependency([string] $name, [bool] $managed) {
+    # API sets come from Windows, even when Pro's bin has local copies.
+    if ($name -match '^(api|ext)-ms-') { return [pscustomobject]@{ Source = 'windows'; Path = $null } }
+
+    # P/Invokes for macOS and Linux in cross-platform libraries (Azure,
+    # MSAL): never loaded on Windows.
+    if (-not $managed -and ($name -match '^/|\.(so(\.\d+)*|dylib)$|\.framework/')) {
+        return [pscustomobject]@{ Source = 'other-os'; Path = $null }
+    }
+
     # Assembly references are bare names; P/Invoke names may omit .dll.
     $file = if (-not $managed -and $name -match '\.(dll|exe|drv|sys)$') { $name } else { "$name.dll" }
 
     $inPro = Join-Path $ProBin $file
     if (Test-Path $inPro) { return [pscustomobject]@{ Source = 'pro'; Path = $inPro } }
-
-    if ($name -match '^(api|ext)-ms-') { return [pscustomobject]@{ Source = 'windows'; Path = $null } }
 
     foreach ($dir in $frameworkDirs) {
         $candidate = Join-Path $dir.FullName $file
@@ -207,7 +244,7 @@ function Resolve-Dependency([string] $name, [bool] $managed) {
         return [pscustomobject]@{ Source = $source; Path = $inWindows }
     }
 
-    return [pscustomobject]@{ Source = 'missing'; Path = $null }
+    return [pscustomobject]@{ Source = 'missing'; Path = $null; Elsewhere = (Find-Elsewhere $file) }
 }
 
 $entries = @($exe)
@@ -241,6 +278,7 @@ while ($queue.Count -gt 0) {
                 Kind = $dep.Kind
                 Source = $resolved.Source
                 Path = $resolved.Path
+                Elsewhere = $resolved.Elsewhere
                 UsedBy = [System.Collections.Generic.List[string]]::new()
             }
             if ($resolved.Source -eq 'pro') { $queue.Enqueue($resolved.Path) }
@@ -276,9 +314,15 @@ if ($mixed) {
 }
 
 $rows = $results.Values | Sort-Object @{ Expression = {
-        switch ($_.Source) { 'missing' { 0 } 'pro' { 1 } 'vcredist' { 2 } default { 3 } } } }, Name
+        switch ($_.Source) { 'missing' { 0 } 'pro' { 1 } 'vcredist' { 2 } 'other-os' { 4 } default { 3 } } } }, Name
 Write-Host ''
 $rows | Format-Table Name, Kind, Source, @{ Label = 'UsedBy'; Expression = { $_.UsedBy -join ', ' } } -AutoSize -Wrap | Out-String -Width 200 | Write-Host
+
+$missingRows = @($rows | Where-Object Source -eq 'missing')
+if ($missingRows) {
+    Write-Host 'Missing, and where else they are (the signer probes none of these):'
+    $missingRows | Format-Table Name, Elsewhere -AutoSize -Wrap | Out-String -Width 200 | Write-Host
+}
 
 $proFiles = @($seen.Keys | Sort-Object)
 $size = ($proFiles | ForEach-Object { (Get-Item $_).Length } | Measure-Object -Sum).Sum
@@ -296,6 +340,7 @@ if ($Report) {
 }
 
 if ($CopyTo) {
+    if (Test-Path $CopyTo) { Remove-Item (Join-Path $CopyTo '*') -Recurse -Force }
     New-Item -ItemType Directory -Force -Path $CopyTo | Out-Null
     foreach ($file in $proFiles + $sideFiles) { Copy-Item $file -Destination $CopyTo -Force }
     Write-Host "Copied $(($proFiles + $sideFiles).Count) files to $CopyTo."
