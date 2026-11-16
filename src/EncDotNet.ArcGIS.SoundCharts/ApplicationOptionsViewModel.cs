@@ -1,4 +1,6 @@
 using System.IO;
+using System.Windows.Input;
+using ArcGIS.Desktop.Framework;
 using ArcGIS.Desktop.Framework.Contracts;
 using EncDotNet.SoundCharts.Logging;
 using EncDotNet.SoundCharts.Resources;
@@ -16,6 +18,12 @@ namespace EncDotNet.SoundCharts;
 internal sealed class ApplicationOptionsViewModel : Page
 {
     private ApplicationSettings _draft = ApplicationSettings.Default;
+
+    /// <summary>Creates the page.</summary>
+    public ApplicationOptionsViewModel()
+    {
+        BrowseServerPathCommand = new RelayCommand(BrowseServerPath);
+    }
 
     /// <summary>Gets the time formats.</summary>
     public IReadOnlyList<SettingChoice<TimeFormat>> TimeFormats => SettingLabels.TimeFormats;
@@ -61,25 +69,40 @@ internal sealed class ApplicationOptionsViewModel : Page
         set => Edit(_draft with { TileCacheMegabytes = value });
     }
 
-    /// <summary>Gets what's wrong with the draft, or <see langword="null"/>.</summary>
+    /// <summary>Gets what's wrong with the <c>s100</c> path, or <see langword="null"/>.</summary>
+    public string? ServerPathProblem =>
+        _draft.ServerPath is { } path && !File.Exists(Environment.ExpandEnvironmentVariables(path))
+            ? Strings.Settings_Problem_ServerPath
+            : null;
+
+    /// <summary>Gets what's wrong with the tile cache size, or <see langword="null"/>.</summary>
+    public string? TileCacheProblem =>
+        _draft.TileCacheMegabytes is < ApplicationSettings.MinTileCacheMegabytes or > ApplicationSettings.MaxTileCacheMegabytes
+            ? Strings.Settings_Problem_TileCache
+            : null;
+
+    /// <summary>Gets what's wrong with the draft, one problem a line, or <see langword="null"/>.</summary>
     public string? Problems
     {
         get
         {
             List<string> problems = [];
-            if (_draft.TileCacheMegabytes is < ApplicationSettings.MinTileCacheMegabytes or > ApplicationSettings.MaxTileCacheMegabytes)
+            if (TileCacheProblem is { } tileCache)
             {
-                problems.Add(Strings.Settings_Problem_TileCache);
+                problems.Add(tileCache);
             }
 
-            if (_draft.ServerPath is { } path && !File.Exists(Environment.ExpandEnvironmentVariables(path)))
+            if (ServerPathProblem is { } serverPath)
             {
-                problems.Add(Strings.Settings_Problem_ServerPath);
+                problems.Add(serverPath);
             }
 
             return problems.Count == 0 ? null : string.Join(Environment.NewLine, problems);
         }
     }
+
+    /// <summary>Gets the command that chooses the <c>s100.exe</c> with an Open dialog.</summary>
+    public ICommand BrowseServerPathCommand { get; }
 
     /// <inheritdoc/>
     protected override Task InitializeAsync()
@@ -108,6 +131,14 @@ internal sealed class ApplicationOptionsViewModel : Page
         }
 
         return Task.CompletedTask;
+    }
+
+    private void BrowseServerPath()
+    {
+        if (ServerPathPicker.Pick(ServerPath) is { } path)
+        {
+            ServerPath = path;
+        }
     }
 
     private void Edit(ApplicationSettings draft)

@@ -49,4 +49,55 @@ internal static class SettingLabels
         MarinerSettingsProblem.NationalLanguageInvalid => Strings.Settings_Problem_NationalLanguageInvalid,
         _ => Strings.Settings_Problem_UnknownValue,
     };
+
+    /// <summary>
+    /// Gets the messages for the problems in the Options page's Display
+    /// section (the scales, the national language and unknown values), one a
+    /// line, or <see langword="null"/>.
+    /// </summary>
+    /// <param name="settings">The settings to check.</param>
+    public static string? DisplayProblems(MarinerSettings settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        return Join(settings.Validate().Where(p => p is MarinerSettingsProblem.ScaleOutOfRange
+            or MarinerSettingsProblem.NationalLanguageInvalid
+            or MarinerSettingsProblem.UnknownValue));
+    }
+
+    /// <summary>
+    /// Gets the messages for the problems in the Options page's Depths
+    /// section (the contours and the safety depth), one a line, or
+    /// <see langword="null"/>.
+    /// </summary>
+    /// <param name="settings">The settings to check.</param>
+    public static string? DepthProblems(MarinerSettings settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        // Validate reports a bad draft or margin as a depth out of range, so
+        // leave them out: the Route check section shows its own problem.
+        return Join((settings with { Draft = null, UkcMargin = null }).Validate()
+            .Where(p => p is MarinerSettingsProblem.DepthOutOfRange or MarinerSettingsProblem.ContoursOutOfOrder));
+    }
+
+    /// <summary>
+    /// Gets the message for a problem in the Options page's Route check
+    /// section (the draft and the UKC margin), or <see langword="null"/>.
+    /// </summary>
+    /// <param name="settings">The settings to check.</param>
+    public static string? RouteCheckProblems(MarinerSettings settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        // Checked against the defaults, which are valid, so only the draft and margin count.
+        var routeCheck = MarinerSettings.Default with { Draft = settings.Draft, UkcMargin = settings.UkcMargin };
+        return routeCheck.Validate().Count == 0 ? null : Strings.Settings_Problem_RouteCheckOutOfRange;
+    }
+
+    private static string? Join(IEnumerable<MarinerSettingsProblem> problems)
+    {
+        var messages = problems.Select(Message).ToList();
+        return messages.Count == 0 ? null : string.Join(Environment.NewLine, messages);
+    }
 }

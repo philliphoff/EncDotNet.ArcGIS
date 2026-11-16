@@ -48,8 +48,11 @@ internal sealed class ProjectOptionsViewModel : Page
     /// <summary>Gets whether the chart server can hide soundings.</summary>
     public bool SoundingsEnabled => ChartServerSupport.Supports(MarinerSetting.Soundings);
 
-    /// <summary>Gets whether any setting on the page waits for a newer chart server.</summary>
-    public bool ShowNeedsServer => !DisplayCategoryEnabled || !PortrayalEnabled || !SoundingsEnabled;
+    /// <summary>Gets whether a setting in the Display section waits for a newer chart server.</summary>
+    public bool DisplayNeedsServer => !DisplayCategoryEnabled || !SoundingsEnabled;
+
+    /// <summary>Gets whether the Depths section's settings wait for a newer chart server.</summary>
+    public bool DepthsNeedServer => !PortrayalEnabled;
 
     /// <summary>Gets or sets the palette.</summary>
     public SettingChoice<ChartPalette> Palette
@@ -194,6 +197,15 @@ internal sealed class ProjectOptionsViewModel : Page
     public string? Problems => _draft.Validate() is { Count: > 0 } problems
         ? string.Join(Environment.NewLine, problems.Select(SettingLabels.Message))
         : null;
+
+    /// <summary>Gets what's wrong in the Display section, one problem a line, or <see langword="null"/>.</summary>
+    public string? DisplayProblems => SettingLabels.DisplayProblems(_draft);
+
+    /// <summary>Gets what's wrong in the Depths section, one problem a line, or <see langword="null"/>.</summary>
+    public string? DepthProblems => SettingLabels.DepthProblems(_draft);
+
+    /// <summary>Gets what's wrong in the Route check section, or <see langword="null"/>.</summary>
+    public string? RouteCheckProblems => SettingLabels.RouteCheckProblems(_draft);
 
     /// <summary>Gets a line about the last action, such as after <b>Use for New Projects</b>.</summary>
     public string? Note
