@@ -45,4 +45,8 @@
   <SolidColorBrush x:Key="SC_RuleBrush" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
   <SolidColorBrush x:Key="SC_TagBorderBrush" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
 
+  <!-- The app icon (About), 64 px drawn at 32 so it stays sharp at 200%.
+       The light rendering: a filled disc that reads on light and dark contrast themes. -->
+  <BitmapImage x:Key="SC_AppIcon" UriSource="pack://application:,,,/EncDotNet.ArcGIS.SoundCharts;component/Images/AboutSoundCharts32.scale-200.png" />
+
 </ResourceDictionary>

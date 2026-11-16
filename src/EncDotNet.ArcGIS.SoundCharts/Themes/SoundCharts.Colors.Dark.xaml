@@ -45,4 +45,8 @@
   <SolidColorBrush x:Key="SC_RuleBrush" Color="#454545" />
   <SolidColorBrush x:Key="SC_TagBorderBrush" Color="#5A5A5A" />
 
+  <!-- The app icon (About), 64 px drawn at 32 so it stays sharp at 200%.
+       The dark rendering, as Pro shows the ribbon icon in this theme. -->
+  <BitmapImage x:Key="SC_AppIcon" UriSource="pack://application:,,,/EncDotNet.ArcGIS.SoundCharts;component/DarkImages/AboutSoundCharts32.scale-200.png" />
+
 </ResourceDictionary>

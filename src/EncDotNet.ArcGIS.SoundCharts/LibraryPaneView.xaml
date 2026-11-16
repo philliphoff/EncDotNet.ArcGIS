@@ -21,16 +21,6 @@
       </ResourceDictionary.MergedDictionaries>
       <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
 
-      <!-- A product tag that collapses when there's no product: collections have none. -->
-      <Style x:Key="OptionalProductTag" TargetType="ContentControl" BasedOn="{StaticResource SC_ProductTag}">
-        <Setter Property="Margin" Value="0,0,4,0" />
-        <Style.Triggers>
-          <Trigger Property="Content" Value="{x:Null}">
-            <Setter Property="Visibility" Value="Collapsed" />
-          </Trigger>
-        </Style.Triggers>
-      </Style>
-
       <!-- A dataset's tag: neutral, or a warning chip with its glyph (Missing). -->
       <Style x:Key="TagChip" TargetType="ContentControl" BasedOn="{StaticResource SC_Chip}">
         <Setter Property="Margin" Value="4,0,0,0" />
@@ -53,11 +43,33 @@
         </Style.Triggers>
       </Style>
 
-      <!-- The selected dataset's name: a title in the mono face, as ids are. -->
-      <Style x:Key="DatasetTitle" TargetType="TextBlock" BasedOn="{StaticResource SC_Title}">
-        <Setter Property="FontFamily" Value="{StaticResource SC_MonoFontFamily}" />
-        <Setter Property="TextWrapping" Value="Wrap" />
-        <Setter Property="VerticalAlignment" Value="Center" />
+      <!-- A detail's status chip (Validation, Compatibility; design §6): the
+           tone's glyph and word, collapsed for a plain value. -->
+      <Style x:Key="StatusChip" TargetType="ContentControl" BasedOn="{StaticResource SC_Chip}">
+        <Setter Property="sc:Tone.Value" Value="{Binding Tone}" />
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding Chip}" Value="{x:Null}">
+            <Setter Property="Visibility" Value="Collapsed" />
+          </DataTrigger>
+          <DataTrigger Binding="{Binding Tone}" Value="Success">
+            <Setter Property="sc:Ui.Glyph" Value="{StaticResource SC_GlyphSuccess}" />
+          </DataTrigger>
+          <DataTrigger Binding="{Binding Tone}" Value="Warning">
+            <Setter Property="sc:Ui.Glyph" Value="{StaticResource SC_GlyphCheck}" />
+          </DataTrigger>
+          <DataTrigger Binding="{Binding Tone}" Value="Danger">
+            <Setter Property="sc:Ui.Glyph" Value="{StaticResource SC_GlyphError}" />
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+
+      <!-- A detail's value, or the note under its chip; collapsed when there's none. -->
+      <Style x:Key="DetailValue" TargetType="TextBox" BasedOn="{StaticResource SC_FieldValue}">
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding Value}" Value="{x:Null}">
+            <Setter Property="Visibility" Value="Collapsed" />
+          </DataTrigger>
+        </Style.Triggers>
       </Style>
 
       <!-- Shown while the Library has collections; the empty state replaces it. -->
@@ -88,7 +100,7 @@
                 </Style>
               </Path.Style>
             </Path>
-            <ContentControl DockPanel.Dock="Left" Content="{Binding ProductTag}" Style="{StaticResource OptionalProductTag}" />
+            <ContentControl DockPanel.Dock="Left" Content="{Binding ProductTag}" Style="{StaticResource SC_OptionalProductTag}" Margin="0,0,4,0" />
             <ItemsControl DockPanel.Dock="Right" ItemsSource="{Binding Tags}" Focusable="False" VerticalAlignment="Center">
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -268,8 +280,9 @@
             <DockPanel>
               <ContentControl DockPanel.Dock="Left"
                               Content="{Binding DataContext.SelectedNode.ProductTag, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                              Style="{StaticResource OptionalProductTag}" />
-              <TextBlock Text="{Binding Name}" Style="{StaticResource DatasetTitle}" />
+                              Style="{StaticResource SC_OptionalProductTag}"
+                              Margin="0,0,4,0" />
+              <TextBlock Text="{Binding Name}" Style="{StaticResource SC_MonoTitle}" VerticalAlignment="Center" />
             </DockPanel>
             <TextBlock Text="{Binding Product}" Style="{StaticResource SC_OptionalCaption}" Margin="0,2,0,0" />
 
@@ -340,10 +353,22 @@
                               <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="{Binding Label}" Style="{StaticResource SC_FieldLabel}" />
-                            <TextBox Grid.Column="1"
-                                     Text="{Binding Value, Mode=OneWay}"
-                                     Style="{StaticResource SC_FieldValue}"
-                                     AutomationProperties.Name="{Binding Label}" />
+                            <StackPanel Grid.Column="1">
+                              <StackPanel Orientation="Horizontal">
+                                <controls:CircularAnimationControl Width="{StaticResource SC_GlyphSizeSmall}"
+                                                                   Height="{StaticResource SC_GlyphSizeSmall}"
+                                                                   VerticalAlignment="Center"
+                                                                   Margin="0,0,4,0"
+                                                                   Visibility="{Binding IsWorking, Converter={StaticResource BooleanToVisibility}}" />
+                                <ContentControl Style="{StaticResource StatusChip}"
+                                                Content="{Binding Chip}"
+                                                AutomationProperties.Name="{Binding Chip}"
+                                                AutomationProperties.HelpText="{Binding Label}" />
+                              </StackPanel>
+                              <TextBox Text="{Binding Value, Mode=OneWay}"
+                                       Style="{StaticResource DetailValue}"
+                                       AutomationProperties.Name="{Binding Label}" />
+                            </StackPanel>
                           </Grid>
                         </DataTemplate>
                       </ItemsControl.ItemTemplate>
@@ -396,19 +421,10 @@
         </HeaderedContentControl>
 
         <!-- The drop zone: dashed, and the accent colour while something is dragged over the pane. -->
-        <Grid Margin="0,8,0,0">
-          <Rectangle x:Name="DropZoneEdge"
-                     Stroke="{DynamicResource SC_TagBorderBrush}"
-                     StrokeThickness="1"
-                     StrokeDashArray="4 3"
-                     RadiusX="2"
-                     RadiusY="2"
-                     SnapsToDevicePixels="True" />
-          <TextBlock Text="{x:Static res:Strings.Library_DropHint}"
-                     Style="{StaticResource SC_Caption}"
-                     TextAlignment="Center"
-                     Margin="12" />
-        </Grid>
+        <ContentControl x:Name="DropZone"
+                        Style="{StaticResource SC_DropZone}"
+                        Content="{x:Static res:Strings.Library_DropHint}"
+                        Margin="0,8,0,0" />
       </StackPanel>
     </ScrollViewer>
 

@@ -7,7 +7,8 @@ namespace EncDotNet.SoundCharts.Themes;
 
 /// <summary>
 /// Attached properties the theme's templates read: a glyph, a count, actions
-/// and a trailing element, and a button that opens its context menu on click.
+/// and a trailing element, a button that opens its context menu on click, and
+/// a drop zone's drag-over state.
 /// </summary>
 /// <remarks>
 /// See "Using the theme" in <c>docs/design/look-and-feel.md</c> for the styles
@@ -60,6 +61,17 @@ public static class Ui
         typeof(bool),
         typeof(Ui),
         new FrameworkPropertyMetadata(false, OnOpensContextMenuChanged));
+
+    /// <summary>
+    /// Identifies <c>sc:Ui.IsDragOver</c>: true while files are dragged over
+    /// the view, so an <c>SC_DropZone</c> takes the accent colour. The view
+    /// sets it from its drag events.
+    /// </summary>
+    public static readonly DependencyProperty IsDragOverProperty = DependencyProperty.RegisterAttached(
+        "IsDragOver",
+        typeof(bool),
+        typeof(Ui),
+        new FrameworkPropertyMetadata(false));
 
     /// <summary>Gets an element's glyph.</summary>
     /// <param name="element">The element.</param>
@@ -149,6 +161,24 @@ public static class Ui
     {
         ArgumentNullException.ThrowIfNull(element);
         element.SetValue(OpensContextMenuProperty, value);
+    }
+
+    /// <summary>Gets whether files are dragged over a drop zone.</summary>
+    /// <param name="element">The drop zone.</param>
+    /// <returns>True while they are.</returns>
+    public static bool GetIsDragOver(DependencyObject element)
+    {
+        ArgumentNullException.ThrowIfNull(element);
+        return (bool)element.GetValue(IsDragOverProperty);
+    }
+
+    /// <summary>Sets whether files are dragged over a drop zone.</summary>
+    /// <param name="element">The drop zone.</param>
+    /// <param name="value">True while they are.</param>
+    public static void SetIsDragOver(DependencyObject element, bool value)
+    {
+        ArgumentNullException.ThrowIfNull(element);
+        element.SetValue(IsDragOverProperty, value);
     }
 
     private static void OnOpensContextMenuChanged(DependencyObject element, DependencyPropertyChangedEventArgs e)

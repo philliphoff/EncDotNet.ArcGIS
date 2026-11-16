@@ -46,15 +46,20 @@ public sealed class RouteCheckPresenterTests : IDisposable
     }
 
     [Fact]
-    public void Failed_IsAVerdictThatSaysWhy()
+    public void Failed_IsADangerMessageThatSaysWhy()
     {
         var view = RouteCheckPresenter.Failed("Solent inbound", "The file is locked.");
 
-        Assert.Equal(RouteCheckPaneState.Verdict, view.State);
+        Assert.Equal(RouteCheckPaneState.Failed, view.State);
         Assert.Equal("Solent inbound", view.Heading);
-        Assert.Equal("Couldn't check the passage: The file is locked.", view.Title);
-        Assert.Equal(RouteCheckTone.Neutral, view.Tone);
+        Assert.Equal("Couldn't check the passage", view.Title);
+        Assert.Equal("The file is locked.", view.Subtitle);
+        Assert.Equal(RouteCheckTone.Destructive, view.Tone);
+        Assert.Equal(SoundChartsTone.Danger, Tones.From(view.Tone));
+        Assert.Null(view.Confidence);
         Assert.Null(view.Footer);
+        Assert.Empty(view.Rows);
+        Assert.Empty(view.Items);
         Assert.False(view.IsEmpty);
     }
 
@@ -63,7 +68,8 @@ public sealed class RouteCheckPresenterTests : IDisposable
     {
         var view = RouteCheckPresenter.Failed(null, "This file isn't an RTZ or S-421 route.");
 
-        Assert.Equal(RouteCheckPaneState.Verdict, view.State);
+        Assert.Equal(RouteCheckPaneState.Failed, view.State);
+        Assert.Equal("This file isn't an RTZ or S-421 route.", view.Subtitle);
         Assert.Equal("Check a route", view.Heading);
         Assert.Null(view.Parameters);
     }
@@ -107,7 +113,7 @@ public sealed class RouteCheckPresenterTests : IDisposable
     public void State_FollowsTheChecksLifecycle()
     {
         Assert.Equal(
-            [RouteCheckPaneState.Empty, RouteCheckPaneState.Working, RouteCheckPaneState.Verdict],
+            [RouteCheckPaneState.Empty, RouteCheckPaneState.Working, RouteCheckPaneState.Failed],
             new[] { RouteCheckPresenter.Empty, RouteCheckPresenter.Working("Route"), RouteCheckPresenter.Failed("Route", "No.") }.Select(v => v.State));
     }
 }

@@ -9,6 +9,9 @@ public enum RouteCheckPaneState
     /// <summary>A route is being checked: the verdict card shows a spinner.</summary>
     Working,
 
-    /// <summary>A check finished, or failed: the verdict card, summary and findings.</summary>
+    /// <summary>A check finished: the verdict card, summary and findings.</summary>
     Verdict,
+
+    /// <summary>A check couldn't run: an error message bar says why.</summary>
+    Failed,
 }

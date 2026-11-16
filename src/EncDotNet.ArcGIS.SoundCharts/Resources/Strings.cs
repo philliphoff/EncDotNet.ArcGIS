@@ -240,6 +240,12 @@ public static class Strings
     /// <summary>Gets the Show all button's tooltip.</summary>
     public static string Tooltip_LogShowAll => Get(nameof(Tooltip_LogShowAll));
 
+    /// <summary>Gets the errors chip's tooltip: a click shows only the errors.</summary>
+    public static string Tooltip_LogShowErrors => Get(nameof(Tooltip_LogShowErrors));
+
+    /// <summary>Gets the warnings chip's tooltip: a click shows the warnings and errors.</summary>
+    public static string Tooltip_LogShowWarnings => Get(nameof(Tooltip_LogShowWarnings));
+
     /// <summary>Gets the title of SoundCharts notifications.</summary>
     public static string Notification_Title => Get(nameof(Notification_Title));
 
@@ -771,16 +777,22 @@ public static class Strings
     /// <summary>Gets the label of a dataset's time steps.</summary>
     public static string Library_Field_TimeSteps => Get(nameof(Library_Field_TimeSteps));
 
-    /// <summary>Gets the compatibility of an edition SoundCharts reads.</summary>
+    /// <summary>Gets the compatibility chip of an edition SoundCharts reads, or reads with a newer compatible edition.</summary>
     public static string Library_Compatibility_Supported => Get(nameof(Library_Compatibility_Supported));
 
-    /// <summary>Gets the compatibility of an older compatible edition: <c>{0}</c> is the edition SoundCharts reads.</summary>
+    /// <summary>Gets the note under the Supported chip for an older compatible edition: <c>{0}</c> is the edition SoundCharts reads.</summary>
     public static string Library_Compatibility_NewerFormat => Get(nameof(Library_Compatibility_NewerFormat));
 
-    /// <summary>Gets the compatibility of a newer edition on the same major: <c>{0}</c> is the edition SoundCharts reads.</summary>
+    /// <summary>Gets the compatibility chip of a newer edition on the same major.</summary>
+    public static string Library_Compatibility_PartlySupported => Get(nameof(Library_Compatibility_PartlySupported));
+
+    /// <summary>Gets the note under the Partly supported chip: <c>{0}</c> is the edition SoundCharts reads.</summary>
     public static string Library_Compatibility_OlderFormat => Get(nameof(Library_Compatibility_OlderFormat));
 
-    /// <summary>Gets the compatibility of an edition on another major: <c>{0}</c> is the edition SoundCharts reads.</summary>
+    /// <summary>Gets the compatibility chip of an edition on another major.</summary>
+    public static string Library_Compatibility_NotSupported => Get(nameof(Library_Compatibility_NotSupported));
+
+    /// <summary>Gets the note under the Not supported chip: <c>{0}</c> is the edition SoundCharts reads.</summary>
     public static string Library_Compatibility_UnsupportedFormat => Get(nameof(Library_Compatibility_UnsupportedFormat));
 
     /// <summary>Gets the compatibility when the dataset states no edition: <c>{0}</c> is the edition SoundCharts reads.</summary>
@@ -795,7 +807,7 @@ public static class Strings
     /// <summary>Gets the status of a valid dataset.</summary>
     public static string Library_Validation_Valid => Get(nameof(Library_Validation_Valid));
 
-    /// <summary>Gets the status of a valid dataset: <c>{0}</c> is the number of rules.</summary>
+    /// <summary>Gets the note under the Valid chip: <c>{0}</c> is the number of rules checked.</summary>
     public static string Library_Validation_ValidRulesFormat => Get(nameof(Library_Validation_ValidRulesFormat));
 
     /// <summary>Gets the status of a dataset that failed validation without counted findings.</summary>
@@ -804,8 +816,8 @@ public static class Strings
     /// <summary>Gets the status when the product has no rules.</summary>
     public static string Library_Validation_NoRules => Get(nameof(Library_Validation_NoRules));
 
-    /// <summary>Gets the status when validation couldn't run: <c>{0}</c> is why.</summary>
-    public static string Library_Validation_FailedFormat => Get(nameof(Library_Validation_FailedFormat));
+    /// <summary>Gets the status chip when validation couldn't run; the reason is the note under it.</summary>
+    public static string Library_Validation_Failed => Get(nameof(Library_Validation_Failed));
 
     /// <summary>Gets a count of one error.</summary>
     public static string Library_Validation_OneError => Get(nameof(Library_Validation_OneError));
@@ -1158,8 +1170,8 @@ public static class Strings
     /// <summary>Gets the line while a check runs (the viewer's).</summary>
     public static string RouteCheck_Computing => Get(nameof(RouteCheck_Computing));
 
-    /// <summary>Gets the line when a check fails: <c>{0}</c> is the reason (the viewer's).</summary>
-    public static string RouteCheck_ErrorFormat => Get(nameof(RouteCheck_ErrorFormat));
+    /// <summary>Gets the heading of the error message bar when a check fails (the viewer's words); the reason is under it.</summary>
+    public static string RouteCheck_Failed => Get(nameof(RouteCheck_Failed));
 
     /// <summary>Gets the verdict when water-level data ends before arrival (the viewer's).</summary>
     public static string RouteCheck_VerdictWaterLevelEnds => Get(nameof(RouteCheck_VerdictWaterLevelEnds));
@@ -1325,6 +1337,9 @@ public static class Strings
 
     /// <summary>Gets the Open Route button tooltip.</summary>
     public static string RouteCheck_OpenRouteTooltip => Get(nameof(RouteCheck_OpenRouteTooltip));
+
+    /// <summary>Gets the tooltip and accessible name of the toolbar's ≡ menu.</summary>
+    public static string RouteCheck_MoreActions => Get(nameof(RouteCheck_MoreActions));
 
     /// <summary>Gets the Open Route dialog's title.</summary>
     public static string RouteCheck_OpenRouteTitle => Get(nameof(RouteCheck_OpenRouteTitle));

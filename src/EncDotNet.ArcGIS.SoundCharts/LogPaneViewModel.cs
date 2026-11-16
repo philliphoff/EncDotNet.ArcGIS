@@ -31,17 +31,12 @@ internal sealed class LogPaneViewModel : DockPane
     /// <summary>Creates the view model; Pro calls it when the pane first opens.</summary>
     public LogPaneViewModel()
     {
-        Filters =
-        [
-            new(LogFilter.InfoAndAbove, Strings.Log_Filter_InfoAndAbove),
-            new(LogFilter.WarningsAndErrors, Strings.Log_Filter_WarningsAndErrors),
-            new(LogFilter.Errors, Strings.Log_Filter_Errors),
-            new(LogFilter.Everything, Strings.Log_Filter_Everything),
-        ];
+        Filters = LogFilterOption.All();
         _selectedFilter = Filters[0];
         CopyAllCommand = new RelayCommand(CopyAll);
         OpenLogFolderCommand = new RelayCommand(OpenLogFolder);
         ShowAllCommand = new RelayCommand(() => SourceFilter = null);
+        ShowLevelCommand = new RelayCommand(ShowLevel, parameter => parameter is LogLevel, true, false);
     }
 
     /// <summary>Gets the lines shown, oldest first.</summary>
@@ -104,6 +99,12 @@ internal sealed class LogPaneViewModel : DockPane
 
     /// <summary>Gets the <b>Show all</b> command, which clears <see cref="SourceFilter"/>.</summary>
     public ICommand ShowAllCommand { get; }
+
+    /// <summary>
+    /// Gets the count chips' command: its parameter, a <see cref="LogLevel"/>,
+    /// picks the level filter (<see cref="LogFilterOption.ForCount"/>).
+    /// </summary>
+    public ICommand ShowLevelCommand { get; }
 
     /// <summary>Opens the pane, showing only <paramref name="source"/> when given.</summary>
     /// <param name="source">The log source to show, or <see langword="null"/> for every source.</param>
@@ -190,6 +191,14 @@ internal sealed class LogPaneViewModel : DockPane
             {
                 Entries.Add(new LogRow(entry, SoundChartsSession.Settings.Application.TimeFormat));
             }
+        }
+    }
+
+    private void ShowLevel(object? parameter)
+    {
+        if (parameter is LogLevel level && LogFilterOption.ForCount(Filters, level) is { } option)
+        {
+            SelectedFilter = option;
         }
     }
 

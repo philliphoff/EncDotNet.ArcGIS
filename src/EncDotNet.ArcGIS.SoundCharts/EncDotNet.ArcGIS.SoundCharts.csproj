@@ -34,6 +34,13 @@
     <Content Include="Images\*.png;DarkImages\*.png" />
   </ItemGroup>
 
+  <!-- The About window's app icon, SC_AppIcon in the theme's colour
+       dictionaries: also a WPF resource in the assembly, which a pack URI
+       reaches; the .esriAddinX Content above isn't. -->
+  <ItemGroup>
+    <Resource Include="Images\AboutSoundCharts32.scale-200.png;DarkImages\AboutSoundCharts32.scale-200.png" />
+  </ItemGroup>
+
   <!-- SoundCharts Tools, the Python toolbox (A9). Pro copies an add-in's
        Toolboxes folder to %LOCALAPPDATA%\ESRI\ArcGISPro\Toolboxes\{add-in id}
        and lists the toolboxes in it in the Geoprocessing pane. Esri's
