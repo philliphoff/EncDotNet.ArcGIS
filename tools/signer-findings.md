@@ -287,8 +287,9 @@ What this shows:
   *Trusted*.** This was tested with certificates already expired at signing
   time; that's the same to Pro, since nothing in the package proves when it
   was signed. Releases need re-signing with a new certificate before the old
-  one expires. Public code-signing certificates are now limited to a little
-  over a year, so that means at least once a year.
+  one expires. The CA/Browser Forum has been shortening the maximum lifetime
+  of public code-signing certificates (to about 15 months, as far as I know),
+  so plan on roughly yearly re-signing. Check the current limit when buying.
 
 For releases, any public CA's code-signing certificate (OV is enough) meets
 these conditions. Public CAs publish CRLs over HTTP, and Windows trusts their
