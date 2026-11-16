@@ -22,3 +22,5 @@
           href: design/chart-export.md
         - name: Native symbology spike
           href: design/native-symbology-spike.md
+        - name: Look and feel
+          href: design/look-and-feel.md
