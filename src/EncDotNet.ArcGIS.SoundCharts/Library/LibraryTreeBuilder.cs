@@ -54,7 +54,8 @@ public static class LibraryTreeBuilder
                 var sourceId = SourceNodeId(source.Id);
                 sources.Add(new LibraryNode(sourceId, LibraryNodeKind.Source, LibraryNodeText.SourceName(source, collection), line ?? LibraryNodeText.SourceLocation(source.Definition), datasets)
                 {
-                    Badge = LibraryNodeText.KindOf(source.Definition),
+                    ProductTag = LibraryNodeText.KindOf(source.Definition),
+                    Meta = source.Index is { } sourceIndex ? DatasetCount(sourceIndex.Items.Count) : null,
                     IsWarning = warning,
                     Collection = collection,
                     Source = source,
@@ -72,7 +73,7 @@ public static class LibraryTreeBuilder
             var id = CollectionNodeId(collection.Id);
             rows.Add(new LibraryNode(id, LibraryNodeKind.Collection, collection.Definition.Name, status, sources)
             {
-                Badge = DatasetCount(collection.ItemCount),
+                Meta = DatasetCount(collection.ItemCount),
                 IsWarning = isWarning,
                 Collection = collection,
                 IsExpanded = text is not null || (expanded?.Contains(id) ?? false),
@@ -121,25 +122,25 @@ public static class LibraryTreeBuilder
             }
 
             var tags = LibraryItemText.Tags(new LibraryItemTextInput(item, source, state.Availability, state.EffectiveItem))
-                .Select(t => t.Text)
+                .Select(t => new LibraryNodeTag(t.Text))
                 .ToList();
             if (state.Availability == LibraryAvailability.Missing)
             {
-                tags.Insert(0, Strings.Library_Tag_Missing);
+                tags.Insert(0, new LibraryNodeTag(Strings.Library_Tag_Missing, IsWarning: true));
             }
 
             if (state.NotForNavigation)
             {
-                tags.Add(Strings.Library_NotForNavigation);
+                tags.Add(new LibraryNodeTag(Strings.Library_NotForNavigation));
             }
 
-            var badge = EditionText(item) is { } edition ? $"{item.ProductSpec} · {edition}" : item.ProductSpec;
             var title = string.IsNullOrWhiteSpace(item.Title) || string.Equals(item.Title, item.Name, StringComparison.OrdinalIgnoreCase)
                 ? null
                 : item.Title;
             rows.Add(new LibraryNode(state.Id, LibraryNodeKind.Dataset, item.Name, title, [])
             {
-                Badge = badge,
+                ProductTag = item.ProductSpec,
+                Meta = EditionText(item),
                 Tags = tags,
                 IsWarning = state.Availability == LibraryAvailability.Missing,
                 Collection = collection,

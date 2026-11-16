@@ -50,11 +50,21 @@ public sealed class LibraryNode : INotifyPropertyChanged
     /// <summary>Gets whether the row has a second line.</summary>
     public bool HasDetail => !string.IsNullOrEmpty(Detail);
 
-    /// <summary>Gets a short tag after the name: a source's kind (<c>DIR</c>, <c>ZIP</c>, <c>JSON</c>), a dataset's product and edition.</summary>
-    public string? Badge { get; init; }
+    /// <summary>
+    /// Gets the product tag before the name: a source's kind (<c>DIR</c>,
+    /// <c>ZIP</c>, <c>JSON</c>) or a dataset's product (<c>S-101</c>), or
+    /// <see langword="null"/> for a collection.
+    /// </summary>
+    public string? ProductTag { get; init; }
+
+    /// <summary>
+    /// Gets the quiet text at the end of the row: a collection's or source's
+    /// dataset count, or a dataset's edition (<c>Ed 3 Upd 2</c>), or <see langword="null"/>.
+    /// </summary>
+    public string? Meta { get; init; }
 
     /// <summary>Gets the dataset's tags, such as <b>Loaded</b>, in the viewer's words.</summary>
-    public IReadOnlyList<string> Tags { get; init; } = [];
+    public IReadOnlyList<LibraryNodeTag> Tags { get; init; } = [];
 
     /// <summary>Gets whether the second line is a problem (indexing failed, a path not found).</summary>
     public bool IsWarning { get; init; }

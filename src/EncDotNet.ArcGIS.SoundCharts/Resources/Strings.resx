@@ -752,6 +752,12 @@
   <data name="Library_NotForNavigation" xml:space="preserve">
     <value>Not for navigation</value>
   </data>
+  <data name="Library_NotForNavigationStrip" xml:space="preserve">
+    <value>NOT FOR NAVIGATION</value>
+  </data>
+  <data name="Library_NotForNavigationToolTip" xml:space="preserve">
+    <value>The data provider marks this data as not for navigation</value>
+  </data>
   <data name="Library_Group_Validation" xml:space="preserve">
     <value>Validation</value>
   </data>
@@ -793,7 +799,7 @@
     <value>Not validated</value>
   </data>
   <data name="Library_Validation_Running" xml:space="preserve">
-    <value>Validating…</value>
+    <value>Validating...</value>
   </data>
   <data name="Library_Validation_Valid" xml:space="preserve">
     <value>Valid</value>
@@ -873,7 +879,7 @@
     <comment>{0} is a number of minutes.</comment>
   </data>
   <data name="Library_TimeSteps_Reading" xml:space="preserve">
-    <value>Reading…</value>
+    <value>Reading...</value>
   </data>
   <data name="Library_EmptyTitle" xml:space="preserve">
     <value>Your library is empty</value>
@@ -885,7 +891,7 @@
     <value>Or drop a folder, .zip, CATALOG or collection manifest file here</value>
   </data>
   <data name="Library_FilterWatermark" xml:space="preserve">
-    <value>Filter by name, title, product…</value>
+    <value>Filter by name, title, product...</value>
   </data>
   <data name="Library_Filter" xml:space="preserve">
     <value>Filter datasets</value>
@@ -899,20 +905,23 @@
   <data name="Library_SelectItemPlaceholder" xml:space="preserve">
     <value>Select a dataset to see its details</value>
   </data>
+  <data name="Library_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
   <data name="Library_AddFolder" xml:space="preserve">
-    <value>Add a folder…</value>
+    <value>Add a folder...</value>
   </data>
   <data name="Library_AddExchangeSet" xml:space="preserve">
-    <value>Add an exchange set…</value>
+    <value>Add an exchange set...</value>
   </data>
   <data name="Library_AddManifest" xml:space="preserve">
-    <value>Add a collection manifest…</value>
+    <value>Add a collection manifest...</value>
   </data>
   <data name="Library_Refresh" xml:space="preserve">
     <value>Refresh</value>
   </data>
   <data name="Library_Remove" xml:space="preserve">
-    <value>Remove from library</value>
+    <value>Remove from Library</value>
   </data>
   <data name="Library_AddToMap" xml:space="preserve">
     <value>Add to Map</value>
@@ -925,6 +934,15 @@
   </data>
   <data name="Library_OpenContainingFolder" xml:space="preserve">
     <value>Open Containing Folder</value>
+  </data>
+  <data name="Tooltip_LibraryAdd" xml:space="preserve">
+    <value>Add a folder, an exchange set or a collection manifest to the Library</value>
+  </data>
+  <data name="Tooltip_LibraryMore" xml:space="preserve">
+    <value>More Library actions</value>
+  </data>
+  <data name="Tooltip_LibraryDatasetMore" xml:space="preserve">
+    <value>More actions for the selected dataset</value>
   </data>
   <data name="Tooltip_LibraryAddFolder" xml:space="preserve">
     <value>Add a folder of datasets and exchange sets to the Library. It's scanned recursively and referenced in place.</value>

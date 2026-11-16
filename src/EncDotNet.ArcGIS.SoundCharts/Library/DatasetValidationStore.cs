@@ -39,7 +39,7 @@ public sealed class DatasetValidationStore
 
     /// <summary>
     /// Validates the dataset at <paramref name="path"/> with
-    /// <paramref name="validator"/>, showing <b>Validating…</b> meanwhile.
+    /// <paramref name="validator"/>, showing <b>Validating...</b> meanwhile.
     /// </summary>
     /// <param name="path">The dataset file.</param>
     /// <param name="validator">Runs the validation.</param>

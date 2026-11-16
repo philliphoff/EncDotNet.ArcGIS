@@ -106,19 +106,19 @@ internal sealed class LibraryPaneViewModel : DockPane
     /// <summary>Gets the notice shown with every dataset.</summary>
     public string NotForNavigation => Strings.Library_NotForNavigation;
 
-    /// <summary>Gets the <b>Add a folder…</b> command.</summary>
+    /// <summary>Gets the <b>Add a folder...</b> command.</summary>
     public ICommand AddFolderCommand { get; }
 
-    /// <summary>Gets the <b>Add an exchange set…</b> command.</summary>
+    /// <summary>Gets the <b>Add an exchange set...</b> command.</summary>
     public ICommand AddExchangeSetCommand { get; }
 
-    /// <summary>Gets the <b>Add a collection manifest…</b> command.</summary>
+    /// <summary>Gets the <b>Add a collection manifest...</b> command.</summary>
     public ICommand AddManifestCommand { get; }
 
     /// <summary>Gets the <b>Refresh</b> command: the selected collection or source, or everything.</summary>
     public ICommand RefreshCommand { get; }
 
-    /// <summary>Gets the <b>Remove from library</b> command.</summary>
+    /// <summary>Gets the <b>Remove from Library</b> command.</summary>
     public ICommand RemoveCommand { get; }
 
     /// <summary>Gets the <b>Add to Map</b> command.</summary>

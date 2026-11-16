@@ -687,6 +687,12 @@ public static class Strings
     /// <summary>Gets the not-for-navigation notice and tag.</summary>
     public static string Library_NotForNavigation => Get(nameof(Library_NotForNavigation));
 
+    /// <summary>Gets the caution strip on a dataset its producer marks not for navigation.</summary>
+    public static string Library_NotForNavigationStrip => Get(nameof(Library_NotForNavigationStrip));
+
+    /// <summary>Gets the caution strip's tooltip.</summary>
+    public static string Library_NotForNavigationToolTip => Get(nameof(Library_NotForNavigationToolTip));
+
     /// <summary>Gets the heading of the validation details.</summary>
     public static string Library_Group_Validation => Get(nameof(Library_Group_Validation));
 
@@ -819,6 +825,9 @@ public static class Strings
     /// <summary>Gets the details panel's text without a selection.</summary>
     public static string Library_SelectItemPlaceholder => Get(nameof(Library_SelectItemPlaceholder));
 
+    /// <summary>Gets the Add menu button's text.</summary>
+    public static string Library_Add => Get(nameof(Library_Add));
+
     /// <summary>Gets the Add a folder button's text.</summary>
     public static string Library_AddFolder => Get(nameof(Library_AddFolder));
 
@@ -845,6 +854,15 @@ public static class Strings
 
     /// <summary>Gets the Open Containing Folder button's text.</summary>
     public static string Library_OpenContainingFolder => Get(nameof(Library_OpenContainingFolder));
+
+    /// <summary>Gets the Add menu button's tooltip.</summary>
+    public static string Tooltip_LibraryAdd => Get(nameof(Tooltip_LibraryAdd));
+
+    /// <summary>Gets the tooltip and accessible name of the toolbar's ≡ menu.</summary>
+    public static string Tooltip_LibraryMore => Get(nameof(Tooltip_LibraryMore));
+
+    /// <summary>Gets the tooltip and accessible name of the dataset details' ≡ menu.</summary>
+    public static string Tooltip_LibraryDatasetMore => Get(nameof(Tooltip_LibraryDatasetMore));
 
     /// <summary>Gets the Add a folder button's tooltip.</summary>
     public static string Tooltip_LibraryAddFolder => Get(nameof(Tooltip_LibraryAddFolder));
