@@ -150,36 +150,47 @@ SC styles set only Foreground (as `DynamicResource` to Esri brushes), FontSize a
 
 ### 4.3 Brushes (theme dictionaries)
 
-Proposed files are `Themes/SoundCharts.Colors.Light.xaml`, `.Dark.xaml` and
-`.HighContrast.xaml`. The values below are what the mockup uses; check them in Pro before
-locking them in. Ink colours meet 4.5:1 on Pro's pane background.
+The files are `Themes/SoundCharts.Colors.Light.xaml`, `.Dark.xaml` and `.HighContrast.xaml`.
+The mockup's inks were adjusted when the theme was built (issue #43) so that each ink meets
+4.5:1 on its own 11% fill over Pro's pane (white or `#F7F7F7` in Light, `#2E2E2E` to `#353535`
+in Dark); the table shows the shipped values. Check them in Pro before locking them in.
 
 | Key | Light | Dark | High Contrast |
 |---|---|---|---|
-| `SC_DangerBrush` | `#C8291C` | `#FF6B57` | `SystemColors.WindowTextBrush` |
-| `SC_WarningBrush` (ink) | `#B36200` | `#FFB938` | `SystemColors.WindowTextBrush` |
-| `SC_SuccessBrush` | `#23793A` | `#58C771` | `SystemColors.WindowTextBrush` |
-| `SC_InfoBrush` | Pro accent (`#007AC2`) | Pro accent (`#2EA8F5`-ish) | `SystemColors.HotTrackBrush` |
-| `SC_NeutralBrush` | → `Esri_TextStyleSubduedBrush` | same | `SystemColors.GrayTextBrush` |
-| `SC_*FillBrush` | tone at 11% (chips), 6% (cards, bars) | tone at 11% / 6% | Transparent |
-| `SC_*EdgeBrush` | tone at 40% | tone at 40% | `SystemColors.WindowTextBrush` |
-| `SC_CautionBackgroundBrush` | `#FFF3D1` | `#3A2F12` | `SystemColors.WindowBrush` |
-| `SC_CautionBorderBrush` | `#D9A21B` | `#9A7A21` | `SystemColors.WindowTextBrush` |
-| `SC_CautionInkBrush` | `#6A4700` | `#FFD670` | `SystemColors.WindowTextBrush` |
+| `SC_DangerBrush` | `#C0271A` | `#FF9485` | `SystemColors.WindowTextColor` |
+| `SC_WarningBrush` (ink) | `#9A5200` | `#FFB938` | `SystemColors.WindowTextColor` |
+| `SC_SuccessBrush` | `#217538` | `#58C771` | `SystemColors.WindowTextColor` |
+| `SC_InfoBrush` | `#006AA5` (Pro accent, darkened) | `#5BBAF5` | `SystemColors.HotTrackColor` |
+| `SC_NeutralBrush` | `#666666` (as `Esri_TextStyleSubduedBrush`) | `#B1B1B1` | `SystemColors.GrayTextColor` |
+| `SC_*FillBrush` | tone at 11% (chips) | tone at 11% | Transparent |
+| `SC_*TintBrush` | tone at 6% (cards, bars, rows) | tone at 6% | Transparent |
+| `SC_*EdgeBrush` | tone at 40% | tone at 40% | `SystemColors.WindowTextColor` |
+| `SC_CautionBackgroundBrush` | `#FFF3D1` | `#3A2F12` | `SystemColors.WindowColor` |
+| `SC_CautionBorderBrush` | `#D9A21B` | `#9A7A21` | `SystemColors.WindowTextColor` |
+| `SC_CautionInkBrush` | `#6A4700` | `#FFD670` | `SystemColors.WindowTextColor` |
+| `SC_RuleBrush` | `#D6D6D6` | `#454545` | `SystemColors.WindowTextColor` |
+| `SC_TagBorderBrush` | `#BDBDBD` | `#5A5A5A` | `SystemColors.WindowTextColor` |
+
+`SC_NeutralBrush`, `SC_RuleBrush` and `SC_TagBorderBrush` are add-in values, not aliases of Esri
+brushes: a colour dictionary can't refer to a resource that only Pro provides at run time, and
+the published style guide has no rule brush (§8).
 
 **Choosing the dictionary.** Read `FrameworkApplication.ApplicationTheme` (Default, Dark,
-HighContrast) when the module loads. Changing Pro's theme needs a Pro restart, as far as I know,
-so a load-time choice is enough; verify this in 3.7. Each view merges one
-`<sc:SoundChartsTheme />` (a `ResourceDictionary` subclass whose constructor merges
-`SoundCharts.xaml` plus the right Colors file). This replaces the per-view
-`DesignOnlyResourceDictionary` plus local styles, and makes `BasedOn="{StaticResource SC_…}"`
-legal.
+HighContrast) when a view loads; High Contrast also wins when Windows has a contrast theme on.
+Pro 3.7 has no public theme-changed event (§8), so after a theme change, restart Pro. Each view
+merges one `<sc:SoundChartsTheme />` (a `ResourceDictionary` subclass whose constructor merges
+`SoundCharts.xaml` plus the right Colors file). This replaces the per-view local styles, and
+makes `BasedOn="{StaticResource SC_…}"` legal. Views keep the `DesignOnlyResourceDictionary`,
+which only loads Pro's styles in the designer.
 
 **High Contrast rule.** In HC, chips, cards and strips draw no fill. They get a 1 px
 `WindowText` border, and the glyph carries the severity. Don't use opacity for "subdued": HC
 ignores it, so use `Esri_TextStyleSubduedBrush`.
 
 ### 4.4 Shared styles (`Themes/SoundCharts.xaml`)
+
+This table is the proposal. What was built, with every key, is in
+[§11 Using the theme](#11-using-the-theme), which is the contract for the views.
 
 | Key | Target | Intent |
 |---|---|---|
@@ -361,6 +372,9 @@ Do phase 1 first: it removes the dark-theme breakage (A1) and most of the visibl
 
 ## 8. What I'm unsure of about Pro
 
+This section was written before the theme was built. The verification record that follows
+it says what the 3.7 SDK confirmed.
+
 - **Exact Esri resource keys.** The public style guide lists `Esri_Button`,
   `Esri_ButtonBorderless`, `Esri_TextBlockH1`–`H7`, `Esri_TextBlockRegular`,
   `Esri_TextStyleDefaultBrush`, `Esri_TextStyleSubduedBrush`,
@@ -374,6 +388,44 @@ Do phase 1 first: it removes the dark-theme breakage (A1) and most of the visibl
   theme-changed event and swap the Colors dictionary.
 - **Pro's colours.** The theme colours in the mockup (pane `#FFFFFF` / `#2E2E2E`, accent
   `#007AC2` / `#2EA8F5`) are eyeballed approximations. The real views take them from Esri brushes.
+
+### 8.1 Verified against the Pro 3.7 SDK (issue #43)
+
+Checked offline in the reference assemblies of the `Esri.ArcGISPro.Extensions30` 3.7.0.1901
+package: the type metadata, and the compiled theme dictionaries (BAML) in
+`ArcGIS.Desktop.Framework`'s resources (`Resources/BasicResources`, `DarkResources` and
+`HCBasicResources`, which `Themes/Default`, `Dark` and `HighContrast` merge). Nothing here was
+checked in a running Pro.
+
+- **Resource keys.** Every Esri key the theme uses is defined in all three of Pro's theme
+  dictionaries: `Esri_TextStyleDefaultBrush`, `Esri_TextStyleSubduedBrush`,
+  `Esri_BackgroundHoverSelectedBrush` and `Esri_BackgroundPressedBrush`. `Esri_Button`,
+  `Esri_ButtonBorderless`, `Esri_TextBlockRegular` and `Esri_TextBlockH1`–`H7` are defined
+  too. `Esri_Label` is defined nowhere, which confirms finding A4. `Esri_BorderBrush` and
+  `Esri_TextErrorBrush` do exist in all three dictionaries, but the published guide doesn't
+  list them, so the theme doesn't use them: rules use the add-in's `SC_RuleBrush`, and errors
+  use `SC_DangerBrush`.
+- **`FrameworkApplication.ApplicationTheme`** exists, with `ApplicationTheme` values `Default`,
+  `Dark` and `HighContrast`. There is **no public theme-changed event** (the only theme event
+  is `PopupThemeChangedEvent`, for map pop-ups), so `SoundChartsTheme` chooses once, when a view
+  loads. Whether Pro itself asks for a restart after a theme change is unverified.
+- **`ArcGIS.Desktop.Framework.Controls.CircularAnimationControl`** is public (a `Control`), and
+  Pro's resources style it. `SC_BusyState` uses it. Its look at 24 px is unverified.
+- **`ArcGIS.Desktop.Framework.Controls.SearchTextBox`** is public (a `TextBox` with `InfoText`
+  for the placeholder, `SearchMode` and a `Search` event). The Library can use it (§4.6); its
+  behaviour in a pane is unverified, and the fallback is today's `TextBox` with an overlay
+  watermark.
+- **`ArcGIS.Desktop.Framework.Controls.MessageLabel`** is public (a `Label`), but its
+  `MessageType` and `Severity` enums are in `ArcGIS.Desktop.Internal.Framework.Controls`, and
+  it draws its own icons and colours. The theme uses its own `SC_MessageBar` instead, so
+  message bars share the tone brushes, glyphs and High Contrast rule.
+- **`ArcGIS.Desktop.Framework.Controls.BurgerButton`** is public (an Actipro `PopupButton`
+  through an internal `Button_Burger`). Its look in a 32 px toolbar is unverified, so the theme
+  has its own `SC_BurgerButton`: an icon button that opens its `ContextMenu`, which also works
+  in dialogs.
+
+Still to check in Pro 3.7 (phase 6): every style in Light, Dark and High Contrast; the tone
+contrast against Pro's real pane colours; the busy spinner; and a theme change while Pro runs.
 
 ---
 
@@ -419,3 +471,271 @@ Do phase 1 first: it removes the dark-theme breakage (A1) and most of the visibl
 10. **Extras:** keep all four: Log count chips, copy position, Browse... for the s100 path, Log link in the failure bar.
 11. **Scale note idle:** blank, with a dimmed glyph.
 12. **Product tags:** neutral chips, no per-product hue.
+
+---
+
+## 11. Using the theme
+
+This is the contract for the views: every key the theme defines, and how to use it. The theme is
+in `src/EncDotNet.ArcGIS.SoundCharts/Themes/`. Change this section with any change there.
+
+### 11.1 Merge the theme
+
+Each view merges one `sc:SoundChartsTheme`. Keep the `DesignOnlyResourceDictionary` first: it
+loads Pro's `Esri_*` styles in the designer only.
+
+```xml
+<UserControl x:Class="EncDotNet.SoundCharts.LogPaneView"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
+             xmlns:sc="clr-namespace:EncDotNet.SoundCharts.Themes">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml" />
+        <sc:SoundChartsTheme />
+      </ResourceDictionary.MergedDictionaries>
+      <!-- The view's own resources, which may now use BasedOn="{StaticResource SC_…}". -->
+    </ResourceDictionary>
+  </UserControl.Resources>
+```
+
+- Refer to styles, sizes and glyphs with `StaticResource`, and to brushes (`SC_*Brush` and
+  `Esri_*`) with `DynamicResource`.
+- Use only the `Esri_*` keys in §8.1 and those already in the views. Never `Esri_Label`,
+  `Esri_BorderBrush` or `Esri_TextErrorBrush`: use `SC_RuleBrush` and `SC_DangerBrush`.
+- Set no hex colour, font family or font size in a view; take them from the keys below.
+- Labelled buttons outside toolbars stay `Esri_Button`. Every string still comes from
+  `Strings.resx`, and AutomationIds stay where the UI tests expect them.
+- `SoundChartsTheme.Variant` says which colour dictionary was merged (`Light`, `Dark` or
+  `HighContrast`).
+
+### 11.2 Attached properties and converter
+
+Namespace `xmlns:sc="clr-namespace:EncDotNet.SoundCharts.Themes"`.
+
+| Property | Type | Read by |
+|---|---|---|
+| `sc:Tone.Value` | `SoundChartsTone`: `Neutral` (default), `Info`, `Success`, `Warning`, `Danger` | `SC_ToneGlyph`, `SC_Chip`, `SC_MonoChip`, `SC_VerdictCard`, `SC_MessageBar` (default `Info`), `SC_SectionHeader`, `SC_FoldableSectionHeader` and `SC_ListRow` (glyph colour). It doesn't inherit: set it on each element. |
+| `sc:Ui.Glyph` | `Geometry` (an `SC_Glyph…` key) | Toolbar, icon and row buttons, section headers, list rows, chips, the pane footer (default info) and the empty state disc |
+| `sc:Ui.Count` | `object` | Section headers: shown after the title, in regular weight |
+| `sc:Ui.Trailing` | `object` | `SC_ListRow`: a chip or an `SC_RowAction` at the right end |
+| `sc:Ui.Actions` | `object` | `SC_EmptyState`: the buttons under the text |
+| `sc:Ui.OpensContextMenu` | `bool` | A button opens its `ContextMenu` below itself on click, with the button's `DataContext`. `SC_ToolbarMenuButton` and `SC_BurgerButton` set it. |
+| `SC_ToneConverter` | `ToneConverter` | Binds a view model's tone to `sc:Tone.Value`: a `SoundChartsTone`, a `RouteCheckTone` (`Destructive` is `Danger`) or a name |
+
+### 11.3 Brushes
+
+From the colour dictionaries (§4.3). `{Tone}` is `Danger`, `Warning`, `Success`, `Info` or
+`Neutral`.
+
+| Key | Intent |
+|---|---|
+| `SC_{Tone}Brush` | Ink: toned text, glyphs and bars |
+| `SC_{Tone}FillBrush` | Ink at 11%: chip fill |
+| `SC_{Tone}TintBrush` | Ink at 6%: verdict card, message bar and row tints (the Log's error and warning rows) |
+| `SC_{Tone}EdgeBrush` | Ink at 40%: chip, card and message bar edges |
+| `SC_CautionBackgroundBrush`, `SC_CautionBorderBrush`, `SC_CautionInkBrush` | NOT FOR NAVIGATION strip |
+| `SC_RuleBrush` | 1 px rules: toolbar, footers, splitters; replaces `Esri_BorderBrush` |
+| `SC_TagBorderBrush` | Product tag borders, the splitter grip |
+
+In High Contrast every fill and tint is transparent, and inks, edges and rules are system
+colours, so a toned element must also show a glyph and a word.
+
+### 11.4 Sizes
+
+| Key | Type | Value |
+|---|---|---|
+| `SC_FontSizePageTitle`, `SC_FontSizeTitle`, `SC_FontSizeVerdictTitle`, `SC_FontSizeBody`, `SC_FontSizeCaption`, `SC_FontSizeMono`, `SC_FontSizeTag` | `Double` | 16, 14, 13, 12, 11, 11.5, 10.5 |
+| `SC_MonoFontFamily` | `FontFamily` | Cascadia Mono, Consolas |
+| `SC_Space2`, `SC_Space4`, `SC_Space8`, `SC_Space12`, `SC_Space16`, `SC_Space24` | `Double` | The spacing scale |
+| `SC_ToolbarHeight`, `SC_ControlHeight`, `SC_RowHeight`, `SC_SummaryRowHeight`, `SC_ChipHeight` | `Double` | 32, 24, 24, 22, 18 |
+| `SC_GlyphSize`, `SC_GlyphSizeSmall` | `Double` | 16, 12 |
+| `SC_DialogButtonMinWidth` | `Double` | 80: dialog and Options buttons |
+| `SC_FormInputWidth`, `SC_FormSliderWidth` | `Double` | 96, 170 |
+| `SC_EmptyStateTextMaxWidth` | `Double` | 300 |
+| `SC_PaneGutter` | `Thickness` | 8: a pane's outer margin |
+| `SC_DialogPadding` | `Thickness` | 16: dialog body |
+| `SC_RowPadding` | `Thickness` | 8,5: list and tree rows |
+| `SC_ButtonGap` | `Thickness` | 8,0,0,0: between adjacent buttons |
+| `SC_ToolbarItemGap` | `Thickness` | 4,0,0,0: between toolbar items |
+| `SC_FieldRowMargin` | `Thickness` | 0,1,0,2: a key/value row |
+| `SC_FormRowMargin`, `SC_FormGroupMargin` | `Thickness` | 0,0,0,8 and 0,0,0,16 |
+| `SC_FormLabelColumnDialog`, `SC_FormLabelColumnOptions` | `GridLength` | 150 (dialogs), 170 (Options): the one label column per page |
+| `SC_SummaryLabelColumn` | `GridLength` | 72: the verdict card's summary row label |
+
+### 11.5 Glyphs
+
+`Geometry` keys on a 16 × 16 grid, outline only, drawn from the mockup's icon set. Show one with
+`<Path Style="{StaticResource SC_Glyph}" Data="{StaticResource SC_GlyphCopy}" />`, or pass it to
+a style through `sc:Ui.Glyph`.
+
+| Key | Intent |
+|---|---|
+| `SC_GlyphMustReview` | Octagon with !: MUST REVIEW |
+| `SC_GlyphCheck` | Triangle with !: CHECK, warnings, the caution strip |
+| `SC_GlyphInfo` | Circle with i: INFO, information, footers |
+| `SC_GlyphError` | Circle with ×: errors and failures |
+| `SC_GlyphSuccess` | Circle with a tick: meets, valid |
+| `SC_GlyphAdd`, `SC_GlyphRefresh`, `SC_GlyphBurger`, `SC_GlyphChevronDown`, `SC_GlyphChevronRight`, `SC_GlyphClose`, `SC_GlyphSearch`, `SC_GlyphFilter`, `SC_GlyphCopy` | Add, refresh or check again, ≡ menu, menu arrow or expanded, collapsed, dismiss, search, filter, copy |
+| `SC_GlyphFolder`, `SC_GlyphFolderOpen`, `SC_GlyphLayers`, `SC_GlyphLibrary`, `SC_GlyphChart`, `SC_GlyphFootprint`, `SC_GlyphValidate`, `SC_GlyphZoomTo` | Folder, open folder or Browse..., layers, Library, chart or dataset, footprint, validate, zoom to |
+| `SC_GlyphClock`, `SC_GlyphNow`, `SC_GlyphPrevious`, `SC_GlyphNext`, `SC_GlyphNearest` | Time note, Now, previous and next data, nearest data |
+| `SC_GlyphObjectInfo`, `SC_GlyphRoute`, `SC_GlyphRouteCheck`, `SC_GlyphDraw`, `SC_GlyphSelectLine`, `SC_GlyphWater` | Object information, route, Route check, draw route, check selected line, water level or clearance |
+| `SC_GlyphExport`, `SC_GlyphLog`, `SC_GlyphServer`, `SC_GlyphLaunch`, `SC_GlyphSettings` | Export, Log, chart server, open externally, settings |
+
+| Style | Target | Intent |
+|---|---|---|
+| `SC_Glyph` | `Path` | 16 px glyph stroked in the inherited `Foreground` (set `TextElement.Foreground` on it or a parent) |
+| `SC_GlyphSmall` | `Path` | The same at 12 px |
+| `SC_ToneGlyph` | `Path` | Shape and colour from `sc:Tone.Value`: Danger octagon, Warning triangle, Info circle i, Success circle tick, Neutral subdued circle i. Set `Data` to keep the tone colour with another shape. |
+
+### 11.6 Text
+
+All `TextBlock` styles set only foreground, size, weight, wrapping and (mono) font family.
+
+| Key | Intent |
+|---|---|
+| `SC_PageTitle` | 16 SemiBold: Options page title, dialog heading |
+| `SC_Title` | 14 SemiBold: selected feature, dataset, route name |
+| `SC_VerdictTitle` | 13 SemiBold: verdict card title, Options expander header |
+| `SC_RowTitle` | 12 SemiBold, one line with ellipsis: list row title |
+| `SC_Body` | 12 Regular, wraps: everything else |
+| `SC_Caption` | 11 subdued, wraps: meta lines, help text |
+| `SC_Overline` | 11 SemiBold subdued, one line: section and group headers, pick count. The caps come from the string; WPF has no letter spacing. |
+| `SC_Mono`, `SC_MonoSubdued` | 11.5 mono: ids, editions, versions, paths, positions, log rows |
+| `SC_OptionalText`, `SC_OptionalCaption`, `SC_OptionalMono` | `SC_Body`, `SC_Caption` and `SC_MonoSubdued` that collapse when `Text` is null or empty. Replaces every local `OptionalText`. |
+| `SC_FieldLabel` | Key/value label: subdued body, 12 px right margin |
+| `SC_FormLabel` | Form label: body, centred vertically, 12 px right margin |
+| `SC_FormHelp` | Help text under a form field: caption, 2 px top margin |
+
+### 11.7 Buttons
+
+| Key | Target | Intent |
+|---|---|---|
+| `SC_ToolbarButton` | `ButtonBase` | Borderless, 24 px, padding `5,0`: optional `sc:Ui.Glyph` then the content. Hover `Esri_BackgroundHoverSelectedBrush`, pressed `Esri_BackgroundPressedBrush`, disabled at 45% opacity. |
+| `SC_ToolbarMenuButton` | `ButtonBase` | `SC_ToolbarButton` with a ▾ that opens its `ContextMenu`: "Add ▾" |
+| `SC_IconButton` | `ButtonBase` | 24 × 24, the `sc:Ui.Glyph` only |
+| `SC_SmallIconButton` | `ButtonBase` | 20 × 20 with a 12 px glyph: actions inside rows |
+| `SC_BurgerButton` | `ButtonBase` | `SC_IconButton` with ≡ that opens its `ContextMenu`: the toolbar's right end |
+| `SC_RowAction` | `ButtonBase` | `SC_SmallIconButton`, hidden until its `ListBoxItem` or `ListViewItem` is hovered, selected or has keyboard focus: the finding row's Object information action |
+| `SC_SummaryRow` | `Button` | 22 px borderless row with a hover tint; the content lays out label (`SC_SummaryLabelColumn`), text and chip |
+
+Icon-only buttons need a `ToolTip` and `AutomationProperties.Name` from `Strings.resx`; the styles
+can't supply them.
+
+### 11.8 Structure, sections and rows
+
+| Key | Target | Intent |
+|---|---|---|
+| `SC_PaneToolbar` | `Border` | 32 px, padding `4,0`, 1 px bottom rule. Child: a `DockPanel LastChildFill="False"` with the labelled primary action left and icon buttons and `SC_BurgerButton` right. |
+| `SC_PaneFooter` | `ContentControl` | 1 px top rule, padding `8,6`, a 12 px info glyph (or `sc:Ui.Glyph`), 11 px subdued wrapped text |
+| `SC_DialogFooter` | `Border` | 1 px top rule, padding `16,12`. Child: a `DockPanel` with Copy-type actions left and a right-aligned `StackPanel` of `Esri_Button`s, default first, `MinWidth` `SC_DialogButtonMinWidth`, `SC_ButtonGap` between them. |
+| `SC_Splitter` | `GridSplitter` | Row splitter: 7 px hit area, 1 px rule, centre grip; in its own `Auto` row between the two resizable rows |
+| `SC_SectionHeader` | `ContentControl` | Margin `0,12,0,4`: optional 12 px `sc:Ui.Glyph` in the `sc:Tone.Value` colour, overline content, optional `sc:Ui.Count` |
+| `SC_FoldableSectionHeader` | `Expander` | The same header with a 12 px chevron, as a keyboard-reachable toggle; `Header` is the text, the content is the section, `IsExpanded` folds it |
+| `SC_ListRow` | `HeaderedContentControl` | List row layout for an item template, padding `8,5`: `sc:Ui.Glyph` (in the `sc:Tone.Value` colour), `Header` as the row title, `Content` as a caption line (collapses when null), `sc:Ui.Trailing` at the right. Selection and hover stay Pro's item style. |
+| `SC_FieldGrid` | `ItemsControl` | Key/value list: a shared size scope. Item template: a two-column `Grid`, label column `SharedSizeGroup="SC_FieldLabel"`, `SC_FieldLabel` and `SC_FieldValue`, row margin `SC_FieldRowMargin`. |
+| `SC_FieldValue`, `SC_FieldValueMono` | `TextBox` | Read-only, chromeless, wrapping, selectable value (mono variant for ids and paths). Give it `AutomationProperties.Name`. |
+
+### 11.9 Chips, cards, messages and states
+
+| Key | Target | Intent |
+|---|---|---|
+| `SC_Chip` | `ContentControl` | 18 px tone chip: `sc:Tone.Value` fill, edge and ink, optional 12 px `sc:Ui.Glyph`, 11 px text |
+| `SC_MonoChip` | `ContentControl` | `SC_Chip` with mono 10.5 px: numbers and counts |
+| `SC_ProductTag` | `ContentControl` | Neutral bordered mono tag: `S-101`, `S-104`, `ExS`, `Dir`; min width 40 |
+| `SC_VerdictCard` | `Border` | Tone tint and edge, radius 3, padding `10,9`; put an `SC_ToneGlyph` with the same tone and an `SC_VerdictTitle` inside |
+| `SC_MessageBar` | `HeaderedContentControl` | 3 px tone bar, the tone's glyph (Danger shows `SC_GlyphError`), optional bold `Header`, wrapped `Content`; live region (polite). `sc:Tone.Value` `Info` (default), `Warning`, `Danger`, `Success` or `Neutral`. |
+| `SC_CautionStrip` | `ContentControl` | NOT FOR NAVIGATION: caution colours, warning glyph, 11 px bold content; give it the existing tooltip |
+| `SC_EmptyState` | `HeaderedContentControl` | Centred, padding 24: a 40 px tinted disc with `sc:Ui.Glyph`, `Header` as a 14 px SemiBold title, `Content` as subdued text (max 300 px), `sc:Ui.Actions` under it |
+| `SC_BusyState` | `ContentControl` | Pro's `CircularAnimationControl` (24 px) above a subdued caption; live region (polite) |
+
+### 11.10 Examples
+
+A pane toolbar:
+
+```xml
+<Border Style="{StaticResource SC_PaneToolbar}">
+  <DockPanel LastChildFill="False">
+    <Button Style="{StaticResource SC_ToolbarMenuButton}"
+            sc:Ui.Glyph="{StaticResource SC_GlyphAdd}"
+            Content="{x:Static res:Strings.Library_Add}">
+      <Button.ContextMenu>
+        <ContextMenu>
+          <MenuItem Header="{x:Static res:Strings.Library_AddFolder}" Command="{Binding AddFolderCommand}" />
+        </ContextMenu>
+      </Button.ContextMenu>
+    </Button>
+    <Button DockPanel.Dock="Right"
+            Style="{StaticResource SC_BurgerButton}"
+            ToolTip="{x:Static res:Strings.Tooltip_More}"
+            AutomationProperties.Name="{x:Static res:Strings.Tooltip_More}" />
+    <Button DockPanel.Dock="Right"
+            Style="{StaticResource SC_IconButton}"
+            sc:Ui.Glyph="{StaticResource SC_GlyphRefresh}"
+            Command="{Binding RefreshCommand}"
+            ToolTip="{x:Static res:Strings.Tooltip_Refresh}"
+            AutomationProperties.Name="{x:Static res:Strings.Tooltip_Refresh}" />
+  </DockPanel>
+</Border>
+```
+
+The string names are placeholders; use the view's own.
+
+A message bar, a toned chip, and a section header with a count:
+
+```xml
+<HeaderedContentControl Style="{StaticResource SC_MessageBar}"
+                        sc:Tone.Value="Warning"
+                        Content="{Binding Problems}" />
+<ContentControl Style="{StaticResource SC_MonoChip}"
+                sc:Tone.Value="{Binding ChipTone, Converter={StaticResource SC_ToneConverter}}"
+                Content="{Binding Chip}" />
+<ContentControl Style="{StaticResource SC_SectionHeader}"
+                sc:Ui.Glyph="{StaticResource SC_GlyphMustReview}"
+                sc:Tone.Value="Danger"
+                sc:Ui.Count="{Binding MustReview.Count}"
+                Content="{x:Static res:Strings.RouteCheck_MustReview}" />
+```
+
+A list row in an item template:
+
+```xml
+<DataTemplate>
+  <HeaderedContentControl Style="{StaticResource SC_ListRow}"
+                          sc:Ui.Glyph="{StaticResource SC_GlyphCheck}"
+                          sc:Tone.Value="{Binding Tone, Converter={StaticResource SC_ToneConverter}}"
+                          Header="{Binding Title}"
+                          Content="{Binding Detail}">
+    <sc:Ui.Trailing>
+      <Button Style="{StaticResource SC_RowAction}"
+              sc:Ui.Glyph="{StaticResource SC_GlyphObjectInfo}"
+              Command="{Binding DataContext.ShowObjectInfoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+              CommandParameter="{Binding}"
+              ToolTip="{x:Static res:Strings.Tooltip_ObjectInfo}"
+              AutomationProperties.Name="{x:Static res:Strings.Tooltip_ObjectInfo}" />
+    </sc:Ui.Trailing>
+  </HeaderedContentControl>
+</DataTemplate>
+```
+
+### 11.11 Notes for the view changes
+
+- **Pro controls.** Use Pro's `SearchTextBox` for the Library search
+  (`xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"`,
+  placeholder in `InfoText`); keep the overlay watermark if it misbehaves in Pro. Use
+  `SC_MessageBar` rather than `MessageLabel`, and `SC_BurgerButton` rather than Pro's
+  `BurgerButton` (§8.1).
+- **Tone doesn't inherit.** A chip inside a danger card is neutral unless it sets its own tone.
+  Route check needs a `ChipTone` on its summary rows (§6).
+- **Row padding.** `SC_ListRow` pads `8,5` inside Pro's `ListBoxItem`, which has its own small
+  padding. Don't replace the item container style to remove it: that loses Pro's selection
+  colours.
+- **Disabled buttons** in the theme's button styles dim to 45% opacity. High Contrast ignores
+  opacity, so check them there (phase 6).
+- **Unit suffixes** (`SC_UnitSuffix` in §4.4) aren't in the theme: Options lays out the value
+  and a `SC_Caption` unit beside it, or adds the style with that change.
+- **Not yet checked in Pro.** The styles compile, but none has run in Pro yet (§8.1). Check
+  each view in Light, Dark and High Contrast as it changes.
