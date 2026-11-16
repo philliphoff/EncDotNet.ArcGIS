@@ -55,7 +55,7 @@
     <value>No feature picked</value>
   </data>
   <data name="ObjectInfo_EmptyDescription" xml:space="preserve">
-    <value>Use the Object information tool on the SoundCharts tab and click the map.</value>
+    <value>Use the Object Information tool on the SoundCharts tab and click the map.</value>
   </data>
   <data name="ObjectInfo_NoChartLayersTitle" xml:space="preserve">
     <value>No SoundCharts layers here</value>
@@ -1405,7 +1405,7 @@ Choose No to export without it.</value>
     <value>Object information</value>
   </data>
   <data name="RouteCheck_ObjectInformationTooltip" xml:space="preserve">
-    <value>List the chart features here in the SoundCharts Object information pane.</value>
+    <value>List the chart features here in the SoundCharts Object Information pane.</value>
   </data>
   <data name="RouteCheck_ZoomTooltip" xml:space="preserve">
     <value>Zoom map to finding location.</value>

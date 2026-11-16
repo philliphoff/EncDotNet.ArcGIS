@@ -222,6 +222,29 @@ internal sealed class MapTimeController
             .FirstOrDefault();
     }
 
+    /// <summary>
+    /// Gets the step of any time layer in <paramref name="map"/> just before
+    /// (or, with <paramref name="forward"/>, just after) map time, for
+    /// <b>‹ Previous data</b> and <b>Next data ›</b> (design brief §6.6);
+    /// <see langword="null"/> without map time or past the data's ends.
+    /// </summary>
+    /// <param name="map">The map.</param>
+    /// <param name="forward">Whether to step forward in time.</param>
+    /// <remarks>
+    /// Map time is the instant the add-in last applied, read from the
+    /// layers' statuses, so this needs no call to Pro's thread.
+    /// </remarks>
+    public DateTime? DataStep(Map? map, bool forward)
+    {
+        var instant = Statuses(map).Select(s => s.Status).OfType<TimeStatus>().Select(s => (DateTime?)s.Instant).FirstOrDefault();
+        if (instant is not { } at || StepsOf(map) is not { } steps)
+        {
+            return null;
+        }
+
+        return forward ? steps.After(at) : steps.Before(at);
+    }
+
     /// <summary>Sets <paramref name="view"/>'s map time to the instant <paramref name="time"/>.</summary>
     /// <param name="view">The map view.</param>
     /// <param name="time">The instant (UTC).</param>

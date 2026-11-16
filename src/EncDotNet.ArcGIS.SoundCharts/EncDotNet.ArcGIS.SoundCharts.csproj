@@ -24,6 +24,16 @@
     <Content Include="Config.daml" />
   </ItemGroup>
 
+  <!-- The ribbon and pane images Config.daml names (design proposal §4.5),
+       rendered from Images/src by tools/render-icons.py. Content, packaged
+       at Images/ and DarkImages/ in the .esriAddinX: Pro reads an image from
+       DarkImages/ instead of Images/ in its Dark theme. Config.daml names
+       the 100% files; the .scale-150 and .scale-200 renderings are kept
+       beside them for high-DPI use. -->
+  <ItemGroup>
+    <Content Include="Images\*.png;DarkImages\*.png" />
+  </ItemGroup>
+
   <!-- SoundCharts Tools, the Python toolbox (A9). Pro copies an add-in's
        Toolboxes folder to %LOCALAPPDATA%\ESRI\ArcGISPro\Toolboxes\{add-in id}
        and lists the toolboxes in it in the Geoprocessing pane. Esri's

@@ -156,6 +156,34 @@ public sealed class TimeSteps
     }
 
     /// <summary>
+    /// Gets the last step before <paramref name="instant"/>, for
+    /// <b>‹ Previous data</b> (design brief §6.6); <see langword="null"/> when
+    /// there's none.
+    /// </summary>
+    /// <param name="instant">The map instant; local times are converted to UTC, unspecified ones taken as UTC.</param>
+    public DateTime? Before(DateTime instant)
+    {
+        var index = Array.BinarySearch(_steps, Utc(instant));
+
+        // A hit is the instant's own step; a miss gives the first step after it.
+        var first = index >= 0 ? index : ~index;
+        return first > 0 ? _steps[first - 1] : null;
+    }
+
+    /// <summary>
+    /// Gets the first step after <paramref name="instant"/>, for
+    /// <b>Next data ›</b> (design brief §6.6); <see langword="null"/> when
+    /// there's none.
+    /// </summary>
+    /// <param name="instant">The map instant; local times are converted to UTC, unspecified ones taken as UTC.</param>
+    public DateTime? After(DateTime instant)
+    {
+        var index = Array.BinarySearch(_steps, Utc(instant));
+        var next = index >= 0 ? index + 1 : ~index;
+        return next < _steps.Length ? _steps[next] : null;
+    }
+
+    /// <summary>
     /// Gets the map time to open at when the first time-varying layer arrives
     /// in a map without one (D32): now, snapped, when the data covers it;
     /// otherwise the nearer end of the data.
