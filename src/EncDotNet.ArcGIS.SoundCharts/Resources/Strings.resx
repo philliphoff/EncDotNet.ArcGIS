@@ -190,6 +190,38 @@
     <value>Message</value>
     <comment>Log pane column header.</comment>
   </data>
+  <data name="Log_Level_Debug" xml:space="preserve">
+    <value>Debug</value>
+    <comment>Log pane level column, short form (the viewer's logs panel D6).</comment>
+  </data>
+  <data name="Log_Level_Info" xml:space="preserve">
+    <value>Info</value>
+    <comment>Log pane level column, short form.</comment>
+  </data>
+  <data name="Log_Level_Warning" xml:space="preserve">
+    <value>Warn</value>
+    <comment>Log pane level column, short form of Warning.</comment>
+  </data>
+  <data name="Log_Level_Error" xml:space="preserve">
+    <value>Error</value>
+    <comment>Log pane level column, short form.</comment>
+  </data>
+  <data name="Log_ErrorCount_One" xml:space="preserve">
+    <value>1 error</value>
+    <comment>Log pane toolbar chip: the errors in the log.</comment>
+  </data>
+  <data name="Log_ErrorCount_Format" xml:space="preserve">
+    <value>{0:N0} errors</value>
+    <comment>Log pane toolbar chip; {0} is a count greater than one.</comment>
+  </data>
+  <data name="Log_WarningCount_One" xml:space="preserve">
+    <value>1 warning</value>
+    <comment>Log pane toolbar chip: the warnings in the log.</comment>
+  </data>
+  <data name="Log_WarningCount_Format" xml:space="preserve">
+    <value>{0:N0} warnings</value>
+    <comment>Log pane toolbar chip; {0} is a count greater than one.</comment>
+  </data>
   <data name="Log_ShowingSource" xml:space="preserve">
     <value>Showing {0} only</value>
     <comment>{0} is a log source such as "chart 3f9a1c02".</comment>

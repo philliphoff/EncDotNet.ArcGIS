@@ -180,6 +180,30 @@ public static class Strings
     /// <summary>Gets the Message column header.</summary>
     public static string Log_Column_Message => Get(nameof(Log_Column_Message));
 
+    /// <summary>Gets the Log pane's short label for Debug.</summary>
+    public static string Log_Level_Debug => Get(nameof(Log_Level_Debug));
+
+    /// <summary>Gets the Log pane's short label for Info.</summary>
+    public static string Log_Level_Info => Get(nameof(Log_Level_Info));
+
+    /// <summary>Gets the Log pane's short label for Warning.</summary>
+    public static string Log_Level_Warning => Get(nameof(Log_Level_Warning));
+
+    /// <summary>Gets the Log pane's short label for Error.</summary>
+    public static string Log_Level_Error => Get(nameof(Log_Level_Error));
+
+    /// <summary>Gets the Log pane's errors chip for one error.</summary>
+    public static string Log_ErrorCount_One => Get(nameof(Log_ErrorCount_One));
+
+    /// <summary>Gets the format of the Log pane's errors chip: <c>{0}</c> is the count.</summary>
+    public static string Log_ErrorCount_Format => Get(nameof(Log_ErrorCount_Format));
+
+    /// <summary>Gets the Log pane's warnings chip for one warning.</summary>
+    public static string Log_WarningCount_One => Get(nameof(Log_WarningCount_One));
+
+    /// <summary>Gets the format of the Log pane's warnings chip: <c>{0}</c> is the count.</summary>
+    public static string Log_WarningCount_Format => Get(nameof(Log_WarningCount_Format));
+
     /// <summary>Gets the format of the source filter note: <c>{0}</c> is the source.</summary>
     public static string Log_ShowingSource => Get(nameof(Log_ShowingSource));
 
