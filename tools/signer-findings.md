@@ -233,18 +233,70 @@ certificate, Esri's signature and ours both get Verified ☑ and Trusted ☐.
 Both also get the same banner, which says "invalid" although the signature
 verifies. It seems to mean "not trusted": a self-signed root isn't trusted,
 and .NET reports the chain as `UntrustedRoot`. A certificate from a trusted
-CA should check *Trusted* and clear the banner, but that hasn't been tested.
+CA checks *Trusted*: see "Trusted signatures" below.
 
 Since Pro accepts ours, CI doesn't need Esri's files, the storage account,
-the message-box workaround or Windows Sandbox. It needs only the certificate
-(a `.pfx` from a secret, or later Key Vault). The sandbox run (step 4) wasn't
-done; with our own signer it no longer decides anything.
+the message-box workaround or Windows Sandbox. It needs only the certificate.
+For a public certificate the key has to stay in hardware, so in practice
+Key Vault Premium, not a `.pfx` secret; see "Trusted signatures" below. The
+sandbox run (step 4) wasn't done; with our own signer it no longer decides
+anything.
 
 The test machine is Windows 11 on **ARM64** (a VMware VM on Apple silicon).
 Pro and its signer are x64 and ran under emulation, on the x64 .NET in
 `C:\Program Files\dotnet\x64`. Timings on an x64 runner will differ. An
 ARM64 process can't load Esri's x64 DLL to call its internal verifier, so
 that check wasn't made.
+
+## Trusted signatures
+
+Can an add-in signed by our tool show as *Trusted* in Pro? Tested with a
+private test CA, every package signed by `tools/PackageSigner`:
+
+| Package | Signing certificate | Windows chain check | Pro: Trusted |
+|---|---|---|---|
+| `trusted.esriAddinX` | issued by the test root, no CRL address | Valid without a revocation check; `RevocationStatusUnknown` with one | ☐ |
+| `expired.esriAddinX` | the same, but already expired | `NotTimeValid` | ☐ |
+| `trusted-crl.esriAddinX` | issued by the test root, CRL served over HTTP | **Valid, including the revocation check** | **☑** |
+| `expired-crl.esriAddinX` | the same, but already expired | `NotTimeValid` | ☐ |
+
+The test root (`CN=SoundCharts Test Root CA`, a CA with no extended key
+usage) was added to the user's Trusted Root store. The publisher
+certificates have the code-signing extended key usage. The CRL was empty,
+signed by the root, and served from `http://127.0.0.1:8765`.
+
+What this shows:
+- **Trust is a Windows chain check.** Pro shows *Trusted* when the signer's
+  certificate chains to a root in the Windows trust store, is in date, and
+  **its revocation status can be checked**. A trusted chain alone wasn't
+  enough. This matches .NET's
+  `PackageDigitalSignatureManager.VerifyCertificate`, which checks
+  revocation online: it gave `RevocationStatusUnknown` for `trusted.esriAddinX`
+  and `NoError` for `trusted-crl.esriAddinX`. Nothing had to go in *Trusted
+  Publishers*.
+- **The CRL has to be reachable over HTTP.** A `file://` CRL address wasn't
+  fetched (`OfflineRevocation`). Over HTTP, Windows (`Microsoft-CryptoAPI`)
+  fetched it during a chain check. Pro used Windows' cached copy and made no
+  request of its own. So Pro, or Windows on its behalf, needs to reach the
+  CA's CRL. Behind a strict proxy or offline, a public CA's certificate could
+  show as untrusted.
+- **An expired certificate isn't trusted.** OPC package signatures carry the
+  signing time only as a claim from the signer's clock, with no trusted
+  timestamp. So Pro checks the certificate against today's date: **once the
+  signing certificate expires, released add-ins should stop showing as
+  *Trusted*.** This was tested with certificates already expired at signing
+  time; that's the same to Pro, since nothing in the package proves when it
+  was signed. Releases need re-signing with a new certificate before the old
+  one expires. Public code-signing certificates are now limited to a little
+  over a year, so that means at least once a year.
+
+For releases, any public CA's code-signing certificate (OV is enough) meets
+these conditions. Public CAs publish CRLs over HTTP, and Windows trusts their
+roots. Since 2023 the private key has to stay in hardware. For CI that means
+something like Azure Key Vault Premium, and `tools/PackageSigner` would need
+to sign through Key Vault. Azure Trusted Signing's certificates last about
+three days, so with no trusted timestamp its add-ins would lose *Trusted*
+within days. It doesn't suit these packages.
 
 ## Run-time extras
 
