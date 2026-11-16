@@ -5,6 +5,7 @@
                     xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"
                     xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
                     xmlns:res="clr-namespace:EncDotNet.SoundCharts.Resources"
+                    xmlns:sc="clr-namespace:EncDotNet.SoundCharts.Themes"
                     Title="{x:Static res:Strings.About_Title}"
                     SizeToContent="WidthAndHeight"
                     ResizeMode="NoResize"
@@ -15,61 +16,72 @@
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml" />
+        <sc:SoundChartsTheme />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </controls:ProWindow.Resources>
 
-  <StackPanel Margin="16" MinWidth="360" Grid.IsSharedSizeScope="True">
-    <TextBlock Text="{x:Static res:Strings.About_Heading}"
-               Style="{DynamicResource Esri_TextBlockH3}"
-               Margin="0,0,0,12" />
+  <DockPanel Width="440">
+    <!-- Copy at the left; Close, the default, at the right. -->
+    <Border DockPanel.Dock="Bottom" Style="{StaticResource SC_DialogFooter}">
+      <DockPanel>
+        <Button DockPanel.Dock="Left"
+                Style="{DynamicResource Esri_Button}"
+                MinWidth="{StaticResource SC_DialogButtonMinWidth}"
+                ToolTip="{x:Static res:Strings.Tooltip_AboutCopy}"
+                Click="OnCopyClick"
+                AutomationProperties.AutomationId="About.Copy"
+                AutomationProperties.Name="{x:Static res:Strings.Button_Copy}"
+                AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_AboutCopy}">
+          <StackPanel Orientation="Horizontal">
+            <Path Style="{StaticResource SC_Glyph}" Data="{StaticResource SC_GlyphCopy}" Margin="0,0,4,0" />
+            <TextBlock Text="{x:Static res:Strings.Button_Copy}" VerticalAlignment="Center" />
+          </StackPanel>
+        </Button>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+          <Button Content="{x:Static res:Strings.Button_Close}"
+                  Style="{DynamicResource Esri_Button}"
+                  MinWidth="{StaticResource SC_DialogButtonMinWidth}"
+                  IsDefault="True"
+                  IsCancel="True"
+                  Click="OnCloseClick"
+                  AutomationProperties.AutomationId="About.Close" />
+        </StackPanel>
+      </DockPanel>
+    </Border>
 
-    <ItemsControl ItemsSource="{Binding Rows}"
-                  Focusable="False"
-                  AutomationProperties.AutomationId="About.Versions"
-                  AutomationProperties.Name="{x:Static res:Strings.About_Versions}">
-      <ItemsControl.ItemTemplate>
-        <DataTemplate>
-          <Grid Margin="0,2">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="Auto" SharedSizeGroup="Label" />
-              <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding Label}"
-                       Style="{DynamicResource Esri_TextBlockRegular}"
-                       Margin="0,0,16,0" />
-            <!-- A read-only text box so the value can be selected and copied. -->
-            <TextBox Grid.Column="1"
-                     Text="{Binding Value, Mode=OneWay}"
-                     IsReadOnly="True"
-                     BorderThickness="0"
-                     Background="Transparent"
-                     Foreground="{DynamicResource Esri_TextStyleDefaultBrush}"
-                     Padding="0"
-                     AutomationProperties.Name="{Binding Label}" />
-          </Grid>
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    <StackPanel Margin="{StaticResource SC_DialogPadding}">
+      <TextBlock Text="{x:Static res:Strings.About_Heading}"
+                 Style="{StaticResource SC_PageTitle}"
+                 Margin="0,0,0,12" />
 
-    <TextBlock Text="{x:Static res:Strings.About_NotForNavigation}"
-               Style="{DynamicResource Esri_TextBlockRegular}"
-               FontWeight="SemiBold"
-               Margin="0,12,0,0" />
+      <ItemsControl Style="{StaticResource SC_FieldGrid}"
+                    ItemsSource="{Binding Rows}"
+                    AutomationProperties.AutomationId="About.Versions"
+                    AutomationProperties.Name="{x:Static res:Strings.About_Versions}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Grid Margin="{StaticResource SC_FieldRowMargin}">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="SC_FieldLabel" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <TextBlock Text="{Binding Label}" Style="{StaticResource SC_FieldLabel}" />
+              <!-- A read-only text box so the value can be selected and copied. -->
+              <TextBox Grid.Column="1"
+                       Style="{StaticResource SC_FieldValueMono}"
+                       Text="{Binding Value, Mode=OneWay}"
+                       AutomationProperties.Name="{Binding Label}" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
-      <Button Content="{x:Static res:Strings.Button_Copy}"
-              ToolTip="{x:Static res:Strings.Tooltip_AboutCopy}"
-              Style="{DynamicResource Esri_Button}"
-              Click="OnCopyClick"
-              AutomationProperties.AutomationId="About.Copy"
-              AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_AboutCopy}" />
-      <Button Content="{x:Static res:Strings.Button_Close}"
-              Style="{DynamicResource Esri_Button}"
-              IsDefault="True"
-              IsCancel="True"
-              Click="OnCloseClick"
-              AutomationProperties.AutomationId="About.Close" />
+      <HeaderedContentControl Style="{StaticResource SC_MessageBar}"
+                              sc:Tone.Value="Neutral"
+                              Content="{x:Static res:Strings.About_NotForNavigation}"
+                              Margin="0,12,0,0"
+                              AutomationProperties.AutomationId="About.NotForNavigation" />
     </StackPanel>
-  </StackPanel>
+  </DockPanel>
 </controls:ProWindow>

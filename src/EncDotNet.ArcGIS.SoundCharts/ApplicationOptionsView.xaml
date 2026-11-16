@@ -4,84 +4,148 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
              xmlns:res="clr-namespace:EncDotNet.SoundCharts.Resources"
+             xmlns:sc="clr-namespace:EncDotNet.SoundCharts.Themes"
              AutomationProperties.AutomationId="ApplicationOptions">
   <UserControl.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml" />
+        <sc:SoundChartsTheme />
       </ResourceDictionary.MergedDictionaries>
+
+      <!-- A label in the form grid's label column, level with its field
+           (whose row margin is SC_FormRowMargin). -->
+      <Style x:Key="FormLabel" TargetType="TextBlock" BasedOn="{StaticResource SC_FormLabel}">
+        <Setter Property="Margin" Value="0,0,12,8" />
+      </Style>
+
+      <!-- A field's problem: an error message bar right under the field,
+           collapsed while there's none. -->
+      <Style x:Key="FieldProblem" TargetType="HeaderedContentControl" BasedOn="{StaticResource SC_MessageBar}">
+        <Setter Property="sc:Tone.Value" Value="Danger" />
+        <Setter Property="Margin" Value="{StaticResource SC_FormRowMargin}" />
+        <Style.Triggers>
+          <Trigger Property="Content" Value="{x:Null}">
+            <Setter Property="Visibility" Value="Collapsed" />
+          </Trigger>
+        </Style.Triggers>
+      </Style>
     </ResourceDictionary>
   </UserControl.Resources>
 
   <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-    <StackPanel Margin="8">
-      <TextBlock Text="{x:Static res:Strings.Settings_ApplicationHeading}" Style="{DynamicResource Esri_TextBlockH3}" />
-      <TextBlock Text="{x:Static res:Strings.Settings_ScopeNote}" Style="{DynamicResource Esri_TextBlockRegular}" TextWrapping="Wrap" Margin="0,4,0,8" />
+    <StackPanel Margin="{StaticResource SC_PaneGutter}">
+      <TextBlock Text="{x:Static res:Strings.Settings_ApplicationHeading}" Style="{StaticResource SC_PageTitle}" />
+      <TextBlock Text="{x:Static res:Strings.Settings_ScopeNote}" Style="{StaticResource SC_Caption}" Margin="0,2,0,0" />
 
-      <TextBlock Text="{x:Static res:Strings.Settings_AppearanceSection}" Style="{DynamicResource Esri_TextBlockH5}" Margin="0,4,0,2" />
-      <CheckBox Margin="0,2" IsChecked="{Binding FollowProTheme}" Content="{x:Static res:Strings.Settings_FollowProTheme}"
-                ToolTip="{x:Static res:Strings.Tooltip_FollowProTheme}"
-                AutomationProperties.AutomationId="ApplicationOptions.FollowProTheme"
-                AutomationProperties.Name="{x:Static res:Strings.Settings_FollowProTheme}" />
+      <!-- Palette. -->
+      <Expander Style="{StaticResource SC_FoldableSectionHeader}" IsExpanded="True"
+                Header="{x:Static res:Strings.Settings_AppearanceSection}"
+                AutomationProperties.AutomationId="ApplicationOptions.PaletteSection">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{StaticResource SC_FormLabelColumnOptions}" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="1" Margin="{StaticResource SC_FormRowMargin}">
+            <CheckBox IsChecked="{Binding FollowProTheme}" Content="{x:Static res:Strings.Settings_FollowProTheme}"
+                      ToolTip="{x:Static res:Strings.Tooltip_FollowProTheme}"
+                      AutomationProperties.AutomationId="ApplicationOptions.FollowProTheme"
+                      AutomationProperties.Name="{x:Static res:Strings.Settings_FollowProTheme}"
+                      AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_FollowProTheme}" />
+            <TextBlock Text="{x:Static res:Strings.Tooltip_FollowProTheme}" Style="{StaticResource SC_FormHelp}" />
+          </StackPanel>
+        </Grid>
+      </Expander>
 
-      <Grid Margin="0,8,0,0">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" MinWidth="160" />
-          <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+      <!-- General: as the viewer's settings categories (look and feel design §10.4). -->
+      <Expander Style="{StaticResource SC_FoldableSectionHeader}" IsExpanded="True"
+                Header="{x:Static res:Strings.Settings_GeneralSection}"
+                AutomationProperties.AutomationId="ApplicationOptions.GeneralSection">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{StaticResource SC_FormLabelColumnOptions}" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="{x:Static res:Strings.Settings_TimeFormat}" ToolTip="{x:Static res:Strings.Tooltip_TimeFormat}"
-                   Style="{DynamicResource Esri_TextBlockRegular}" VerticalAlignment="Center" />
-        <ComboBox Grid.Row="0" Grid.Column="1" Margin="0,2" MinWidth="160" HorizontalAlignment="Left"
-                  ItemsSource="{Binding TimeFormats}" SelectedItem="{Binding TimeFormat}" DisplayMemberPath="Label"
-                  ToolTip="{x:Static res:Strings.Tooltip_TimeFormat}"
-                  AutomationProperties.AutomationId="ApplicationOptions.TimeFormat"
-                  AutomationProperties.Name="{x:Static res:Strings.Settings_TimeFormat}" />
+          <TextBlock Grid.Row="0" Text="{x:Static res:Strings.Settings_TimeFormat}" ToolTip="{x:Static res:Strings.Tooltip_TimeFormat}"
+                     Style="{StaticResource FormLabel}" />
+          <ComboBox Grid.Row="0" Grid.Column="1" Width="{StaticResource SC_FormSliderWidth}" HorizontalAlignment="Left"
+                    Margin="{StaticResource SC_FormRowMargin}"
+                    ItemsSource="{Binding TimeFormats}" SelectedItem="{Binding TimeFormat}" DisplayMemberPath="Label"
+                    ToolTip="{x:Static res:Strings.Tooltip_TimeFormat}"
+                    AutomationProperties.AutomationId="ApplicationOptions.TimeFormat"
+                    AutomationProperties.Name="{x:Static res:Strings.Settings_TimeFormat}" />
 
-        <TextBlock Grid.Row="1" Text="{x:Static res:Strings.Settings_DepthUnit}" ToolTip="{x:Static res:Strings.Tooltip_DepthUnit}"
-                   Style="{DynamicResource Esri_TextBlockRegular}" VerticalAlignment="Center" />
-        <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,2" MinWidth="160" HorizontalAlignment="Left"
-                  IsEnabled="{Binding DepthUnitEnabled}"
-                  ItemsSource="{Binding DepthUnits}" SelectedItem="{Binding DepthUnit}" DisplayMemberPath="Label"
-                  ToolTip="{x:Static res:Strings.Tooltip_DepthUnit}"
-                  AutomationProperties.AutomationId="ApplicationOptions.DepthUnit"
-                  AutomationProperties.Name="{x:Static res:Strings.Settings_DepthUnit}" />
-      </Grid>
+          <TextBlock Grid.Row="1" Text="{x:Static res:Strings.Settings_DepthUnit}" ToolTip="{x:Static res:Strings.Tooltip_DepthUnit}"
+                     Style="{StaticResource FormLabel}" />
+          <ComboBox Grid.Row="1" Grid.Column="1" Width="{StaticResource SC_FormSliderWidth}" HorizontalAlignment="Left"
+                    Margin="{StaticResource SC_FormRowMargin}"
+                    IsEnabled="{Binding DepthUnitEnabled}"
+                    ItemsSource="{Binding DepthUnits}" SelectedItem="{Binding DepthUnit}" DisplayMemberPath="Label"
+                    ToolTip="{x:Static res:Strings.Tooltip_DepthUnit}"
+                    AutomationProperties.AutomationId="ApplicationOptions.DepthUnit"
+                    AutomationProperties.Name="{x:Static res:Strings.Settings_DepthUnit}" />
+        </Grid>
+      </Expander>
 
-      <TextBlock Text="{x:Static res:Strings.Settings_ServerSection}" Style="{DynamicResource Esri_TextBlockH5}" Margin="0,12,0,2" />
-      <Grid>
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" MinWidth="160" />
-          <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+      <!-- Chart server. -->
+      <Expander Style="{StaticResource SC_FoldableSectionHeader}" IsExpanded="True"
+                Header="{x:Static res:Strings.Settings_ServerSection}"
+                AutomationProperties.AutomationId="ApplicationOptions.ServerSection">
+        <StackPanel>
+          <HeaderedContentControl Style="{StaticResource SC_MessageBar}"
+                                  Content="{x:Static res:Strings.Settings_RestartNote}"
+                                  Margin="{StaticResource SC_FormRowMargin}" />
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="{StaticResource SC_FormLabelColumnOptions}" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="{x:Static res:Strings.Settings_ServerPath}" ToolTip="{x:Static res:Strings.Tooltip_ServerPath}"
-                   Style="{DynamicResource Esri_TextBlockRegular}" VerticalAlignment="Center" />
-        <TextBox Grid.Row="0" Grid.Column="1" Margin="0,2"
-                 Text="{Binding ServerPath, UpdateSourceTrigger=PropertyChanged}" ToolTip="{x:Static res:Strings.Tooltip_ServerPath}"
-                 AutomationProperties.AutomationId="ApplicationOptions.ServerPath"
-                 AutomationProperties.Name="{x:Static res:Strings.Settings_ServerPath}" />
+            <TextBlock Grid.Row="0" Text="{x:Static res:Strings.Settings_ServerPath}" ToolTip="{x:Static res:Strings.Tooltip_ServerPath}"
+                       Style="{StaticResource FormLabel}" />
+            <DockPanel Grid.Row="0" Grid.Column="1" Margin="{StaticResource SC_FormRowMargin}">
+              <Button DockPanel.Dock="Right"
+                      Content="{x:Static res:Strings.Button_Browse}"
+                      ToolTip="{x:Static res:Strings.Tooltip_ServerPathBrowse}"
+                      Style="{DynamicResource Esri_Button}"
+                      MinWidth="{StaticResource SC_DialogButtonMinWidth}"
+                      Margin="{StaticResource SC_ButtonGap}"
+                      Command="{Binding BrowseServerPathCommand}"
+                      AutomationProperties.AutomationId="ApplicationOptions.ServerPathBrowse"
+                      AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_ServerPathBrowse}" />
+              <TextBox Text="{Binding ServerPath, UpdateSourceTrigger=PropertyChanged}" ToolTip="{x:Static res:Strings.Tooltip_ServerPath}"
+                       FontFamily="{StaticResource SC_MonoFontFamily}"
+                       VerticalContentAlignment="Center"
+                       AutomationProperties.AutomationId="ApplicationOptions.ServerPath"
+                       AutomationProperties.Name="{x:Static res:Strings.Settings_ServerPath}" />
+            </DockPanel>
+            <HeaderedContentControl Grid.Row="1" Grid.Column="1" Style="{StaticResource FieldProblem}" Content="{Binding ServerPathProblem}"
+                                    AutomationProperties.AutomationId="ApplicationOptions.ServerPathProblem" />
 
-        <TextBlock Grid.Row="1" Text="{x:Static res:Strings.Settings_TileCache}" ToolTip="{x:Static res:Strings.Tooltip_TileCache}"
-                   Style="{DynamicResource Esri_TextBlockRegular}" VerticalAlignment="Center" />
-        <TextBox Grid.Row="1" Grid.Column="1" Width="100" HorizontalAlignment="Left" Margin="0,2"
-                 Text="{Binding TileCacheMegabytes}" ToolTip="{x:Static res:Strings.Tooltip_TileCache}"
-                 AutomationProperties.AutomationId="ApplicationOptions.TileCache"
-                 AutomationProperties.Name="{x:Static res:Strings.Settings_TileCache}" />
-      </Grid>
-      <TextBlock Text="{x:Static res:Strings.Settings_RestartNote}" Style="{DynamicResource Esri_TextBlockRegular}" TextWrapping="Wrap"
-                 FontStyle="Italic" Margin="0,4,0,0" />
-
-      <TextBlock Text="{Binding Problems}" Style="{DynamicResource Esri_TextBlockRegular}" Foreground="{DynamicResource Esri_TextErrorBrush}"
-                 TextWrapping="Wrap" Margin="0,8,0,0" AutomationProperties.AutomationId="ApplicationOptions.Problems" />
+            <TextBlock Grid.Row="2" Text="{x:Static res:Strings.Settings_TileCache}" ToolTip="{x:Static res:Strings.Tooltip_TileCache}"
+                       Style="{StaticResource FormLabel}" />
+            <TextBox Grid.Row="2" Grid.Column="1" Width="{StaticResource SC_FormInputWidth}" HorizontalAlignment="Left"
+                     Margin="{StaticResource SC_FormRowMargin}"
+                     Text="{Binding TileCacheMegabytes}" ToolTip="{x:Static res:Strings.Tooltip_TileCache}"
+                     AutomationProperties.AutomationId="ApplicationOptions.TileCache"
+                     AutomationProperties.Name="{x:Static res:Strings.Settings_TileCache}" />
+            <HeaderedContentControl Grid.Row="3" Grid.Column="1" Style="{StaticResource FieldProblem}" Content="{Binding TileCacheProblem}"
+                                    AutomationProperties.AutomationId="ApplicationOptions.TileCacheProblem" />
+          </Grid>
+        </StackPanel>
+      </Expander>
     </StackPanel>
   </ScrollViewer>
 </UserControl>

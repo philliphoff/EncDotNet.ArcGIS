@@ -37,7 +37,8 @@
     <value>{0} (emulated on {1})</value>
   </data>
   <data name="About_NotForNavigation" xml:space="preserve">
-    <value>Not for navigation.</value>
+    <value>SoundCharts for ArcGIS draws S-100 and S-57 data for analysis and planning. It isn't certified for navigation. Not for navigation.</value>
+    <comment>Design brief §7.1, word for word.</comment>
   </data>
   <data name="About_Versions" xml:space="preserve">
     <value>Versions</value>
@@ -513,6 +514,10 @@
   <data name="Settings_NeedsServer" xml:space="preserve">
     <value>Needs a newer chart server: SoundCharts keeps these settings with the project, and the chart draws with them once the chart server takes them.</value>
   </data>
+  <data name="Settings_DisplaySection" xml:space="preserve">
+    <value>Display</value>
+    <comment>The project page section with the palette, display category, text, soundings, scales and language.</comment>
+  </data>
   <data name="Settings_Palette" xml:space="preserve">
     <value>Palette</value>
   </data>
@@ -542,6 +547,10 @@
   </data>
   <data name="Settings_DepthsSection" xml:space="preserve">
     <value>Depths (metres)</value>
+  </data>
+  <data name="Settings_UnitMetres" xml:space="preserve">
+    <value>m</value>
+    <comment>The unit after a depth, draft or margin box.</comment>
   </data>
   <data name="Settings_SafetyContour" xml:space="preserve">
     <value>Safety Contour</value>
@@ -652,6 +661,9 @@
   <data name="Settings_Problem_DepthOutOfRange" xml:space="preserve">
     <value>Contours and depths must be from 0 to 12,000 metres.</value>
   </data>
+  <data name="Settings_Problem_RouteCheckOutOfRange" xml:space="preserve">
+    <value>The draft must be more than 0 and at most 100 metres, and the UKC margin from 0 to 100 metres, or empty.</value>
+  </data>
   <data name="Settings_Problem_ContoursOutOfOrder" xml:space="preserve">
     <value>The shallow contour must be no deeper than the safety contour, and the deep contour no shallower.</value>
   </data>
@@ -672,6 +684,10 @@
   </data>
   <data name="Tooltip_FollowProTheme" xml:space="preserve">
     <value>Pro's Light theme shows the Day palette and its Dark theme the Dusk palette. Choosing a palette by hand turns this off. Night is only ever chosen by hand.</value>
+  </data>
+  <data name="Settings_GeneralSection" xml:space="preserve">
+    <value>General</value>
+    <comment>The application page section with Time Format and Depth Unit, as the viewer's settings category.</comment>
   </data>
   <data name="Settings_TimeFormat" xml:space="preserve">
     <value>Time Format</value>
@@ -711,6 +727,16 @@
   </data>
   <data name="Tooltip_ServerPath" xml:space="preserve">
     <value>The s100.exe to run instead of the one that comes with SoundCharts, for trying a newer build. Leave empty for the bundled one.</value>
+  </data>
+  <data name="Tooltip_ServerPathBrowse" xml:space="preserve">
+    <value>Choose the s100.exe to run.</value>
+  </data>
+  <data name="Settings_ServerPathDialogTitle" xml:space="preserve">
+    <value>Choose the s100 Program</value>
+  </data>
+  <data name="Settings_ServerPathFilter" xml:space="preserve">
+    <value>s100 program (s100.exe)|s100.exe|Programs (*.exe)|*.exe</value>
+    <comment>A Windows file dialog filter: label|pattern.</comment>
   </data>
   <data name="Settings_TileCache" xml:space="preserve">
     <value>Tile cache (MB)</value>

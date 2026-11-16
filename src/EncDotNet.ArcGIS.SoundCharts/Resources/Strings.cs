@@ -447,6 +447,9 @@ public static class Strings
     /// <summary>Gets the note on settings the chart server doesn't apply yet.</summary>
     public static string Settings_NeedsServer => Get(nameof(Settings_NeedsServer));
 
+    /// <summary>Gets the heading of the project page's display section.</summary>
+    public static string Settings_DisplaySection => Get(nameof(Settings_DisplaySection));
+
     /// <summary>Gets the Palette label.</summary>
     public static string Settings_Palette => Get(nameof(Settings_Palette));
 
@@ -476,6 +479,9 @@ public static class Strings
 
     /// <summary>Gets the heading over the contour and depth boxes.</summary>
     public static string Settings_DepthsSection => Get(nameof(Settings_DepthsSection));
+
+    /// <summary>Gets the unit after a depth, draft or margin box.</summary>
+    public static string Settings_UnitMetres => Get(nameof(Settings_UnitMetres));
 
     /// <summary>Gets the Safety Contour label.</summary>
     public static string Settings_SafetyContour => Get(nameof(Settings_SafetyContour));
@@ -585,6 +591,9 @@ public static class Strings
     /// <summary>Gets the message for a depth out of range.</summary>
     public static string Settings_Problem_DepthOutOfRange => Get(nameof(Settings_Problem_DepthOutOfRange));
 
+    /// <summary>Gets the message for a route check draft or UKC margin out of range.</summary>
+    public static string Settings_Problem_RouteCheckOutOfRange => Get(nameof(Settings_Problem_RouteCheckOutOfRange));
+
     /// <summary>Gets the message for contours out of order.</summary>
     public static string Settings_Problem_ContoursOutOfOrder => Get(nameof(Settings_Problem_ContoursOutOfOrder));
 
@@ -605,6 +614,9 @@ public static class Strings
 
     /// <summary>Gets the Follow Pro theme tooltip.</summary>
     public static string Tooltip_FollowProTheme => Get(nameof(Tooltip_FollowProTheme));
+
+    /// <summary>Gets the heading of the application page's general section: Time Format and Depth Unit.</summary>
+    public static string Settings_GeneralSection => Get(nameof(Settings_GeneralSection));
 
     /// <summary>Gets the Time Format label.</summary>
     public static string Settings_TimeFormat => Get(nameof(Settings_TimeFormat));
@@ -644,6 +656,15 @@ public static class Strings
 
     /// <summary>Gets the s100 path tooltip.</summary>
     public static string Tooltip_ServerPath => Get(nameof(Tooltip_ServerPath));
+
+    /// <summary>Gets the tooltip of the s100 path's Browse... button.</summary>
+    public static string Tooltip_ServerPathBrowse => Get(nameof(Tooltip_ServerPathBrowse));
+
+    /// <summary>Gets the title of the dialog that chooses the s100 program.</summary>
+    public static string Settings_ServerPathDialogTitle => Get(nameof(Settings_ServerPathDialogTitle));
+
+    /// <summary>Gets the file filter of the dialog that chooses the s100 program.</summary>
+    public static string Settings_ServerPathFilter => Get(nameof(Settings_ServerPathFilter));
 
     /// <summary>Gets the label of the tile cache size box.</summary>
     public static string Settings_TileCache => Get(nameof(Settings_TileCache));
