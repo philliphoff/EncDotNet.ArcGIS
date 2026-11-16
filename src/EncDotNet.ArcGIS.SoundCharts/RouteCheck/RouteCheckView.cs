@@ -1,6 +1,7 @@
 namespace EncDotNet.SoundCharts.RouteCheck;
 
 /// <summary>What the <b>SoundCharts Route check</b> pane shows.</summary>
+/// <param name="State">Whether the pane is empty, checking, or showing a verdict.</param>
 /// <param name="Heading">The route's name, or what the pane is waiting for.</param>
 /// <param name="Parameters">The ship parameters the check used, or <c>null</c>.</param>
 /// <param name="Title">The verdict, in the viewer's words, or <c>null</c> before a check.</param>
@@ -12,6 +13,7 @@ namespace EncDotNet.SoundCharts.RouteCheck;
 /// <param name="Footer">The viewer's footer, "Not for navigation · computed from …", or <c>null</c> before a check.</param>
 /// <param name="Problems">One line per dataset that couldn't be read.</param>
 public sealed record RouteCheckView(
+    RouteCheckPaneState State,
     string Heading,
     string? Parameters,
     string? Title,

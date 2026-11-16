@@ -29,19 +29,23 @@ public static class RouteCheckPresenter
 
     /// <summary>Gets the pane before any check.</summary>
     public static RouteCheckView Empty { get; } = new(
-        Strings.RouteCheck_EmptyTitle, Strings.RouteCheck_EmptyDescription, null, null, RouteCheckTone.Neutral, [], null, [], null, []);
+        RouteCheckPaneState.Empty,
+        Strings.RouteCheck_EmptyTitle,
+        Strings.RouteCheck_EmptyDescription,
+        null, null, RouteCheckTone.Neutral, [], null, [], null, []);
 
     /// <summary>Gets the pane while a route is being checked.</summary>
     /// <param name="routeName">The route's name.</param>
     /// <returns>The view.</returns>
     public static RouteCheckView Working(string routeName) => new(
-        routeName, null, Strings.RouteCheck_Computing, null, RouteCheckTone.Neutral, [], null, [], null, []);
+        RouteCheckPaneState.Working, routeName, null, Strings.RouteCheck_Computing, null, RouteCheckTone.Neutral, [], null, [], null, []);
 
     /// <summary>Gets the pane when a route couldn't be checked.</summary>
     /// <param name="routeName">The route's name, or <c>null</c> when no route was read.</param>
     /// <param name="message">Why, ready to show.</param>
     /// <returns>The view.</returns>
     public static RouteCheckView Failed(string? routeName, string message) => new(
+        RouteCheckPaneState.Verdict,
         routeName ?? Strings.RouteCheck_EmptyTitle,
         null,
         string.Format(CultureInfo.CurrentCulture, Strings.RouteCheck_ErrorFormat, message),
@@ -87,6 +91,7 @@ public static class RouteCheckPresenter
             : string.Format(CultureInfo.CurrentCulture, Strings.RouteCheck_FooterFormat, string.Join(", ", outcome.Products));
 
         return new RouteCheckView(
+            RouteCheckPaneState.Verdict,
             outcome.Route.Name,
             ParametersLine(outcome.Prepared.Parameters),
             title,

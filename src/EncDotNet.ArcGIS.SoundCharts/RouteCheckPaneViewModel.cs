@@ -53,6 +53,9 @@ internal sealed class RouteCheckPaneViewModel : DockPane
         ObjectInfoCommand = new RelayCommand(ShowObjectInfoAsync, item => item is RouteFindingItem { Position: not null }, true, false);
     }
 
+    /// <summary>Gets whether the pane is empty, checking a route, or showing a verdict.</summary>
+    public RouteCheckPaneState State => _view.State;
+
     /// <summary>Gets the route's name, or what the pane is waiting for.</summary>
     public string Heading => _view.Heading;
 
@@ -65,7 +68,7 @@ internal sealed class RouteCheckPaneViewModel : DockPane
     /// <summary>Gets the line under the verdict.</summary>
     public string? Subtitle => _view.Subtitle;
 
-    /// <summary>Gets the verdict's tone, for the view's colours.</summary>
+    /// <summary>Gets the verdict's tone, for the card's colours and glyph (<c>SC_ToneConverter</c>).</summary>
     public RouteCheckTone Tone => _view.Tone;
 
     /// <summary>Gets the clearance check's lower-confidence notes.</summary>
@@ -77,7 +80,7 @@ internal sealed class RouteCheckPaneViewModel : DockPane
     /// <summary>Gets whether a check ran and found nothing.</summary>
     public bool IsEmptyResult => _view.IsEmpty;
 
-    /// <summary>Gets the summary rows.</summary>
+    /// <summary>Gets the summary rows, each with its chip's tone (<see cref="RouteCheckSummaryRow.ChipTone"/>).</summary>
     public ObservableCollection<RouteCheckSummaryRow> Rows { get; } = [];
 
     /// <summary>Gets the findings, for a list grouped by <see cref="RouteFindingItem.Group"/>.</summary>
@@ -326,6 +329,7 @@ internal sealed class RouteCheckPaneViewModel : DockPane
             Replace(Problems, view.Problems);
             _selectedItem = null;
             NotifyPropertyChanged(nameof(SelectedItem));
+            NotifyPropertyChanged(nameof(State));
             NotifyPropertyChanged(nameof(Heading));
             NotifyPropertyChanged(nameof(Parameters));
             NotifyPropertyChanged(nameof(Title));

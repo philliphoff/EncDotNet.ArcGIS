@@ -115,6 +115,7 @@ public sealed class RouteCheckServiceTests : IDisposable
 
         var view = RouteCheckPresenter.Present(outcome);
 
+        Assert.Equal(RouteCheckPaneState.Verdict, view.State);
         Assert.Equal("Across", view.Heading);
         Assert.Equal(outcome.Report.Findings.Count, view.Items.Count);
         Assert.Equal(view.Items.Select(i => i.GroupRank).Order(), view.Items.Select(i => i.GroupRank));
@@ -123,6 +124,10 @@ public sealed class RouteCheckServiceTests : IDisposable
         Assert.StartsWith("Not for navigation · ", view.Footer);
         Assert.Equal(["Clearance", "Route"], view.Rows.Take(2).Select(r => r.Label));
         Assert.Equal("Not checked", view.Rows[0].Text);
+        // The chips carry their own tone: no chip without a draft, danger with findings to review.
+        Assert.Null(view.Rows[0].Chip);
+        Assert.Equal(RouteCheckTone.Neutral, view.Rows[0].ChipTone);
+        Assert.Equal(RouteCheckTone.Destructive, view.Rows[1].ChipTone);
         // Without a draft the viewer counts what to review and names the worst.
         Assert.Equal("2 to review", view.Title);
         Assert.StartsWith("Crosses the safety contour · Crosses the safety contour · ", view.Subtitle);
