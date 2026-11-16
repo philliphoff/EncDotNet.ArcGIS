@@ -1185,7 +1185,7 @@ Choose No to export without it.</value>
     <value>Select a line feature and choose Check Selected Line, draw a route, or open an S-421 or RTZ route. It's checked against the datasets of the map's SoundCharts layers.</value>
   </data>
   <data name="RouteCheck_Computing" xml:space="preserve">
-    <value>Checking the passage…</value>
+    <value>Checking the passage...</value>
   </data>
   <data name="RouteCheck_ErrorFormat" xml:space="preserve">
     <value>Couldn't check the passage: {0}</value>
