@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Experimental: signs .esriAddinX and .esriPlugin packages the way
+       ArcGIS Pro's ArcGISSignAddIn.exe does (an OPC package signature), so CI
+       can sign without Esri's tool and its message boxes. Worked out by
+       observing and comparing packages signed by Esri's tool with this
+       tool's output, not from Esri documentation or source; see the comment
+       at the top of Program.cs. Not part of the add-in or its packages. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <!-- System.IO.Packaging's signature support (PackageDigitalSignatureManager)
+         is in WindowsBase, which comes with the Windows Desktop runtime. -->
+    <UseWPF>true</UseWPF>
+    <RootNamespace>EncDotNet.ArcGIS.PackageSigner</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+</Project>
