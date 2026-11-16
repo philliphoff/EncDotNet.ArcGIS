@@ -69,10 +69,7 @@
       </Style>
 
       <!-- The pick header: shown once there is a position. -->
-      <Style x:Key="PickHeader" TargetType="Border">
-        <Setter Property="BorderThickness" Value="0,0,0,1" />
-        <Setter Property="BorderBrush" Value="{DynamicResource SC_RuleBrush}" />
-        <Setter Property="Padding" Value="{StaticResource SC_PaneGutter}" />
+      <Style x:Key="PickHeader" TargetType="Border" BasedOn="{StaticResource SC_PickHeader}">
         <Style.Triggers>
           <DataTrigger Binding="{Binding Location}" Value="{x:Null}">
             <Setter Property="Visibility" Value="Collapsed" />
@@ -198,7 +195,7 @@
                             AutomationProperties.AutomationId="ObjectInfo.Failed">
       <TextBlock>
         <Run Text="{Binding Description, Mode=OneWay}" /> <Hyperlink Command="{Binding ShowLogCommand}"
-                   Foreground="{DynamicResource SC_InfoBrush}"
+                   Style="{StaticResource SC_Hyperlink}"
                    AutomationProperties.AutomationId="ObjectInfo.ShowLog"><Run Text="{x:Static res:Strings.ObjectInfo_ShowLog}" /></Hyperlink>
       </TextBlock>
     </HeaderedContentControl>

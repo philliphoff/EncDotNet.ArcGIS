@@ -51,9 +51,19 @@
     </Border>
 
     <StackPanel Margin="{StaticResource SC_DialogPadding}">
-      <TextBlock Text="{x:Static res:Strings.About_Heading}"
-                 Style="{StaticResource SC_PageTitle}"
-                 Margin="0,0,0,12" />
+      <!-- The app icon, from Pro's theme (SC_AppIcon), beside the product name. -->
+      <DockPanel Margin="0,0,0,12">
+        <Image DockPanel.Dock="Left"
+               Source="{DynamicResource SC_AppIcon}"
+               Width="32"
+               Height="32"
+               Margin="0,0,12,0"
+               VerticalAlignment="Center"
+               RenderOptions.BitmapScalingMode="HighQuality" />
+        <TextBlock Text="{x:Static res:Strings.About_Heading}"
+                   Style="{StaticResource SC_PageTitle}"
+                   VerticalAlignment="Center" />
+      </DockPanel>
 
       <ItemsControl Style="{StaticResource SC_FieldGrid}"
                     ItemsSource="{Binding Rows}"

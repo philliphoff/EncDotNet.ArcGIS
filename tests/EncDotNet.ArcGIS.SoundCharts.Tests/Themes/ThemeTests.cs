@@ -64,6 +64,20 @@ public class ThemeTests
         Assert.Contains(baml, names);
     }
 
+    [Theory]
+    [InlineData("images/aboutsoundcharts32.scale-200.png")]
+    [InlineData("darkimages/aboutsoundcharts32.scale-200.png")]
+    public void AppIcons_AreInTheAssembly(string resource)
+    {
+        // SC_AppIcon's pack URIs in the colour dictionaries reach these.
+        var assembly = typeof(ThemeDictionaries).Assembly;
+        using var stream = assembly.GetManifestResourceStream($"{ThemeDictionaries.AssemblyName}.g.resources");
+        Assert.NotNull(stream);
+        using var reader = new ResourceReader(stream);
+
+        Assert.Contains(resource, reader.Cast<DictionaryEntry>().Select(e => (string)e.Key));
+    }
+
     public static TheoryData<string> DictionaryFiles() =>
     [
         ThemeDictionaries.SharedUri.OriginalString,

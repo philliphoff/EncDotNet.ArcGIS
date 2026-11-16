@@ -309,6 +309,7 @@ This table is the proposal. What was built, with every key, is in
   `SC_FindingRow`; the Object information action becomes an icon button, visible on hover,
   selection and keyboard focus.
 - Working: the card shape with a spinner. Message → info `SC_MessageBar`. Problems → warning message bar.
+  Failed → error message bar ("Couldn't check the passage" and the reason) in place of the card.
 - Footer: `SC_PaneFooter` with the viewer's footer text, word for word.
 
 ### Log (`LogPaneView.xaml`)
@@ -346,8 +347,9 @@ This table is the proposal. What was built, with every key, is in
   Cancel).
 
 ### About (`AboutWindow.xaml`)
-- Header: SoundCharts app icon (from the viewer's `Branding/icon.svg`, 52 px) + "SoundCharts for
-  ArcGIS Pro" + a one-line subtitle (open question). Versions in `SC_FieldGrid` with mono
+- Header: SoundCharts app icon + "SoundCharts for ArcGIS Pro" + a one-line subtitle (open
+  question). Built with the ribbon's About icon at 32 px (`SC_AppIcon`, light or dark by Pro's
+  theme), not the viewer's `Branding/icon.svg` at 52 px. Versions in `SC_FieldGrid` with mono
   values. The brief's full not-for-navigation sentence in a neutral message bar.
   `SC_DialogFooter` with Copy at the left and Close (default) at the right.
 
@@ -518,12 +520,13 @@ Namespace `xmlns:sc="clr-namespace:EncDotNet.SoundCharts.Themes"`.
 
 | Property | Type | Read by |
 |---|---|---|
-| `sc:Tone.Value` | `SoundChartsTone`: `Neutral` (default), `Info`, `Success`, `Warning`, `Danger` | `SC_ToneGlyph`, `SC_Chip`, `SC_MonoChip`, `SC_VerdictCard`, `SC_MessageBar` (default `Info`), `SC_SectionHeader`, `SC_FoldableSectionHeader` and `SC_ListRow` (glyph colour). It doesn't inherit: set it on each element. |
+| `sc:Tone.Value` | `SoundChartsTone`: `Neutral` (default), `Info`, `Success`, `Warning`, `Danger` | `SC_ToneGlyph`, `SC_Chip`, `SC_MonoChip`, `SC_ChipButton`, `SC_VerdictCard`, `SC_MessageBar` (default `Info`), `SC_SectionHeader`, `SC_FoldableSectionHeader` and `SC_ListRow` (glyph colour). It doesn't inherit: set it on each element. |
 | `sc:Ui.Glyph` | `Geometry` (an `SC_Glyph…` key) | Toolbar, icon and row buttons, section headers, list rows, chips, the pane footer (default info) and the empty state disc |
 | `sc:Ui.Count` | `object` | Section headers: shown after the title, in regular weight |
 | `sc:Ui.Trailing` | `object` | `SC_ListRow`: a chip or an `SC_RowAction` at the right end |
 | `sc:Ui.Actions` | `object` | `SC_EmptyState`: the buttons under the text |
 | `sc:Ui.OpensContextMenu` | `bool` | A button opens its `ContextMenu` below itself on click, with the button's `DataContext`. `SC_ToolbarMenuButton` and `SC_BurgerButton` set it. |
+| `sc:Ui.IsDragOver` | `bool` | `SC_DropZone`: true while files are dragged over the view, so the dashed edge takes the accent. The view sets it from its drag events. |
 | `SC_ToneConverter` | `ToneConverter` | Binds a view model's tone to `sc:Tone.Value`: a `SoundChartsTone`, a `RouteCheckTone` (`Destructive` is `Danger`) or a name |
 
 ### 11.3 Brushes
@@ -539,7 +542,8 @@ From the colour dictionaries (§4.3). `{Tone}` is `Danger`, `Warning`, `Success`
 | `SC_{Tone}EdgeBrush` | Ink at 40%: chip, card and message bar edges |
 | `SC_CautionBackgroundBrush`, `SC_CautionBorderBrush`, `SC_CautionInkBrush` | NOT FOR NAVIGATION strip |
 | `SC_RuleBrush` | 1 px rules: toolbar, footers, splitters; replaces `Esri_BorderBrush` |
-| `SC_TagBorderBrush` | Product tag borders, the splitter grip |
+| `SC_TagBorderBrush` | Product tag borders, the splitter grip, the drop zone's dashed edge |
+| `SC_AppIcon` | A `BitmapImage`, not a brush: the app icon (the ribbon's About icon, 64 px for 32 px use), the light rendering in Light and High Contrast and the dark one in Dark. The About header. |
 
 In High Contrast every fill and tint is transparent, and inks, edges and rules are system
 colours, so a toned element must also show a glyph and a word.
@@ -556,6 +560,7 @@ colours, so a toned element must also show a glyph and a word.
 | `SC_DialogButtonMinWidth` | `Double` | 80: dialog and Options buttons |
 | `SC_FormInputWidth`, `SC_FormSliderWidth` | `Double` | 96, 170 |
 | `SC_EmptyStateTextMaxWidth` | `Double` | 300 |
+| `SC_StatusLabelMaxWidth` | `Double` | 220: a status label's widest, as on the Layer tab (the scale note) |
 | `SC_PaneGutter` | `Thickness` | 8: a pane's outer margin |
 | `SC_DialogPadding` | `Thickness` | 16: dialog body |
 | `SC_RowPadding` | `Thickness` | 8,5: list and tree rows |
@@ -593,7 +598,8 @@ a style through `sc:Ui.Glyph`.
 
 ### 11.6 Text
 
-All `TextBlock` styles set only foreground, size, weight, wrapping and (mono) font family.
+All `TextBlock` styles set only foreground, size, weight, wrapping and (mono) font family; the
+one-line styles also trim with an ellipsis and centre vertically.
 
 | Key | Intent |
 |---|---|
@@ -606,6 +612,11 @@ All `TextBlock` styles set only foreground, size, weight, wrapping and (mono) fo
 | `SC_Overline` | 11 SemiBold subdued, one line: section and group headers, pick count. The caps come from the string; WPF has no letter spacing. |
 | `SC_Mono`, `SC_MonoSubdued` | 11.5 mono: ids, editions, versions, paths, positions, log rows |
 | `SC_OptionalText`, `SC_OptionalCaption`, `SC_OptionalMono` | `SC_Body`, `SC_Caption` and `SC_MonoSubdued` that collapse when `Text` is null or empty. Replaces every local `OptionalText`. |
+| `SC_MonoTitle` | `SC_Title` in the mono face: the Library's selected dataset |
+| `SC_MonoCell`, `SC_MonoCellSubdued` | `SC_Mono` and `SC_MonoSubdued` on one line with an ellipsis, centred: list cells (the Log's rows) |
+| `SC_ColumnHeader` | `SC_Caption` on one line with an ellipsis, centred: column headers over list cells |
+| `SC_StatusLabel` | `SC_Body` on one line with an ellipsis, centred: a status label (the scale note). Put the full text in the label's tooltip and cap it at `SC_StatusLabelMaxWidth`. |
+| `SC_Hyperlink` | A `Hyperlink` (not a `TextBlock`) in the info ink: a link in running text, such as the Log link in Object information's failure bar |
 | `SC_FieldLabel` | Key/value label: subdued body, 12 px right margin |
 | `SC_FormLabel` | Form label: body, centred vertically, 12 px right margin |
 | `SC_FormHelp` | Help text under a form field: caption, 2 px top margin |
@@ -621,6 +632,9 @@ All `TextBlock` styles set only foreground, size, weight, wrapping and (mono) fo
 | `SC_BurgerButton` | `ButtonBase` | `SC_IconButton` with ≡ that opens its `ContextMenu`: the toolbar's right end |
 | `SC_RowAction` | `ButtonBase` | `SC_SmallIconButton`, hidden until its `ListBoxItem` or `ListViewItem` is hovered, selected or has keyboard focus: the finding row's Object information action |
 | `SC_SummaryRow` | `Button` | 22 px borderless row with a hover tint; the content lays out label (`SC_SummaryLabelColumn`), text and chip |
+| `SC_SummaryRowStatic` | `ContentControl` | `SC_SummaryRow`'s layout for a row that does nothing when clicked: no hover tint, no focus stop (Route check's summary rows) |
+| `SC_ChipCloseButton` | `ButtonBase` | 16 × 16 with a 12 px `sc:Ui.Glyph` (`SC_GlyphClose`) inside a chip, in the chip's ink: the Log's source filter chip |
+| `SC_ChipButton` | `ButtonBase` | An `SC_Chip` that is a button: `sc:Tone.Value`, `sc:Ui.Glyph` and the content as the chip, a hand cursor and a keyboard stop (the Log's count chips). Give it a `ToolTip` and `AutomationProperties.HelpText` saying what a click does. |
 
 Icon-only buttons need a `ToolTip` and `AutomationProperties.Name` from `Strings.resx`; the styles
 can't supply them.
@@ -630,7 +644,9 @@ can't supply them.
 | Key | Target | Intent |
 |---|---|---|
 | `SC_PaneToolbar` | `Border` | 32 px, padding `4,0`, 1 px bottom rule. Child: a `DockPanel LastChildFill="False"` with the labelled primary action left and icon buttons and `SC_BurgerButton` right. |
+| `SC_PickHeader` | `Border` | A pane's header strip under the toolbar: padding 8, 1 px bottom rule (Object information's pick header) |
 | `SC_PaneFooter` | `ContentControl` | 1 px top rule, padding `8,6`, a 12 px info glyph (or `sc:Ui.Glyph`), 11 px subdued wrapped text |
+| `SC_OptionalPaneFooter` | `ContentControl` | `SC_PaneFooter` that collapses while `Content` is null or empty |
 | `SC_DialogFooter` | `Border` | 1 px top rule, padding `16,12`. Child: a `DockPanel` with Copy-type actions left and a right-aligned `StackPanel` of `Esri_Button`s, default first, `MinWidth` `SC_DialogButtonMinWidth`, `SC_ButtonGap` between them. |
 | `SC_Splitter` | `GridSplitter` | Row splitter: 7 px hit area, 1 px rule, centre grip; in its own `Auto` row between the two resizable rows |
 | `SC_SectionHeader` | `ContentControl` | Margin `0,12,0,4`: optional 12 px `sc:Ui.Glyph` in the `sc:Tone.Value` colour, overline content, optional `sc:Ui.Count` |
@@ -646,11 +662,15 @@ can't supply them.
 | `SC_Chip` | `ContentControl` | 18 px tone chip: `sc:Tone.Value` fill, edge and ink, optional 12 px `sc:Ui.Glyph`, 11 px text |
 | `SC_MonoChip` | `ContentControl` | `SC_Chip` with mono 10.5 px: numbers and counts |
 | `SC_ProductTag` | `ContentControl` | Neutral bordered mono tag: `S-101`, `S-104`, `ExS`, `Dir`; min width 40 |
+| `SC_OptionalProductTag` | `ContentControl` | `SC_ProductTag` that collapses while `Content` is null: a Library row or dataset with no product |
 | `SC_VerdictCard` | `Border` | Tone tint and edge, radius 3, padding `10,9`; put an `SC_ToneGlyph` with the same tone and an `SC_VerdictTitle` inside |
+| `SC_WorkingCard` | `ContentControl` | The verdict card's shape while work runs: neutral tint and edge, a 16 px spinner, the content as a 13 px SemiBold title; live region (polite). Route check's Working state. |
 | `SC_MessageBar` | `HeaderedContentControl` | 3 px tone bar, the tone's glyph (Danger shows `SC_GlyphError`), optional bold `Header`, wrapped `Content`; live region (polite). `sc:Tone.Value` `Info` (default), `Warning`, `Danger`, `Success` or `Neutral`. |
+| `SC_OptionalMessageBar` | `HeaderedContentControl` | `SC_MessageBar` that collapses while `Content` is null or empty: a last action's message, a field's problem |
 | `SC_CautionStrip` | `ContentControl` | NOT FOR NAVIGATION: caution colours, warning glyph, 11 px bold content; give it the existing tooltip |
 | `SC_EmptyState` | `HeaderedContentControl` | Centred, padding 24: a 40 px tinted disc with `sc:Ui.Glyph`, `Header` as a 14 px SemiBold title, `Content` as subdued text (max 300 px), `sc:Ui.Actions` under it |
 | `SC_BusyState` | `ContentControl` | Pro's `CircularAnimationControl` (24 px) above a subdued caption; live region (polite) |
+| `SC_DropZone` | `ContentControl` | The content (a caption), centred inside a dashed 1 px `SC_TagBorderBrush` edge that takes `SC_InfoBrush` while `sc:Ui.IsDragOver` is true: the empty Library |
 
 ### 11.10 Examples
 

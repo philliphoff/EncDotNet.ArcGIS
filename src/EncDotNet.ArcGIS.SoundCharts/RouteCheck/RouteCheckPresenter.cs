@@ -40,17 +40,22 @@ public static class RouteCheckPresenter
     public static RouteCheckView Working(string routeName) => new(
         RouteCheckPaneState.Working, routeName, null, Strings.RouteCheck_Computing, null, RouteCheckTone.Neutral, [], null, [], null, []);
 
-    /// <summary>Gets the pane when a route couldn't be checked.</summary>
+    /// <summary>
+    /// Gets the pane when a route couldn't be checked: an error message bar
+    /// with the viewer's "Couldn't check the passage" as its
+    /// <see cref="RouteCheckView.Title"/> and the reason as its
+    /// <see cref="RouteCheckView.Subtitle"/>.
+    /// </summary>
     /// <param name="routeName">The route's name, or <c>null</c> when no route was read.</param>
     /// <param name="message">Why, ready to show.</param>
     /// <returns>The view.</returns>
     public static RouteCheckView Failed(string? routeName, string message) => new(
-        RouteCheckPaneState.Verdict,
+        RouteCheckPaneState.Failed,
         routeName ?? Strings.RouteCheck_EmptyTitle,
         null,
-        string.Format(CultureInfo.CurrentCulture, Strings.RouteCheck_ErrorFormat, message),
-        null,
-        RouteCheckTone.Neutral,
+        Strings.RouteCheck_Failed,
+        message,
+        RouteCheckTone.Destructive,
         [],
         null,
         [],

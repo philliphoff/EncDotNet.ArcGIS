@@ -53,7 +53,7 @@ internal sealed class RouteCheckPaneViewModel : DockPane
         ObjectInfoCommand = new RelayCommand(ShowObjectInfoAsync, item => item is RouteFindingItem { Position: not null }, true, false);
     }
 
-    /// <summary>Gets whether the pane is empty, checking a route, or showing a verdict.</summary>
+    /// <summary>Gets whether the pane is empty, checking a route, showing a verdict, or saying why a check failed.</summary>
     public RouteCheckPaneState State => _view.State;
 
     /// <summary>Gets the route's name, or what the pane is waiting for.</summary>

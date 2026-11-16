@@ -1,6 +1,7 @@
 using EncDotNet.S100.Collections;
 using EncDotNet.S100.Collections.Library;
 using EncDotNet.SoundCharts.Library;
+using EncDotNet.SoundCharts.Themes;
 using static EncDotNet.SoundCharts.Tests.Library.LibraryTestItems;
 
 namespace EncDotNet.SoundCharts.Tests.Library;
@@ -8,18 +9,31 @@ namespace EncDotNet.SoundCharts.Tests.Library;
 public class LibraryDatasetDetailsBuilderTests
 {
     [Theory]
-    [InlineData("2.0.0", "Supported")]
-    [InlineData("1.0.0", "Supported: read with the newer, compatible edition 1.2.0")]
-    [InlineData("2.1.0", "Partly supported: SoundCharts reads edition 2.0.0, so some features may not draw")]
-    [InlineData("3.0.0", "Not supported: SoundCharts reads edition 2.0.0, so the chart may be incomplete or wrong")]
-    [InlineData(null, "Edition not stated; SoundCharts reads edition 2.0.0")]
-    public void Compatibility_ComparesTheEditionWithWhatSoundChartsReads(string? version, string expected)
+    [InlineData("2.0.0", "Supported", SoundChartsTone.Success, null)]
+    [InlineData("1.0.0", "Supported", SoundChartsTone.Success, "Read with the newer, compatible edition 1.2.0")]
+    [InlineData("2.1.0", "Partly supported", SoundChartsTone.Warning, "SoundCharts reads edition 2.0.0, so some features may not draw")]
+    [InlineData("3.0.0", "Not supported", SoundChartsTone.Danger, "SoundCharts reads edition 2.0.0, so the chart may be incomplete or wrong")]
+    public void Compatibility_IsAToneChipForTheEdition(string version, string chip, SoundChartsTone tone, string? note)
     {
         var field = LibraryDatasetDetailsBuilder.Compatibility(Item("101AA00DS0003", version: version));
 
         Assert.NotNull(field);
         Assert.Equal("Compatibility", field.Label);
-        Assert.Equal(expected, field.Value);
+        Assert.Equal(chip, field.Chip);
+        Assert.Equal(tone, field.Tone);
+        Assert.Equal(note, field.Value);
+        Assert.False(field.IsWorking);
+    }
+
+    [Fact]
+    public void Compatibility_WithoutAnEdition_IsAPlainNote()
+    {
+        var field = LibraryDatasetDetailsBuilder.Compatibility(Item("101AA00DS0003", version: null));
+
+        Assert.NotNull(field);
+        Assert.Null(field.Chip);
+        Assert.Equal(SoundChartsTone.Neutral, field.Tone);
+        Assert.Equal("Edition not stated; SoundCharts reads edition 2.0.0", field.Value);
     }
 
     [Fact]
@@ -39,11 +53,14 @@ public class LibraryDatasetDetailsBuilderTests
         Assert.Equal("101AA00DS0003", details.Name);
         Assert.StartsWith("S-101", details.Product, StringComparison.Ordinal);
         var product = details.Groups[0];
-        Assert.Contains(product.Fields, f => f.Label == "Compatibility" && f.Value == "Supported");
-        Assert.Contains(details.Groups, g => g.Fields.Any(f => f.Value.Contains("Charts", StringComparison.Ordinal)));
+        Assert.Contains(product.Fields, f => f.Label == "Compatibility" && f.Chip == "Supported" && f.Tone == SoundChartsTone.Success);
+        Assert.Contains(details.Groups, g => g.Fields.Any(f => f.Value?.Contains("Charts", StringComparison.Ordinal) == true));
         var validation = details.Groups[^1];
         Assert.Equal("Validation", validation.Title);
-        Assert.Equal("Not validated", Assert.Single(validation.Fields).Value);
+        Assert.False(string.IsNullOrEmpty(validation.Header));
+        var status = Assert.Single(validation.Fields);
+        Assert.Equal("Not validated", status.Chip);
+        Assert.Equal(SoundChartsTone.Neutral, status.Tone);
     }
 
     [Fact]
@@ -67,7 +84,7 @@ public class LibraryDatasetDetailsBuilderTests
 
         var time = reading.Groups[1];
         Assert.Equal("Time", time.Title);
-        Assert.Contains(time.Fields, f => f.Label == "Time range" && f.Value.Contains('→'));
+        Assert.Contains(time.Fields, f => f.Label == "Time range" && f.Value?.Contains('→') == true);
         Assert.Contains(time.Fields, f => f.Label == "Time steps" && f.Value == "Reading...");
         Assert.Contains(read.Groups[1].Fields, f => f.Label == "Time steps" && f.Value == "3 steps · hourly");
     }
@@ -111,11 +128,42 @@ public class LibraryDatasetDetailsBuilderTests
 
         var fields = LibraryDatasetDetailsBuilder.ValidationFields(findings);
 
-        Assert.Equal("2 errors, 1 warning", fields[0].Value);
+        Assert.Equal("2 errors, 1 warning", fields[0].Chip);
+        Assert.Equal(SoundChartsTone.Danger, fields[0].Tone);
         Assert.Equal("S101-R-1.2", fields[1].Label);
         Assert.Equal("Error: Not bound.", fields[1].Value);
-        Assert.Equal("Valid · 13 rules checked", LibraryDatasetDetailsBuilder.ValidationFields(new DatasetValidation(DatasetValidationState.Valid, RulesEvaluated: 13))[0].Value);
-        Assert.Equal("Couldn't validate: boom", LibraryDatasetDetailsBuilder.ValidationFields(DatasetValidation.Failed("boom"))[0].Value);
-        Assert.Equal("Validating...", LibraryDatasetDetailsBuilder.ValidationFields(DatasetValidation.Running)[0].Value);
+        Assert.Null(fields[1].Chip);
+    }
+
+    [Theory]
+    [InlineData(DatasetValidationState.NotValidated, 0, 0, 0, null, "Not validated", SoundChartsTone.Neutral, null, false)]
+    [InlineData(DatasetValidationState.Running, 0, 0, 0, null, "Validating...", SoundChartsTone.Neutral, null, true)]
+    [InlineData(DatasetValidationState.Valid, 0, 0, 0, null, "Valid", SoundChartsTone.Success, null, false)]
+    [InlineData(DatasetValidationState.Valid, 0, 0, 13, null, "Valid", SoundChartsTone.Success, "13 rules checked", false)]
+    [InlineData(DatasetValidationState.Findings, 0, 3, 0, null, "3 warnings", SoundChartsTone.Warning, null, false)]
+    [InlineData(DatasetValidationState.Findings, 1, 0, 0, null, "1 error", SoundChartsTone.Danger, null, false)]
+    [InlineData(DatasetValidationState.Findings, 0, 0, 0, null, "Not valid", SoundChartsTone.Danger, null, false)]
+    [InlineData(DatasetValidationState.NoRules, 0, 0, 0, null, null, SoundChartsTone.Neutral, "No validation rules for this product", false)]
+    [InlineData(DatasetValidationState.Failed, 0, 0, 0, "boom", "Couldn't validate", SoundChartsTone.Warning, "boom", false)]
+    public void ValidationFields_StatusIsAToneChip(
+        DatasetValidationState state,
+        int errors,
+        int warnings,
+        int rules,
+        string? message,
+        string? chip,
+        SoundChartsTone tone,
+        string? note,
+        bool working)
+    {
+        var validation = new DatasetValidation(state, errors, warnings, rules, Message: message);
+
+        var status = LibraryDatasetDetailsBuilder.ValidationFields(validation)[0];
+
+        Assert.Equal("Status", status.Label);
+        Assert.Equal(chip, status.Chip);
+        Assert.Equal(tone, status.Tone);
+        Assert.Equal(note, status.Value);
+        Assert.Equal(working, status.IsWorking);
     }
 }

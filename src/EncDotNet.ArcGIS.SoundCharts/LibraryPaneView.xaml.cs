@@ -2,8 +2,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using EncDotNet.SoundCharts.Library;
+using EncDotNet.SoundCharts.Themes;
 
 namespace EncDotNet.SoundCharts;
 
@@ -61,8 +61,7 @@ internal sealed partial class LibraryPaneView : UserControl
 
     // The empty Library's drop zone turns the accent colour while files are
     // dragged over the pane.
-    private void ShowDropTarget(bool active) =>
-        DropZoneEdge.SetResourceReference(Shape.StrokeProperty, active ? "SC_InfoBrush" : "SC_TagBorderBrush");
+    private void ShowDropTarget(bool active) => Ui.SetIsDragOver(DropZone, active);
 
     private async void OnDrop(object sender, DragEventArgs e)
     {

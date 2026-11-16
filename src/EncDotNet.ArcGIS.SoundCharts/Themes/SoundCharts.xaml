@@ -53,6 +53,7 @@
   <sys:Double x:Key="SC_FormInputWidth">96</sys:Double>
   <sys:Double x:Key="SC_FormSliderWidth">170</sys:Double>
   <sys:Double x:Key="SC_EmptyStateTextMaxWidth">300</sys:Double>
+  <sys:Double x:Key="SC_StatusLabelMaxWidth">220</sys:Double>
 
   <!-- Margins and paddings. -->
   <Thickness x:Key="SC_PaneGutter">8</Thickness>
@@ -301,6 +302,44 @@
     </Style.Triggers>
   </Style>
 
+  <!-- A title in the mono face, as ids are: the Library's selected dataset. -->
+  <Style x:Key="SC_MonoTitle" TargetType="TextBlock" BasedOn="{StaticResource SC_Title}">
+    <Setter Property="FontFamily" Value="{StaticResource SC_MonoFontFamily}" />
+  </Style>
+
+  <!-- List cells: mono, one line, ellipsis, centred in the row (the Log). -->
+  <Style x:Key="SC_MonoCell" TargetType="TextBlock" BasedOn="{StaticResource SC_Mono}">
+    <Setter Property="TextWrapping" Value="NoWrap" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style x:Key="SC_MonoCellSubdued" TargetType="TextBlock" BasedOn="{StaticResource SC_MonoSubdued}">
+    <Setter Property="TextWrapping" Value="NoWrap" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- A column header over list cells: caption, one line, ellipsis. -->
+  <Style x:Key="SC_ColumnHeader" TargetType="TextBlock" BasedOn="{StaticResource SC_Caption}">
+    <Setter Property="TextWrapping" Value="NoWrap" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- A status label's text (§5.7): one line with ellipsis, the full text in
+       the label's tooltip. Give the label MaxWidth SC_StatusLabelMaxWidth. -->
+  <Style x:Key="SC_StatusLabel" TargetType="TextBlock" BasedOn="{StaticResource SC_Body}">
+    <Setter Property="TextWrapping" Value="NoWrap" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- A link in running text, in the info ink: the Log link in a failure bar. -->
+  <Style x:Key="SC_Hyperlink" TargetType="Hyperlink">
+    <Setter Property="Foreground" Value="{DynamicResource SC_InfoBrush}" />
+  </Style>
+
   <!-- ===================================================================
        Buttons. Labelled buttons outside toolbars stay Pro's Esri_Button.
        =================================================================== -->
@@ -472,6 +511,15 @@
     </Style.Triggers>
   </Style>
 
+  <!-- The dismiss button inside a chip (the Log's source filter): 16 px with
+       a 12 px glyph, in the chip's ink. Set sc:Ui.Glyph to SC_GlyphClose. -->
+  <Style x:Key="SC_ChipCloseButton" TargetType="ButtonBase" BasedOn="{StaticResource SC_SmallIconButton}">
+    <Setter Property="Width" Value="16" />
+    <Setter Property="Height" Value="16" />
+    <Setter Property="Margin" Value="4,0,0,0" />
+    <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ContentControl}}" />
+  </Style>
+
   <!-- A 22 px clickable row in a verdict card: the view lays out the label
        (SC_SummaryLabelColumn), the text and a chip as the content. -->
   <Style x:Key="SC_SummaryRow" TargetType="Button">
@@ -500,6 +548,27 @@
     </Setter>
   </Style>
 
+  <!-- SC_SummaryRow for a row that does nothing when clicked: the same 22 px
+       layout, with no hover tint and no focus stop. -->
+  <Style x:Key="SC_SummaryRowStatic" TargetType="ContentControl">
+    <Setter Property="Height" Value="22" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Foreground" Value="{DynamicResource Esri_TextStyleDefaultBrush}" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="IsTabStop" Value="False" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ContentControl">
+          <Border Padding="{TemplateBinding Padding}">
+            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
   <!-- ===================================================================
        Pane and dialog structure
        =================================================================== -->
@@ -510,6 +579,14 @@
   <Style x:Key="SC_PaneToolbar" TargetType="Border">
     <Setter Property="Height" Value="32" />
     <Setter Property="Padding" Value="4,0" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="BorderBrush" Value="{DynamicResource SC_RuleBrush}" />
+  </Style>
+
+  <!-- A pane's header strip under the toolbar (Object information's pick
+       header): padding 8 and a 1 px bottom rule. -->
+  <Style x:Key="SC_PickHeader" TargetType="Border">
+    <Setter Property="Padding" Value="8" />
     <Setter Property="BorderThickness" Value="0,0,0,1" />
     <Setter Property="BorderBrush" Value="{DynamicResource SC_RuleBrush}" />
   </Style>
@@ -544,6 +621,18 @@
         </ControlTemplate>
       </Setter.Value>
     </Setter>
+  </Style>
+
+  <!-- SC_PaneFooter that collapses while its Content is null or empty. -->
+  <Style x:Key="SC_OptionalPaneFooter" TargetType="ContentControl" BasedOn="{StaticResource SC_PaneFooter}">
+    <Style.Triggers>
+      <Trigger Property="Content" Value="{x:Null}">
+        <Setter Property="Visibility" Value="Collapsed" />
+      </Trigger>
+      <Trigger Property="Content" Value="">
+        <Setter Property="Visibility" Value="Collapsed" />
+      </Trigger>
+    </Style.Triggers>
   </Style>
 
   <!-- Dialog footer: 1 px top rule, padding 16,12. Child: a DockPanel with
@@ -960,6 +1049,44 @@
     </Setter>
   </Style>
 
+  <!-- SC_ProductTag that collapses while its Content is null: collections
+       have no product. -->
+  <Style x:Key="SC_OptionalProductTag" TargetType="ContentControl" BasedOn="{StaticResource SC_ProductTag}">
+    <Style.Triggers>
+      <Trigger Property="Content" Value="{x:Null}">
+        <Setter Property="Visibility" Value="Collapsed" />
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+
+  <!-- A chip that is also a button (the Log's count chips): SC_Chip's look
+       from sc:Tone.Value and sc:Ui.Glyph, a hand cursor and a keyboard stop.
+       Give it a ToolTip and AutomationProperties.HelpText saying what a
+       click does. -->
+  <Style x:Key="SC_ChipButton" TargetType="ButtonBase">
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ButtonBase">
+          <ContentControl x:Name="Chip"
+                          Style="{StaticResource SC_Chip}"
+                          sc:Tone.Value="{Binding Path=(sc:Tone.Value), RelativeSource={RelativeSource TemplatedParent}}"
+                          sc:Ui.Glyph="{Binding Path=(sc:Ui.Glyph), RelativeSource={RelativeSource TemplatedParent}}"
+                          Content="{TemplateBinding Content}" />
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Chip" Property="BorderThickness" Value="1.5" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="Chip" Property="Opacity" Value="0.8" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
   <!-- Verdict card: sc:Tone.Value tint (6%), edge (40%), radius 3, padding
        10,9. Set the same tone on the SC_ToneGlyph inside. -->
   <Style x:Key="SC_VerdictCard" TargetType="Border">
@@ -986,6 +1113,41 @@
         <Setter Property="BorderBrush" Value="{DynamicResource SC_DangerEdgeBrush}" />
       </Trigger>
     </Style.Triggers>
+  </Style>
+
+  <!-- The verdict card's shape while work runs (Route check's Working
+       state): neutral tint and edge, a 16 px spinner, then the content as a
+       verdict title. Live region (polite); the card keeps its place, so
+       nothing jumps when the verdict lands. -->
+  <Style x:Key="SC_WorkingCard" TargetType="ContentControl">
+    <Setter Property="Padding" Value="10,9" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="IsTabStop" Value="False" />
+    <Setter Property="AutomationProperties.LiveSetting" Value="Polite" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ContentControl">
+          <Border CornerRadius="3"
+                  BorderThickness="1"
+                  Padding="{TemplateBinding Padding}"
+                  Background="{DynamicResource SC_NeutralTintBrush}"
+                  BorderBrush="{DynamicResource SC_NeutralEdgeBrush}"
+                  SnapsToDevicePixels="True">
+            <DockPanel>
+              <controls:CircularAnimationControl DockPanel.Dock="Left"
+                                                 Width="16"
+                                                 Height="16"
+                                                 VerticalAlignment="Center"
+                                                 Margin="0,0,8,0" />
+              <ContentPresenter VerticalAlignment="Center"
+                                TextElement.FontSize="13"
+                                TextElement.FontWeight="SemiBold"
+                                TextElement.Foreground="{DynamicResource Esri_TextStyleDefaultBrush}" />
+            </DockPanel>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
   </Style>
 
   <!-- ===================================================================
@@ -1072,6 +1234,19 @@
         </ControlTemplate>
       </Setter.Value>
     </Setter>
+  </Style>
+
+  <!-- SC_MessageBar that collapses while its Content is null or empty: a
+       last action's message, a field's problem. -->
+  <Style x:Key="SC_OptionalMessageBar" TargetType="HeaderedContentControl" BasedOn="{StaticResource SC_MessageBar}">
+    <Style.Triggers>
+      <Trigger Property="Content" Value="{x:Null}">
+        <Setter Property="Visibility" Value="Collapsed" />
+      </Trigger>
+      <Trigger Property="Content" Value="">
+        <Setter Property="Visibility" Value="Collapsed" />
+      </Trigger>
+    </Style.Triggers>
   </Style>
 
   <!-- NOT FOR NAVIGATION strip: caution colours, a warning glyph and 11 px
@@ -1179,6 +1354,45 @@
             </Trigger>
             <Trigger Property="sc:Ui.Actions" Value="{x:Null}">
               <Setter TargetName="Actions" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- Drop zone: the content (a caption) inside a dashed 1 px edge, which
+       takes the accent (info) colour while sc:Ui.IsDragOver is true. The
+       view sets sc:Ui.IsDragOver from its drag events. -->
+  <Style x:Key="SC_DropZone" TargetType="ContentControl">
+    <Setter Property="Padding" Value="12" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="Foreground" Value="{DynamicResource Esri_TextStyleSubduedBrush}" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="IsTabStop" Value="False" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ContentControl">
+          <Grid>
+            <Rectangle x:Name="Edge"
+                       Stroke="{DynamicResource SC_TagBorderBrush}"
+                       StrokeThickness="1"
+                       StrokeDashArray="4 3"
+                       RadiusX="2"
+                       RadiusY="2"
+                       SnapsToDevicePixels="True" />
+            <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="Center">
+              <ContentPresenter.Resources>
+                <Style TargetType="TextBlock">
+                  <Setter Property="TextWrapping" Value="Wrap" />
+                  <Setter Property="TextAlignment" Value="Center" />
+                </Style>
+              </ContentPresenter.Resources>
+            </ContentPresenter>
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="sc:Ui.IsDragOver" Value="True">
+              <Setter TargetName="Edge" Property="Stroke" Value="{DynamicResource SC_InfoBrush}" />
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>

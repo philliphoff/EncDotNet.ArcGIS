@@ -1,11 +1,11 @@
 namespace EncDotNet.SoundCharts.RouteCheck;
 
 /// <summary>What the <b>SoundCharts Route check</b> pane shows.</summary>
-/// <param name="State">Whether the pane is empty, checking, or showing a verdict.</param>
+/// <param name="State">Whether the pane is empty, checking, showing a verdict, or saying why a check failed.</param>
 /// <param name="Heading">The route's name, or what the pane is waiting for.</param>
 /// <param name="Parameters">The ship parameters the check used, or <c>null</c>.</param>
-/// <param name="Title">The verdict, in the viewer's words, or <c>null</c> before a check.</param>
-/// <param name="Subtitle">The line under the verdict, or <c>null</c>.</param>
+/// <param name="Title">The verdict, in the viewer's words, or <c>null</c> before a check; when the check failed, the message bar's heading.</param>
+/// <param name="Subtitle">The line under the verdict, or <c>null</c>; when the check failed, the reason.</param>
 /// <param name="Tone">The verdict's tone.</param>
 /// <param name="Rows">The summary rows.</param>
 /// <param name="Confidence">The clearance check's lower-confidence notes, or <c>null</c>.</param>

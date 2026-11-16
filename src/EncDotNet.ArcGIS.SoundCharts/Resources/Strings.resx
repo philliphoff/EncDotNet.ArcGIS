@@ -267,6 +267,14 @@
   <data name="Tooltip_LogShowAll" xml:space="preserve">
     <value>Show the lines of every chart and of the add-in.</value>
   </data>
+  <data name="Tooltip_LogShowErrors" xml:space="preserve">
+    <value>Show only the errors.</value>
+    <comment>The Log pane's errors chip: a click sets the level filter to Errors.</comment>
+  </data>
+  <data name="Tooltip_LogShowWarnings" xml:space="preserve">
+    <value>Show the warnings and errors.</value>
+    <comment>The Log pane's warnings chip: a click sets the level filter to Warnings and errors.</comment>
+  </data>
   <data name="Notification_Title" xml:space="preserve">
     <value>SoundCharts</value>
     <comment>Title of Pro notifications from SoundCharts.</comment>
@@ -858,15 +866,23 @@
     <value>Supported</value>
   </data>
   <data name="Library_Compatibility_NewerFormat" xml:space="preserve">
-    <value>Supported: read with the newer, compatible edition {0}</value>
+    <value>Read with the newer, compatible edition {0}</value>
     <comment>{0} is an edition, such as 2.0.0.</comment>
+  </data>
+  <data name="Library_Compatibility_PartlySupported" xml:space="preserve">
+    <value>Partly supported</value>
+    <comment>A compatibility chip, warning tone.</comment>
   </data>
   <data name="Library_Compatibility_OlderFormat" xml:space="preserve">
-    <value>Partly supported: SoundCharts reads edition {0}, so some features may not draw</value>
+    <value>SoundCharts reads edition {0}, so some features may not draw</value>
     <comment>{0} is an edition, such as 2.0.0.</comment>
   </data>
+  <data name="Library_Compatibility_NotSupported" xml:space="preserve">
+    <value>Not supported</value>
+    <comment>A compatibility chip, danger tone.</comment>
+  </data>
   <data name="Library_Compatibility_UnsupportedFormat" xml:space="preserve">
-    <value>Not supported: SoundCharts reads edition {0}, so the chart may be incomplete or wrong</value>
+    <value>SoundCharts reads edition {0}, so the chart may be incomplete or wrong</value>
     <comment>{0} is an edition, such as 2.0.0.</comment>
   </data>
   <data name="Library_Compatibility_UnknownFormat" xml:space="preserve">
@@ -883,8 +899,8 @@
     <value>Valid</value>
   </data>
   <data name="Library_Validation_ValidRulesFormat" xml:space="preserve">
-    <value>Valid · {0:N0} rules checked</value>
-    <comment>{0} is a count.</comment>
+    <value>{0:N0} rules checked</value>
+    <comment>The note under the Valid chip; {0} is a count.</comment>
   </data>
   <data name="Library_Validation_Invalid" xml:space="preserve">
     <value>Not valid</value>
@@ -892,9 +908,9 @@
   <data name="Library_Validation_NoRules" xml:space="preserve">
     <value>No validation rules for this product</value>
   </data>
-  <data name="Library_Validation_FailedFormat" xml:space="preserve">
-    <value>Couldn't validate: {0}</value>
-    <comment>{0} is an error message.</comment>
+  <data name="Library_Validation_Failed" xml:space="preserve">
+    <value>Couldn't validate</value>
+    <comment>A validation status chip; the reason is the note under it.</comment>
   </data>
   <data name="Library_Validation_OneError" xml:space="preserve">
     <value>1 error</value>
@@ -1283,9 +1299,9 @@ Choose No to export without it.</value>
   <data name="RouteCheck_Computing" xml:space="preserve">
     <value>Checking the passage...</value>
   </data>
-  <data name="RouteCheck_ErrorFormat" xml:space="preserve">
-    <value>Couldn't check the passage: {0}</value>
-    <comment>{0} is the reason.</comment>
+  <data name="RouteCheck_Failed" xml:space="preserve">
+    <value>Couldn't check the passage</value>
+    <comment>The heading of the error message bar when a check fails; the reason follows under it. The viewer's words.</comment>
   </data>
   <data name="RouteCheck_VerdictWaterLevelEnds" xml:space="preserve">
     <value>Arrival is after the water-level data ends</value>
@@ -1477,6 +1493,10 @@ Choose No to export without it.</value>
   </data>
   <data name="RouteCheck_OpenRouteTooltip" xml:space="preserve">
     <value>Check an S-421 or RTZ route file.</value>
+  </data>
+  <data name="RouteCheck_MoreActions" xml:space="preserve">
+    <value>More actions</value>
+    <comment>The Route check toolbar's ≡ menu, which holds Open Route... when the pane is narrow.</comment>
   </data>
   <data name="RouteCheck_OpenRouteTitle" xml:space="preserve">
     <value>Open Route</value>

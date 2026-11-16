@@ -14,18 +14,6 @@
       </ResourceDictionary.MergedDictionaries>
       <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
 
-      <!-- A field group's problem: an error message bar right under the
-           group, collapsed while there's none. -->
-      <Style x:Key="FieldProblem" TargetType="HeaderedContentControl" BasedOn="{StaticResource SC_MessageBar}">
-        <Setter Property="sc:Tone.Value" Value="Danger" />
-        <Setter Property="Margin" Value="{StaticResource SC_FormRowMargin}" />
-        <Style.Triggers>
-          <Trigger Property="Content" Value="{x:Null}">
-            <Setter Property="Visibility" Value="Collapsed" />
-          </Trigger>
-        </Style.Triggers>
-      </Style>
-
       <!-- A label in the form grid's label column, level with its field
            (whose row margin is SC_FormRowMargin). -->
       <Style x:Key="FormLabel" TargetType="TextBlock" BasedOn="{StaticResource SC_FormLabel}">
@@ -131,7 +119,7 @@
                      AutomationProperties.AutomationId="ProjectOptions.NationalLanguage"
                      AutomationProperties.Name="{x:Static res:Strings.Settings_NationalLanguage}" />
           </Grid>
-          <HeaderedContentControl Style="{StaticResource FieldProblem}" Content="{Binding DisplayProblems}"
+          <HeaderedContentControl Style="{StaticResource SC_OptionalMessageBar}" sc:Tone.Value="Danger" Margin="{StaticResource SC_FormRowMargin}" Content="{Binding DisplayProblems}"
                                   AutomationProperties.AutomationId="ProjectOptions.DisplayProblems" />
         </StackPanel>
       </Expander>
@@ -197,7 +185,7 @@
               <TextBlock Text="{x:Static res:Strings.Settings_UnitMetres}" Style="{StaticResource UnitSuffix}" />
             </StackPanel>
           </Grid>
-          <HeaderedContentControl Style="{StaticResource FieldProblem}" Content="{Binding DepthProblems}"
+          <HeaderedContentControl Style="{StaticResource SC_OptionalMessageBar}" sc:Tone.Value="Danger" Margin="{StaticResource SC_FormRowMargin}" Content="{Binding DepthProblems}"
                                   AutomationProperties.AutomationId="ProjectOptions.DepthProblems" />
 
           <Grid IsEnabled="{Binding PortrayalEnabled}">
@@ -271,7 +259,7 @@
               <TextBlock Text="{x:Static res:Strings.Settings_UnitMetres}" Style="{StaticResource UnitSuffix}" />
             </StackPanel>
           </Grid>
-          <HeaderedContentControl Style="{StaticResource FieldProblem}" Content="{Binding RouteCheckProblems}"
+          <HeaderedContentControl Style="{StaticResource SC_OptionalMessageBar}" sc:Tone.Value="Danger" Margin="{StaticResource SC_FormRowMargin}" Content="{Binding RouteCheckProblems}"
                                   AutomationProperties.AutomationId="ProjectOptions.RouteCheckProblems" />
         </StackPanel>
       </Expander>
