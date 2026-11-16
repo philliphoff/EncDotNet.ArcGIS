@@ -8,7 +8,8 @@ repository; names, versions and sizes only.
 standard OPC package signature, and our own `tools/PackageSigner` makes the
 same one with .NET's `System.IO.Packaging`. In Pro's Add-In Manager, an
 add-in signed by our tool and one signed by Esri's look identical. A tampered
-copy correctly shows *Verified* unchecked. Our tool has no UI, takes half the
+copy correctly shows *Verified* unchecked. Ours installs, loads and works in
+Pro, with the signature shown as *Untrusted* (self-signed test certificate). Our tool has no UI, takes half the
 time, and exits non-zero on failure.
 
 Esri's signer does run from three copied files (249 KB) without Pro's folder.
@@ -221,6 +222,10 @@ Compared with Esri's output for the same add-in:
 
 The control shows that *Verified* really checks the contents, so a checked
 *Verified* box means Pro accepted our signature.
+
+Installed in Pro, the add-in signed by our tool (`ours.esriAddinX`) loads and
+works. Its signature property in Pro reads *Untrusted*, as expected for the
+self-signed test certificate.
 
 Pro's Add-In Manager has no single *Un-trusted* or *Invalid* verdict. It
 shows two checkboxes, *Verified* and *Trusted*. With the self-signed test
