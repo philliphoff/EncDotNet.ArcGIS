@@ -16,14 +16,17 @@ public class LibraryTreeBuilderTests
         var row = Assert.Single(rows);
         Assert.Equal(LibraryNodeKind.Collection, row.Kind);
         Assert.Equal("Charts", row.Title);
-        Assert.Equal("2 datasets", row.Badge);
+        Assert.Equal("2 datasets", row.Meta);
+        Assert.Null(row.ProductTag);
         var sourceRow = Assert.Single(row.Children);
         Assert.Equal(LibraryNodeKind.Source, sourceRow.Kind);
         Assert.Equal("charts", sourceRow.Title);
-        Assert.Equal("DIR", sourceRow.Badge);
+        Assert.Equal("DIR", sourceRow.ProductTag);
+        Assert.Equal("2 datasets", sourceRow.Meta);
         Assert.Equal(["a", "B"], sourceRow.Children.Select(d => d.Title));
-        Assert.Equal("S-101 · Ed 3 Upd 2", sourceRow.Children[0].Badge);
-        Assert.Equal("S-101 · Ed 3", sourceRow.Children[1].Badge);
+        Assert.All(sourceRow.Children, d => Assert.Equal("S-101", d.ProductTag));
+        Assert.Equal("Ed 3 Upd 2", sourceRow.Children[0].Meta);
+        Assert.Equal("Ed 3", sourceRow.Children[1].Meta);
         Assert.All(sourceRow.Children, d => Assert.NotNull(d.Item));
     }
 
@@ -73,9 +76,9 @@ public class LibraryTreeBuilderTests
 
         var datasets = LibraryTreeBuilder.Build([Collection("Charts", Source(temp.Path, gone, flagged))])[0].Children[0].Children;
 
-        Assert.Contains("Not for navigation", datasets.Single(d => d.Title == "FLAGGED").Tags);
+        Assert.Contains(new LibraryNodeTag("Not for navigation"), datasets.Single(d => d.Title == "FLAGGED").Tags);
         var missing = datasets.Single(d => d.Title == "GONE");
-        Assert.Contains("Missing", missing.Tags);
+        Assert.Equal(new LibraryNodeTag("Missing", IsWarning: true), missing.Tags[0]);
         Assert.True(missing.IsWarning);
     }
 

@@ -68,7 +68,7 @@ public class LibraryDatasetDetailsBuilderTests
         var time = reading.Groups[1];
         Assert.Equal("Time", time.Title);
         Assert.Contains(time.Fields, f => f.Label == "Time range" && f.Value.Contains('→'));
-        Assert.Contains(time.Fields, f => f.Label == "Time steps" && f.Value == "Reading…");
+        Assert.Contains(time.Fields, f => f.Label == "Time steps" && f.Value == "Reading...");
         Assert.Contains(read.Groups[1].Fields, f => f.Label == "Time steps" && f.Value == "3 steps · hourly");
     }
 
@@ -116,6 +116,6 @@ public class LibraryDatasetDetailsBuilderTests
         Assert.Equal("Error: Not bound.", fields[1].Value);
         Assert.Equal("Valid · 13 rules checked", LibraryDatasetDetailsBuilder.ValidationFields(new DatasetValidation(DatasetValidationState.Valid, RulesEvaluated: 13))[0].Value);
         Assert.Equal("Couldn't validate: boom", LibraryDatasetDetailsBuilder.ValidationFields(DatasetValidation.Failed("boom"))[0].Value);
-        Assert.Equal("Validating…", LibraryDatasetDetailsBuilder.ValidationFields(DatasetValidation.Running)[0].Value);
+        Assert.Equal("Validating...", LibraryDatasetDetailsBuilder.ValidationFields(DatasetValidation.Running)[0].Value);
     }
 }

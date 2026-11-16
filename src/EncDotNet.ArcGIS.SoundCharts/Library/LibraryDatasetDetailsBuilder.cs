@@ -112,7 +112,7 @@ public static class LibraryDatasetDetailsBuilder
         return new LibraryDetailField(Strings.Library_Field_Compatibility, text);
     }
 
-    /// <summary>"Validating…", "Valid · 13 rules", "2 errors, 1 warning", and the first findings.</summary>
+    /// <summary>"Validating...", "Valid · 13 rules", "2 errors, 1 warning", and the first findings.</summary>
     /// <param name="validation">The status.</param>
     public static IReadOnlyList<LibraryDetailField> ValidationFields(DatasetValidation validation)
     {
