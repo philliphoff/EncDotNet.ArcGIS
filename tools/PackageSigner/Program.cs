@@ -9,6 +9,9 @@
 //   3. Adds the KeyInfo ArcGISSignAddIn writes (outside what's signed).
 //   4. Opens the result again and verifies the signature.
 //
+// Before signing, it refuses a certificate that's out of date or not for code
+// signing, and warns when Windows wouldn't trust it (see CheckCertificate).
+//
 // Exit code 0 only when the output is signed and verifies.
 //
 // How this was worked out: by observing and comparing outputs, not from any
@@ -53,8 +56,10 @@ try
         throw new InvalidOperationException($"The certificate {certificate.Subject} has no private key.");
     }
 
+    CheckCertificate(certificate, DateTime.Now);
+
     Console.WriteLine($"Signing {input}");
-    Console.WriteLine($"     as {certificate.Subject} ({certificate.Thumbprint})");
+    Console.WriteLine($"     as {certificate.Subject} ({certificate.Thumbprint}), valid until {certificate.NotAfter:yyyy-MM-dd}");
 
     var parts = CopyToPackage(input, output);
     Sign(output, certificate, parts);
@@ -64,6 +69,56 @@ catch (Exception ex)
 {
     Console.Error.WriteLine($"error: {ex.Message}");
     return 1;
+}
+
+// Refuses certificates that make packages ArcGIS Pro won't trust, and warns
+// when Windows wouldn't trust the certificate on this machine.
+//
+// Tested with a private CA: Pro shows a signature as Trusted only when the
+// certificate is in date, chains to a trusted root, and its revocation status
+// can be checked. The package signature has no trusted timestamp, so Pro
+// checks the certificate against the current date: a package signed with a
+// certificate that has expired (or expires later) isn't trusted.
+static void CheckCertificate(X509Certificate2 certificate, DateTime now)
+{
+    if (now < certificate.NotBefore)
+    {
+        throw new InvalidOperationException($"The certificate isn't valid until {certificate.NotBefore:yyyy-MM-dd HH:mm}.");
+    }
+    if (now > certificate.NotAfter)
+    {
+        throw new InvalidOperationException($"The certificate expired on {certificate.NotAfter:yyyy-MM-dd}. ArcGIS Pro doesn't trust packages signed with an expired certificate.");
+    }
+
+    const string codeSigning = "1.3.6.1.5.5.7.3.3";
+    var usages = certificate.Extensions.OfType<X509EnhancedKeyUsageExtension>().FirstOrDefault();
+    if (usages is null || !usages.EnhancedKeyUsages.Cast<System.Security.Cryptography.Oid>().Any(oid => oid.Value == codeSigning))
+    {
+        throw new InvalidOperationException("The certificate isn't for code signing: its extended key usage doesn't include Code Signing (1.3.6.1.5.5.7.3.3).");
+    }
+
+    var keyUsage = certificate.Extensions.OfType<X509KeyUsageExtension>().FirstOrDefault();
+    if (keyUsage is not null && !keyUsage.KeyUsages.HasFlag(X509KeyUsageFlags.DigitalSignature))
+    {
+        throw new InvalidOperationException("The certificate's key usage doesn't allow digital signatures.");
+    }
+
+    var daysLeft = (certificate.NotAfter - now).TotalDays;
+    if (daysLeft < 30)
+    {
+        Console.Error.WriteLine($"warning: the certificate expires in {daysLeft:F0} days; packages signed with it stop being trusted then.");
+    }
+
+    // The same check Pro makes, as far as testing shows. A self-signed test
+    // certificate fails it, so this is only a warning.
+    using var chain = new X509Chain();
+    chain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
+    chain.ChainPolicy.ApplicationPolicy.Add(new System.Security.Cryptography.Oid(codeSigning));
+    if (!chain.Build(certificate))
+    {
+        var problems = string.Join(", ", chain.ChainStatus.Select(s => s.Status).Distinct());
+        Console.Error.WriteLine($"warning: Windows doesn't trust this certificate here ({problems}); ArcGIS Pro will show the signature as untrusted.");
+    }
 }
 
 static Dictionary<string, string> ParseOptions(string[] args)
