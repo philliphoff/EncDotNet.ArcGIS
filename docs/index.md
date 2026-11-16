@@ -12,8 +12,8 @@ Pro. It adds a **SoundCharts** tab to the ribbon with commands to:
   them (**Library**).
 - Set the palette, display category and mariner settings of a project's
   SoundCharts layers.
-- List the features and coverage values at a point (**Object information**)
-  and check a route against the chart (**Route check**).
+- List the features and coverage values at a point (**Object Information**)
+  and check a route against the chart (**Route Check**).
 - Export a layout with its SoundCharts layers (**Export SoundCharts
   Chart...**).
 

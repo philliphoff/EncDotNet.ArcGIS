@@ -9,9 +9,28 @@ namespace EncDotNet.SoundCharts;
 /// </summary>
 internal sealed class FollowProThemeButton : Button
 {
+    private bool _captured;
+    private object? _ownImage;
+
     /// <inheritdoc/>
     protected override void OnClick() => SettingsHost.SetFollowProTheme(!SoundChartsSession.Settings.Application.FollowProTheme);
 
     /// <inheritdoc/>
-    protected override void OnUpdate() => IsChecked = SoundChartsSession.Settings.Application.FollowProTheme;
+    protected override void OnUpdate()
+    {
+        if (!_captured)
+        {
+            _captured = true;
+            _ownImage = LargeImage;
+        }
+
+        IsChecked = SoundChartsSession.Settings.Application.FollowProTheme;
+
+        // The split button's face shows the palette in use (PaletteFace).
+        var face = PaletteFace.Active(_ownImage);
+        if (!ReferenceEquals(LargeImage, face))
+        {
+            LargeImage = face;
+        }
+    }
 }

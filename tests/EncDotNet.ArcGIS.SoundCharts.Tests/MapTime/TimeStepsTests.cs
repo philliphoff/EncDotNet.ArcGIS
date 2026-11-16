@@ -184,6 +184,44 @@ public class TimeStepsTests
         Assert.False(steps.Resolve(steps.Last.AddHours(1)).HasData);
     }
 
+    [Fact]
+    public void BeforeAndAfter_StepFromAStep()
+    {
+        var at = Start.AddHours(2);
+
+        Assert.Equal(Start.AddHours(1), Hourly.Before(at));
+        Assert.Equal(Start.AddHours(3), Hourly.After(at));
+    }
+
+    [Fact]
+    public void BeforeAndAfter_StepFromBetweenSteps()
+    {
+        var at = Start.AddHours(2).AddMinutes(20);
+
+        Assert.Equal(Start.AddHours(2), Hourly.Before(at));
+        Assert.Equal(Start.AddHours(3), Hourly.After(at));
+    }
+
+    [Fact]
+    public void BeforeAndAfter_AreNullPastTheEnds()
+    {
+        Assert.Null(Hourly.Before(Hourly.First));
+        Assert.Null(Hourly.After(Hourly.Last));
+        Assert.Equal(Hourly.Last, Hourly.Before(Hourly.Last.AddDays(1)));
+        Assert.Equal(Hourly.First, Hourly.After(Hourly.First.AddDays(-1)));
+    }
+
+    [Fact]
+    public void BeforeAndAfter_UseTheUnionOfTheLayersSteps()
+    {
+        var halfHourly = Steps([Start.AddMinutes(90)]);
+        var union = TimeSteps.Union([Hourly, halfHourly]);
+
+        Assert.NotNull(union);
+        Assert.Equal(Start.AddMinutes(90), union.After(Start.AddHours(1)));
+        Assert.Equal(Start.AddMinutes(90), union.Before(Start.AddHours(2)));
+    }
+
     private static TimeSteps Steps(IEnumerable<DateTime> steps) =>
         TimeSteps.Create(steps) ?? throw new InvalidOperationException("No steps.");
 
