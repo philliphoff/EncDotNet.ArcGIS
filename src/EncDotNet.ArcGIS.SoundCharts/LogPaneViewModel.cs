@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using ArcGIS.Desktop.Framework;
 using ArcGIS.Desktop.Framework.Contracts;
 using EncDotNet.SoundCharts.Logging;
@@ -15,7 +16,7 @@ namespace EncDotNet.SoundCharts;
 /// The SoundCharts Log pane (<c>SoundCharts_LogPane</c> in Config.daml):
 /// add-in events and chart server output in one list, with the viewer's
 /// level filter, <b>Copy all</b> and <b>Open Log Folder</b> (design brief
-/// §4.4, D8).
+/// §4.4, D8), and the error and warning counts (look and feel design §6).
 /// </summary>
 internal sealed class LogPaneViewModel : DockPane
 {
@@ -23,6 +24,8 @@ internal sealed class LogPaneViewModel : DockPane
 
     private LogFilterOption _selectedFilter;
     private string? _sourceFilter;
+    private LogCounts _counts;
+    private bool _recountQueued;
     private bool _subscribed;
 
     /// <summary>Creates the view model; Pro calls it when the pane first opens.</summary>
@@ -73,6 +76,16 @@ internal sealed class LogPaneViewModel : DockPane
                 Reload();
             }
         }
+    }
+
+    /// <summary>
+    /// Gets the errors and warnings in the log from the shown source, at
+    /// every level: the toolbar's count chips.
+    /// </summary>
+    public LogCounts Counts
+    {
+        get => _counts;
+        private set => SetProperty(ref _counts, value);
     }
 
     /// <summary>Gets whether one source is shown.</summary>
@@ -131,6 +144,7 @@ internal sealed class LogPaneViewModel : DockPane
         // Raised on the writing thread, often a server's output reader.
         FrameworkApplication.Current?.Dispatcher.BeginInvoke(() =>
         {
+            QueueRecount();
             if (!_selectedFilter.Filter.Includes(entry, _sourceFilter))
             {
                 return;
@@ -144,10 +158,33 @@ internal sealed class LogPaneViewModel : DockPane
         });
     }
 
+    /// <summary>
+    /// Recounts from the log once the dispatcher is idle: a burst of server
+    /// output costs one count, and the count follows the log's own eviction.
+    /// </summary>
+    private void QueueRecount()
+    {
+        if (_recountQueued)
+        {
+            return;
+        }
+
+        _recountQueued = true;
+        FrameworkApplication.Current?.Dispatcher.InvokeAsync(
+            () =>
+            {
+                _recountQueued = false;
+                Counts = LogCounts.Of(SoundChartsSession.Log.Snapshot(), _sourceFilter);
+            },
+            DispatcherPriority.Background);
+    }
+
     private void Reload()
     {
+        var snapshot = SoundChartsSession.Log.Snapshot();
+        Counts = LogCounts.Of(snapshot, _sourceFilter);
         Entries.Clear();
-        foreach (var entry in SoundChartsSession.Log.Snapshot())
+        foreach (var entry in snapshot)
         {
             if (_selectedFilter.Filter.Includes(entry, _sourceFilter))
             {

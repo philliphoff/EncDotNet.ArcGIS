@@ -2,26 +2,25 @@ using ArcGIS.Desktop.Framework.Contracts;
 using ArcGIS.Desktop.Mapping;
 using EncDotNet.SoundCharts.ChartLayers;
 using EncDotNet.SoundCharts.Logging;
-using EncDotNet.SoundCharts.Resources;
 
 namespace EncDotNet.SoundCharts;
 
 /// <summary>
 /// The scale note on the SoundCharts Layer tab (<c>SoundCharts_ScaleNote</c>,
 /// design brief §2.2, D13): "Zoom in to see the chart" while the active map
-/// is below the minimum scale of a selected chart layer, and nothing
-/// otherwise.
+/// is below the minimum scale of a selected chart layer, and only a dimmed
+/// glyph otherwise (<see cref="ScaleNoteState"/>).
 /// </summary>
 internal sealed class ScaleNoteViewModel : CustomControl
 {
-    private string _text = string.Empty;
+    private ScaleNoteState _state = ScaleNoteState.Idle;
     private bool _failureLogged;
 
-    /// <summary>Gets the note, or an empty string when the chart is in scale.</summary>
-    public string Text
+    /// <summary>Gets what the note shows.</summary>
+    public ScaleNoteState State
     {
-        get => _text;
-        private set => SetProperty(ref _text, value);
+        get => _state;
+        private set => SetProperty(ref _state, value);
     }
 
     /// <summary>Follows the map's scale while the tab shows: Pro calls this as the application idles.</summary>
@@ -31,7 +30,7 @@ internal sealed class ScaleNoteViewModel : CustomControl
         {
             var view = MapView.Active;
             var below = view?.Camera is { } camera && ZoomFloor.IsBelow(camera.Scale, ChartLayerManager.Instance.SelectedMinScales(view));
-            Text = below ? Strings.ScaleNote_ZoomIn : string.Empty;
+            State = ScaleNoteState.For(below);
         }
         catch (Exception ex)
         {
