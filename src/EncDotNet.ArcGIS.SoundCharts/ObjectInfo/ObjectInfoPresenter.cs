@@ -1,5 +1,6 @@
 using System.Globalization;
 using EncDotNet.SoundCharts.Resources;
+using EncDotNet.SoundCharts.Themes;
 
 namespace EncDotNet.SoundCharts.ObjectInfo;
 
@@ -12,9 +13,20 @@ internal static class ObjectInfoPresenter
 {
     /// <summary>The pane's content before the first click.</summary>
     public static ObjectInfoView Empty { get; } = new(
+        ObjectInfoState.Empty,
         Strings.ObjectInfo_EmptyTitle,
         Strings.ObjectInfo_EmptyDescription,
-        Location: null,
+        Position: null,
+        TimeNote: null,
+        Items: [],
+        Problems: []);
+
+    /// <summary>The pane's content when a pick failed unexpectedly.</summary>
+    public static ObjectInfoView Failed { get; } = new(
+        ObjectInfoState.Failed,
+        Strings.ObjectInfo_FailedTitle,
+        Strings.ObjectInfo_FailedDescription,
+        Position: null,
         TimeNote: null,
         Items: [],
         Problems: []);
@@ -23,9 +35,10 @@ internal static class ObjectInfoPresenter
     /// <param name="latitude">The clicked latitude.</param>
     /// <param name="longitude">The clicked longitude.</param>
     public static ObjectInfoView NoChartLayers(double latitude, double longitude) => new(
+        ObjectInfoState.NoChartLayers,
         Strings.ObjectInfo_NoChartLayersTitle,
         Strings.ObjectInfo_NoChartLayersDescription,
-        Location(latitude, longitude),
+        (latitude, longitude),
         TimeNote: null,
         Items: [],
         Problems: []);
@@ -34,18 +47,10 @@ internal static class ObjectInfoPresenter
     /// <param name="latitude">The clicked latitude.</param>
     /// <param name="longitude">The clicked longitude.</param>
     public static ObjectInfoView Working(double latitude, double longitude) => new(
+        ObjectInfoState.Working,
         Strings.ObjectInfo_Working,
         Description: null,
-        Location(latitude, longitude),
-        TimeNote: null,
-        Items: [],
-        Problems: []);
-
-    /// <summary>The pane's content when a pick failed unexpectedly.</summary>
-    public static ObjectInfoView Failed { get; } = new(
-        Strings.ObjectInfo_FailedTitle,
-        Strings.ObjectInfo_FailedDescription,
-        Location: null,
+        (latitude, longitude),
         TimeNote: null,
         Items: [],
         Problems: []);
@@ -67,14 +72,29 @@ internal static class ObjectInfoPresenter
                 false => Strings.ObjectInfo_NotInForce,
                 null => null,
             };
+
+            // A warning in force is a CHECK (warning tone, with a glyph and a
+            // word); every other row is neutral.
+            var tone = dataset.InForce is true ? SoundChartsTone.Warning : SoundChartsTone.Neutral;
+            var isWarning = dataset.InForce is not null
+                || string.Equals(dataset.Spec, "S-124", StringComparison.OrdinalIgnoreCase);
             foreach (var feature in dataset.Features)
             {
+                var kind = feature.Kind == ObjectInfoFeatureKind.Coverage
+                    ? ObjectInfoItemKind.Coverage
+                    : isWarning ? ObjectInfoItemKind.NavigationalWarning : ObjectInfoItemKind.Feature;
+                var caption = Format(Strings.ObjectInfo_IdFormat, feature.FeatureRef);
                 items.Add(new ObjectInfoItem(
                     feature,
                     group,
+                    dataset.Dataset.Name,
+                    dataset.Spec,
+                    kind,
+                    tone,
                     dataset.Dataset.NotForNavigation,
                     validity,
-                    Format(Strings.ObjectInfo_IdFormat, feature.FeatureRef),
+                    caption,
+                    Format(Strings.ObjectInfo_IdentityFormat, group, caption),
                     Format(Strings.ObjectInfo_SourceFormat, dataset.Dataset.Path),
                     [.. feature.Attributes.Select(a => new ObjectInfoAttributeRow(
                         a.Name,
@@ -107,9 +127,10 @@ internal static class ObjectInfoPresenter
             : hasCoverage ? Strings.ObjectInfo_TimeDefault : null;
 
         return new ObjectInfoView(
+            count == 0 ? ObjectInfoState.NothingHere : ObjectInfoState.Results,
             heading,
             description,
-            Location(report.Latitude, report.Longitude),
+            (report.Latitude, report.Longitude),
             timeNote,
             items,
             [.. report.Problems.Select(p => Format(Strings.ObjectInfo_ProblemFormat, p.Dataset.Name, p.Message))]);
@@ -122,46 +143,87 @@ internal static class ObjectInfoPresenter
     internal static string FormatUtc(DateTime time) =>
         Format(Strings.ObjectInfo_UtcFormat, DateTime.SpecifyKind(time, DateTimeKind.Utc));
 
-    private static string Location(double latitude, double longitude) =>
+    /// <summary>Formats a position as the pane shows it: <c>36.9500°, -76.0500°</c>.</summary>
+    internal static string FormatLocation(double latitude, double longitude) =>
         Format(Strings.ObjectInfo_LocationFormat, latitude, longitude);
+
+    /// <summary>
+    /// Formats a position for the clipboard, as the viewer's <b>Copy
+    /// location</b> does: signed decimal degrees, latitude first, to six
+    /// places, in the invariant culture so it pastes the same everywhere
+    /// (<c>36.950000, -76.050000</c>).
+    /// </summary>
+    internal static string FormatPositionText(double latitude, double longitude) =>
+        string.Create(CultureInfo.InvariantCulture, $"{latitude:0.000000}, {longitude:0.000000}");
 
     private static string Format(string format, params object?[] args) =>
         string.Format(CultureInfo.CurrentCulture, format, args);
 }
 
 /// <summary>What the Object information pane shows.</summary>
-/// <param name="Heading">The heading: the feature count, or a state such as "No feature picked".</param>
-/// <param name="Description">A line under the heading, or <c>null</c>.</param>
-/// <param name="Location">The clicked position, or <c>null</c> before a click.</param>
+/// <param name="State">Which of the pane's states this is; each has its own look.</param>
+/// <param name="Heading">
+/// The state's title, such as "No feature picked", the busy caption, or for
+/// <see cref="ObjectInfoState.Results"/> the feature count.
+/// </param>
+/// <param name="Description">A line under the title, or <c>null</c>.</param>
+/// <param name="Position">The clicked position, WGS-84 degrees, or <c>null</c> before a click.</param>
 /// <param name="TimeNote">Which time water levels and currents were sampled at, or <c>null</c> when there are none.</param>
 /// <param name="Items">The features and coverage values, grouped by <see cref="ObjectInfoItem.Group"/>.</param>
 /// <param name="Problems">One line per dataset that couldn't be read.</param>
 internal sealed record ObjectInfoView(
+    ObjectInfoState State,
     string Heading,
     string? Description,
-    string? Location,
+    (double Latitude, double Longitude)? Position,
     string? TimeNote,
     IReadOnlyList<ObjectInfoItem> Items,
-    IReadOnlyList<string> Problems);
+    IReadOnlyList<string> Problems)
+{
+    /// <summary>Gets the clicked position as the pane shows it, or <c>null</c>.</summary>
+    public string? Location => Position is { } p ? ObjectInfoPresenter.FormatLocation(p.Latitude, p.Longitude) : null;
+
+    /// <summary>Gets the clicked position as <b>Copy position</b> puts it on the clipboard, or <c>null</c>.</summary>
+    public string? PositionText => Position is { } p ? ObjectInfoPresenter.FormatPositionText(p.Latitude, p.Longitude) : null;
+
+    /// <summary>
+    /// Gets the overline above the position: the feature count with results,
+    /// otherwise "OBJECT INFORMATION" once there is a position; <c>null</c>
+    /// before a click.
+    /// </summary>
+    public string? Overline => State == ObjectInfoState.Results
+        ? Heading
+        : Position is null ? null : Strings.ObjectInfo_Overline;
+}
 
 /// <summary>One feature or coverage value in the pane's list.</summary>
 /// <param name="Feature">The feature.</param>
-/// <param name="Group">The dataset heading the item is listed under.</param>
+/// <param name="Group">The dataset heading the item is listed under, which the list groups by.</param>
+/// <param name="DatasetName">The dataset's name, shown in mono in the group header.</param>
+/// <param name="Spec">The dataset's product specification, such as <c>S-101</c>: the group header's product tag.</param>
+/// <param name="Kind">Which glyph the row shows.</param>
+/// <param name="Tone">The row glyph's and validity chip's tone.</param>
 /// <param name="NotForNavigation">Whether the dataset's provider marks it not for navigation.</param>
 /// <param name="Validity">
 /// For a navigational warning, "In force at map time" or "Not in force at
 /// map time" (D33); <c>null</c> otherwise.
 /// </param>
 /// <param name="Caption">The line under the title, its id.</param>
+/// <param name="Identity">The details' mono line under the title: the dataset heading and the id.</param>
 /// <param name="Source">The dataset's path, as the viewer's "Source:" line.</param>
 /// <param name="Attributes">The attribute rows.</param>
 /// <param name="References">One line per association.</param>
 internal sealed record ObjectInfoItem(
     ObjectInfoFeature Feature,
     string Group,
+    string DatasetName,
+    string Spec,
+    ObjectInfoItemKind Kind,
+    SoundChartsTone Tone,
     bool NotForNavigation,
     string? Validity,
     string Caption,
+    string Identity,
     string Source,
     IReadOnlyList<ObjectInfoAttributeRow> Attributes,
     IReadOnlyList<string> References)

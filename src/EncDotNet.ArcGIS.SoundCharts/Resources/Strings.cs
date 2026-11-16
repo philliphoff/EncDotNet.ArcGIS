@@ -75,6 +75,9 @@ public static class Strings
     /// <summary>Gets the line under the failure heading.</summary>
     public static string ObjectInfo_FailedDescription => Get(nameof(ObjectInfo_FailedDescription));
 
+    /// <summary>Gets the failure message's link, which opens the SoundCharts Log pane.</summary>
+    public static string ObjectInfo_ShowLog => Get(nameof(ObjectInfo_ShowLog));
+
     /// <summary>Gets the heading when the datasets have nothing at the point.</summary>
     public static string ObjectInfo_NothingHereTitle => Get(nameof(ObjectInfo_NothingHereTitle));
 
@@ -90,11 +93,23 @@ public static class Strings
     /// <summary>Gets the clicked position: <c>{0}</c> latitude and <c>{1}</c> longitude, degrees.</summary>
     public static string ObjectInfo_LocationFormat => Get(nameof(ObjectInfo_LocationFormat));
 
+    /// <summary>Gets the overline above the clicked position while a pick runs or when nothing is listed.</summary>
+    public static string ObjectInfo_Overline => Get(nameof(ObjectInfo_Overline));
+
+    /// <summary>Gets the Copy position button's accessible name.</summary>
+    public static string ObjectInfo_CopyPosition => Get(nameof(ObjectInfo_CopyPosition));
+
+    /// <summary>Gets the Copy position button's tooltip.</summary>
+    public static string Tooltip_ObjectInfoCopyPosition => Get(nameof(Tooltip_ObjectInfoCopyPosition));
+
     /// <summary>Gets a dataset group's heading: <c>{0}</c> the dataset name and <c>{1}</c> its product specification.</summary>
     public static string ObjectInfo_DatasetFormat => Get(nameof(ObjectInfo_DatasetFormat));
 
     /// <summary>Gets a feature's id line: <c>{0}</c> is the id.</summary>
     public static string ObjectInfo_IdFormat => Get(nameof(ObjectInfo_IdFormat));
+
+    /// <summary>Gets the selected feature's identity line: <c>{0}</c> the dataset heading and <c>{1}</c> the feature's id.</summary>
+    public static string ObjectInfo_IdentityFormat => Get(nameof(ObjectInfo_IdentityFormat));
 
     /// <summary>Gets the source dataset line: <c>{0}</c> is its path.</summary>
     public static string ObjectInfo_SourceFormat => Get(nameof(ObjectInfo_SourceFormat));

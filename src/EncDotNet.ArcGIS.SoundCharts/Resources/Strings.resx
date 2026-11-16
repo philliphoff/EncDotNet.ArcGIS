@@ -72,6 +72,10 @@
   <data name="ObjectInfo_FailedDescription" xml:space="preserve">
     <value>The details are in the add-in log.</value>
   </data>
+  <data name="ObjectInfo_ShowLog" xml:space="preserve">
+    <value>Show the SoundCharts Log</value>
+    <comment>A link after ObjectInfo_FailedDescription in the failure message; opens the SoundCharts Log pane.</comment>
+  </data>
   <data name="ObjectInfo_NothingHereTitle" xml:space="preserve">
     <value>Nothing at this point</value>
   </data>
@@ -87,11 +91,27 @@
   <data name="ObjectInfo_LocationFormat" xml:space="preserve">
     <value>{0:F4}°, {1:F4}°</value>
   </data>
+  <data name="ObjectInfo_Overline" xml:space="preserve">
+    <value>OBJECT INFORMATION</value>
+    <comment>Overline above the clicked position while a pick runs or when nothing is listed. Caps, as the viewer's overlines.</comment>
+  </data>
+  <data name="ObjectInfo_CopyPosition" xml:space="preserve">
+    <value>Copy position</value>
+    <comment>Accessible name of the icon button that copies the clicked position.</comment>
+  </data>
+  <data name="Tooltip_ObjectInfoCopyPosition" xml:space="preserve">
+    <value>Copy this position (decimal degrees) to the clipboard.</value>
+    <comment>The viewer's Copy location tooltip, for the Object information pane.</comment>
+  </data>
   <data name="ObjectInfo_DatasetFormat" xml:space="preserve">
     <value>{0} · {1}</value>
   </data>
   <data name="ObjectInfo_IdFormat" xml:space="preserve">
     <value>ID {0}</value>
+  </data>
+  <data name="ObjectInfo_IdentityFormat" xml:space="preserve">
+    <value>{0} · {1}</value>
+    <comment>The selected feature's mono line under its title: {0} the dataset heading (ObjectInfo_DatasetFormat), {1} its id (ObjectInfo_IdFormat).</comment>
   </data>
   <data name="ObjectInfo_SourceFormat" xml:space="preserve">
     <value>Source: {0}</value>

@@ -1,6 +1,7 @@
 using System.Globalization;
 using EncDotNet.SoundCharts.ObjectInfo;
 using EncDotNet.SoundCharts.Resources;
+using EncDotNet.SoundCharts.Themes;
 
 namespace EncDotNet.SoundCharts.Tests.ObjectInfo;
 
@@ -134,6 +135,97 @@ public class ObjectInfoPresenterTests
         Assert.Equal(Strings.ObjectInfo_NoChartLayersTitle, ObjectInfoPresenter.NoChartLayers(1, 2).Heading);
         Assert.Equal(Strings.ObjectInfo_Working, ObjectInfoPresenter.Working(1, 2).Heading);
         Assert.Equal(Strings.ObjectInfo_FailedTitle, ObjectInfoPresenter.Failed.Heading);
+    }
+
+    [Fact]
+    public void States_SayWhichStateTheyAre()
+    {
+        Assert.Equal(ObjectInfoState.Empty, ObjectInfoPresenter.Empty.State);
+        Assert.Equal(ObjectInfoState.NoChartLayers, ObjectInfoPresenter.NoChartLayers(1, 2).State);
+        Assert.Equal(ObjectInfoState.Working, ObjectInfoPresenter.Working(1, 2).State);
+        Assert.Equal(ObjectInfoState.Failed, ObjectInfoPresenter.Failed.State);
+        Assert.Equal(ObjectInfoState.Results, ObjectInfoPresenter.Present(Report(Feature("a"))).State);
+        Assert.Equal(ObjectInfoState.NothingHere, ObjectInfoPresenter.Present(new ObjectInfoReport(1, 2, null, [], [])).State);
+    }
+
+    [Fact]
+    public void Present_KeepsProblemsWhenNothingIsThere()
+    {
+        var view = ObjectInfoPresenter.Present(new ObjectInfoReport(1, 2, null, [], [new(Cell, "bad header")]));
+
+        Assert.Equal(ObjectInfoState.NothingHere, view.State);
+        Assert.Single(view.Problems);
+    }
+
+    [Fact]
+    public void Overline_IsTheCountWithResults()
+    {
+        var view = ObjectInfoPresenter.Present(Report(Feature("a"), Feature("b")));
+
+        Assert.Equal(view.Heading, view.Overline);
+    }
+
+    [Fact]
+    public void Overline_NamesThePaneOnceThereIsAPosition()
+    {
+        Assert.Null(ObjectInfoPresenter.Empty.Overline);
+        Assert.Null(ObjectInfoPresenter.Failed.Overline);
+        Assert.Equal(Strings.ObjectInfo_Overline, ObjectInfoPresenter.Working(1, 2).Overline);
+        Assert.Equal(Strings.ObjectInfo_Overline, ObjectInfoPresenter.NoChartLayers(1, 2).Overline);
+        Assert.Equal(Strings.ObjectInfo_Overline, ObjectInfoPresenter.Present(new ObjectInfoReport(1, 2, null, [], [])).Overline);
+    }
+
+    [Fact]
+    public void PositionText_IsInvariantDecimalDegreesLatitudeFirst()
+    {
+        using var culture = new CultureScope("de-DE");
+
+        var view = ObjectInfoPresenter.Working(36.95, -76.05);
+
+        Assert.Equal("36.950000, -76.050000", view.PositionText);
+        Assert.Null(ObjectInfoPresenter.Empty.PositionText);
+        Assert.Null(ObjectInfoPresenter.Failed.PositionText);
+    }
+
+    [Fact]
+    public void Present_SplitsTheGroupIntoProductAndDataset()
+    {
+        var item = ObjectInfoPresenter.Present(Report(Feature("a"))).Items.Single();
+
+        Assert.Equal("S-101", item.Spec);
+        Assert.Equal("AA00DS0003", item.DatasetName);
+        Assert.Equal("AA00DS0003 · S-101 · ID a", item.Identity);
+    }
+
+    [Fact]
+    public void Present_ChoosesTheRowGlyphByKind()
+    {
+        var coverage = Feature("(1,2)") with { Kind = ObjectInfoFeatureKind.Coverage };
+        var warning = new ChartDataset(@"C:\data\navwarn.gml", "navwarn");
+
+        var items = ObjectInfoPresenter.Present(new ObjectInfoReport(
+            1,
+            2,
+            null,
+            [new(Cell, "S-101", [Feature("a"), coverage]), new(warning, "S-124", [Feature("part")])],
+            [])).Items;
+
+        Assert.Equal(
+            [ObjectInfoItemKind.Feature, ObjectInfoItemKind.Coverage, ObjectInfoItemKind.NavigationalWarning],
+            items.Select(i => i.Kind));
+    }
+
+    [Fact]
+    public void Present_TonesAWarningInForceAsACheck()
+    {
+        var warning = new ChartDataset(@"C:\data\navwarn.gml", "navwarn");
+        ObjectInfoItem ItemOf(bool? inForce) => ObjectInfoPresenter.Present(
+            new ObjectInfoReport(1, 2, DateTime.UtcNow, [new(warning, "S-124", [Feature("part")], inForce)], [])).Items.Single();
+
+        Assert.Equal(SoundChartsTone.Warning, ItemOf(true).Tone);
+        Assert.Equal(SoundChartsTone.Neutral, ItemOf(false).Tone);
+        Assert.Equal(SoundChartsTone.Neutral, ItemOf(null).Tone);
+        Assert.Equal(SoundChartsTone.Neutral, ObjectInfoPresenter.Present(Report(Feature("a"))).Items.Single().Tone);
     }
 
     [Fact]
