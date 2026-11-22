@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Media;
 using EncDotNet.SoundCharts.Library;
 using EncDotNet.SoundCharts.Themes;
@@ -18,28 +17,9 @@ internal sealed partial class LibraryPaneView : UserControl
     public LibraryPaneView()
     {
         InitializeComponent();
-        Loaded += OnLoaded;
     }
 
     private LibraryPaneViewModel? ViewModel => DataContext as LibraryPaneViewModel;
-
-    private void OnLoaded(object sender, RoutedEventArgs e)
-    {
-        if (Tree.ItemContainerStyle is not null)
-        {
-            return;
-        }
-
-        // Rows keep their expansion and selection across rebuilds through the
-        // nodes. Built here, on Pro's own TreeViewItem style when the theme
-        // has one: BasedOn in XAML needs a static resource the pane can't
-        // count on finding at load time.
-        var style = new Style(typeof(TreeViewItem), TryFindResource(typeof(TreeViewItem)) as Style);
-        style.Setters.Add(new Setter(TreeViewItem.IsExpandedProperty, new Binding(nameof(LibraryNode.IsExpanded)) { Mode = BindingMode.TwoWay }));
-        style.Setters.Add(new Setter(TreeViewItem.IsSelectedProperty, new Binding(nameof(LibraryNode.IsSelected)) { Mode = BindingMode.TwoWay }));
-        style.Setters.Add(new Setter(System.Windows.Automation.AutomationProperties.NameProperty, new Binding(nameof(LibraryNode.Title))));
-        Tree.ItemContainerStyle = style;
-    }
 
     private void OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
