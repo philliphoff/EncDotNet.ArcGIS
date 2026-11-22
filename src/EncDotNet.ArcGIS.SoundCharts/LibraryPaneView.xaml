@@ -21,6 +21,10 @@
       </ResourceDictionary.MergedDictionaries>
       <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
 
+      <!-- The details header's buttons: 24 px like everything else in the
+           pane (design §4.1), glyph then label, as the mockup. -->
+      <Thickness x:Key="DetailsButtonPadding">8,0</Thickness>
+
       <!-- A dataset's tag: neutral, or a warning chip with its glyph (Missing). -->
       <Style x:Key="TagChip" TargetType="ContentControl" BasedOn="{StaticResource SC_Chip}">
         <Setter Property="Margin" Value="4,0,0,0" />
@@ -32,13 +36,112 @@
         </Style.Triggers>
       </Style>
 
-      <!-- A row's second line: a status or a title, in the warning colour for a problem. -->
-      <Style x:Key="RowDetail" TargetType="TextBlock" BasedOn="{StaticResource SC_OptionalCaption}">
-        <Setter Property="TextWrapping" Value="NoWrap" />
-        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+      <!-- A row's detail after the name (a dataset's title, a source's
+           location, a status): subdued, in the warning colour for a problem. -->
+      <Style x:Key="RowDetail" TargetType="Run">
+        <Setter Property="FontSize" Value="{StaticResource SC_FontSizeCaption}" />
+        <Setter Property="Foreground" Value="{DynamicResource Esri_TextStyleSubduedBrush}" />
         <Style.Triggers>
           <DataTrigger Binding="{Binding IsWarning}" Value="True">
             <Setter Property="Foreground" Value="{DynamicResource SC_WarningBrush}" />
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+
+      <!-- The tree's twisty: a 16 px chevron, right when collapsed, down when expanded. -->
+      <Style x:Key="TreeTwisty" TargetType="ToggleButton">
+        <Setter Property="Width" Value="16" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="ClickMode" Value="Press" />
+        <Setter Property="Foreground" Value="{DynamicResource Esri_TextStyleSubduedBrush}" />
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="ToggleButton">
+              <Border Background="Transparent">
+                <Path x:Name="Chevron"
+                      Style="{StaticResource SC_GlyphSmall}"
+                      Data="{StaticResource SC_GlyphChevronRight}"
+                      HorizontalAlignment="Center" />
+              </Border>
+              <ControlTemplate.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                  <Setter TargetName="Chevron" Property="Data" Value="{StaticResource SC_GlyphChevronDown}" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                  <Setter Property="Foreground" Value="{DynamicResource Esri_TextStyleDefaultBrush}" />
+                </Trigger>
+              </ControlTemplate.Triggers>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+
+      <!-- A tree row (design §6): 24 px, full width, so the count or edition
+           lines up at the right edge on every row. Indented 16 px a level by
+           the row's kind; rows without children keep the twisty's space, so
+           tags line up. Hover and selection fill the whole row. -->
+      <Style x:Key="TreeRow" TargetType="TreeViewItem">
+        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+        <Setter Property="Padding" Value="4,0,8,0" />
+        <Setter Property="Foreground" Value="{DynamicResource Esri_TextStyleDefaultBrush}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="AutomationProperties.Name" Value="{Binding Title}" />
+        <Setter Property="ToolTip" Value="{Binding Detail}" />
+        <!-- The selection fill shows focus; the default dotted rectangle would
+             wrap the row and all its children. -->
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="TreeViewItem">
+              <StackPanel>
+                <Border x:Name="Row"
+                        MinHeight="{StaticResource SC_RowHeight}"
+                        Padding="{TemplateBinding Padding}"
+                        Background="Transparent"
+                        SnapsToDevicePixels="True">
+                  <DockPanel>
+                    <ToggleButton x:Name="Twisty"
+                                  DockPanel.Dock="Left"
+                                  Style="{StaticResource TreeTwisty}"
+                                  Margin="0,0,4,0"
+                                  IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" />
+                    <ContentPresenter x:Name="PART_Header"
+                                      ContentSource="Header"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Stretch" />
+                  </DockPanel>
+                </Border>
+                <ItemsPresenter x:Name="ItemsHost" Visibility="Collapsed" />
+              </StackPanel>
+              <ControlTemplate.Triggers>
+                <Trigger Property="IsExpanded" Value="True">
+                  <Setter TargetName="ItemsHost" Property="Visibility" Value="Visible" />
+                </Trigger>
+                <Trigger Property="HasItems" Value="False">
+                  <Setter TargetName="Twisty" Property="Visibility" Value="Hidden" />
+                </Trigger>
+                <Trigger SourceName="Row" Property="IsMouseOver" Value="True">
+                  <Setter TargetName="Row" Property="Background" Value="{DynamicResource Esri_BackgroundHoverSelectedBrush}" />
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                  <Setter TargetName="Row" Property="Background" Value="{DynamicResource Esri_BackgroundSelectedBrush}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                  <Setter TargetName="Row" Property="Opacity" Value="0.45" />
+                </Trigger>
+              </ControlTemplate.Triggers>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding Kind}" Value="{x:Static library:LibraryNodeKind.Source}">
+            <Setter Property="Padding" Value="20,0,8,0" />
+          </DataTrigger>
+          <DataTrigger Binding="{Binding Kind}" Value="{x:Static library:LibraryNodeKind.Dataset}">
+            <Setter Property="Padding" Value="36,0,8,0" />
           </DataTrigger>
         </Style.Triggers>
       </Style>
@@ -81,74 +184,71 @@
         </Style.Triggers>
       </Style>
 
-      <!-- One row of the tree: a collection, a source or a dataset. -->
+      <!-- One row of the tree: a collection, a source or a dataset. One line:
+           glyph or product tag, the name and its detail (trimmed; the whole
+           detail is the row's tooltip), then the count or edition and the
+           tags at the right edge. -->
       <HierarchicalDataTemplate DataType="{x:Type library:LibraryNode}" ItemsSource="{Binding Children}">
-        <StackPanel MinHeight="{StaticResource SC_RowHeight}" AutomationProperties.Name="{Binding Title}">
-          <DockPanel>
-            <Path DockPanel.Dock="Left"
-                  Data="{StaticResource SC_GlyphLibrary}"
-                  TextElement.Foreground="{DynamicResource Esri_TextStyleSubduedBrush}"
-                  Margin="0,0,4,0">
-              <Path.Style>
-                <Style TargetType="Path" BasedOn="{StaticResource SC_Glyph}">
-                  <Setter Property="Visibility" Value="Collapsed" />
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static library:LibraryNodeKind.Collection}">
-                      <Setter Property="Visibility" Value="Visible" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Path.Style>
-            </Path>
-            <ContentControl DockPanel.Dock="Left" Content="{Binding ProductTag}" Style="{StaticResource SC_OptionalProductTag}" Margin="0,0,4,0" />
-            <ItemsControl DockPanel.Dock="Right" ItemsSource="{Binding Tags}" Focusable="False" VerticalAlignment="Center">
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <StackPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-              <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <ContentControl Content="{Binding Text}" Style="{StaticResource TagChip}" />
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-            <TextBlock DockPanel.Dock="Right"
-                       Text="{Binding Meta}"
-                       Style="{StaticResource SC_OptionalMono}"
-                       TextWrapping="NoWrap"
-                       VerticalAlignment="Center"
-                       Margin="8,0,0,0" />
-            <TextBlock Text="{Binding Title}"
-                       Style="{StaticResource SC_Body}"
-                       TextWrapping="NoWrap"
-                       TextTrimming="CharacterEllipsis"
-                       VerticalAlignment="Center" />
-          </DockPanel>
-          <DockPanel>
-            <Path DockPanel.Dock="Left"
-                  Data="{StaticResource SC_GlyphCheck}"
-                  TextElement.Foreground="{DynamicResource SC_WarningBrush}"
-                  VerticalAlignment="Center"
-                  Margin="0,0,4,0">
-              <Path.Style>
-                <Style TargetType="Path" BasedOn="{StaticResource SC_GlyphSmall}">
-                  <Setter Property="Visibility" Value="Collapsed" />
-                  <Style.Triggers>
-                    <MultiDataTrigger>
-                      <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding IsWarning}" Value="True" />
-                        <Condition Binding="{Binding HasDetail}" Value="True" />
-                      </MultiDataTrigger.Conditions>
-                      <Setter Property="Visibility" Value="Visible" />
-                    </MultiDataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Path.Style>
-            </Path>
-            <TextBlock Text="{Binding Detail}" ToolTip="{Binding Detail}" Style="{StaticResource RowDetail}" />
-          </DockPanel>
-        </StackPanel>
+        <DockPanel>
+          <Path DockPanel.Dock="Left"
+                Data="{StaticResource SC_GlyphLibrary}"
+                TextElement.Foreground="{DynamicResource Esri_TextStyleSubduedBrush}"
+                Margin="0,0,4,0">
+            <Path.Style>
+              <Style TargetType="Path" BasedOn="{StaticResource SC_Glyph}">
+                <Setter Property="Visibility" Value="Collapsed" />
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding Kind}" Value="{x:Static library:LibraryNodeKind.Collection}">
+                    <Setter Property="Visibility" Value="Visible" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Path.Style>
+          </Path>
+          <ContentControl DockPanel.Dock="Left" Content="{Binding ProductTag}" Style="{StaticResource SC_OptionalProductTag}" Margin="0,0,6,0" />
+          <ItemsControl DockPanel.Dock="Right" ItemsSource="{Binding Tags}" Focusable="False" VerticalAlignment="Center">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <ContentControl Content="{Binding Text}" Style="{StaticResource TagChip}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock DockPanel.Dock="Right"
+                     Text="{Binding Meta}"
+                     Style="{StaticResource SC_OptionalMono}"
+                     FontSize="{StaticResource SC_FontSizeTag}"
+                     TextWrapping="NoWrap"
+                     VerticalAlignment="Center"
+                     Margin="8,0,0,0" />
+          <Path DockPanel.Dock="Left"
+                Data="{StaticResource SC_GlyphCheck}"
+                TextElement.Foreground="{DynamicResource SC_WarningBrush}"
+                Margin="0,0,4,0">
+            <Path.Style>
+              <Style TargetType="Path" BasedOn="{StaticResource SC_GlyphSmall}">
+                <Setter Property="Visibility" Value="Collapsed" />
+                <Style.Triggers>
+                  <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                      <Condition Binding="{Binding IsWarning}" Value="True" />
+                      <Condition Binding="{Binding HasDetail}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Visibility" Value="Visible" />
+                  </MultiDataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Path.Style>
+          </Path>
+          <TextBlock Style="{StaticResource SC_Body}"
+                     TextWrapping="NoWrap"
+                     TextTrimming="CharacterEllipsis"
+                     VerticalAlignment="Center"><Run Text="{Binding Title, Mode=OneWay}" /><Run Text="{Binding Detail, Mode=OneWay, StringFormat='  {0}'}" Style="{StaticResource RowDetail}" /></TextBlock>
+        </DockPanel>
       </HierarchicalDataTemplate>
     </ResourceDictionary>
   </UserControl.Resources>
@@ -250,6 +350,7 @@
       <TreeView x:Name="Tree"
                 Grid.Row="1"
                 ItemsSource="{Binding Nodes}"
+                ItemContainerStyle="{StaticResource TreeRow}"
                 SelectedItemChanged="OnSelectedItemChanged"
                 BorderThickness="0"
                 Background="Transparent"
@@ -288,24 +389,48 @@
 
             <!-- Add to Map and Show Footprint; the rest in the ≡ menu (§10 decision 6). -->
             <WrapPanel Margin="0,8,0,0" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
-              <Button Content="{x:Static res:Strings.Library_AddToMap}"
-                      ToolTip="{x:Static res:Strings.Tooltip_LibraryAddToMap}"
+              <Button ToolTip="{x:Static res:Strings.Tooltip_LibraryAddToMap}"
                       Command="{Binding AddToMapCommand}"
                       Style="{DynamicResource Esri_Button}"
+                      Height="{StaticResource SC_ControlHeight}"
+                      MinWidth="0"
+                      Padding="{StaticResource DetailsButtonPadding}"
+                      AutomationProperties.Name="{x:Static res:Strings.Library_AddToMap}"
                       AutomationProperties.AutomationId="Library.AddToMap"
-                      AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_LibraryAddToMap}" />
-              <Button Content="{x:Static res:Strings.Library_ShowFootprint}"
-                      ToolTip="{x:Static res:Strings.Tooltip_LibraryShowFootprint}"
+                      AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_LibraryAddToMap}">
+                <StackPanel Orientation="Horizontal">
+                  <Path Style="{StaticResource SC_Glyph}" Data="{StaticResource SC_GlyphAdd}" Margin="0,0,4,0" />
+                  <TextBlock Text="{x:Static res:Strings.Library_AddToMap}" VerticalAlignment="Center" />
+                </StackPanel>
+              </Button>
+              <Button ToolTip="{x:Static res:Strings.Tooltip_LibraryShowFootprint}"
                       Command="{Binding ShowFootprintCommand}"
                       Style="{DynamicResource Esri_Button}"
+                      Height="{StaticResource SC_ControlHeight}"
+                      MinWidth="0"
+                      Padding="{StaticResource DetailsButtonPadding}"
                       Margin="{StaticResource SC_ButtonGap}"
+                      AutomationProperties.Name="{x:Static res:Strings.Library_ShowFootprint}"
                       AutomationProperties.AutomationId="Library.ShowFootprint"
-                      AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_LibraryShowFootprint}" />
-              <Button Style="{StaticResource SC_BurgerButton}"
+                      AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_LibraryShowFootprint}">
+                <StackPanel Orientation="Horizontal">
+                  <Path Style="{StaticResource SC_Glyph}" Data="{StaticResource SC_GlyphFootprint}" Margin="0,0,4,0" />
+                  <TextBlock Text="{x:Static res:Strings.Library_ShowFootprint}" VerticalAlignment="Center" />
+                </StackPanel>
+              </Button>
+              <!-- A bordered ≡ the same height as the buttons beside it (the
+                   mockup's details header), not the toolbar's borderless one. -->
+              <Button Style="{DynamicResource Esri_Button}"
+                      sc:Ui.OpensContextMenu="True"
+                      Height="{StaticResource SC_ControlHeight}"
+                      MinWidth="0"
+                      Width="28"
+                      Padding="0"
                       Margin="{StaticResource SC_ButtonGap}"
                       ToolTip="{x:Static res:Strings.Tooltip_LibraryDatasetMore}"
                       AutomationProperties.Name="{x:Static res:Strings.Tooltip_LibraryDatasetMore}"
                       AutomationProperties.AutomationId="Library.DatasetMore">
+                <Path Style="{StaticResource SC_Glyph}" Data="{StaticResource SC_GlyphBurger}" />
                 <Button.ContextMenu>
                   <ContextMenu>
                     <MenuItem Header="{x:Static res:Strings.Library_AddFeatureLayers}"

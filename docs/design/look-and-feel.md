@@ -169,9 +169,10 @@ in Dark); the table shows the shipped values. Check them in Pro before locking t
 | `SC_CautionBorderBrush` | `#D9A21B` | `#9A7A21` | `SystemColors.WindowTextColor` |
 | `SC_CautionInkBrush` | `#6A4700` | `#FFD670` | `SystemColors.WindowTextColor` |
 | `SC_RuleBrush` | `#D6D6D6` | `#454545` | `SystemColors.WindowTextColor` |
+| `SC_RowRuleBrush` | `#EBEBEB` | `#3A3A3A` | Transparent |
 | `SC_TagBorderBrush` | `#BDBDBD` | `#5A5A5A` | `SystemColors.WindowTextColor` |
 
-`SC_NeutralBrush`, `SC_RuleBrush` and `SC_TagBorderBrush` are add-in values, not aliases of Esri
+`SC_NeutralBrush`, `SC_RuleBrush`, `SC_RowRuleBrush` and `SC_TagBorderBrush` are add-in values, not aliases of Esri
 brushes: a colour dictionary can't refer to a resource that only Pro provides at run time, and
 the published style guide has no rule brush (§8).
 
@@ -272,8 +273,14 @@ This table is the proposal. What was built, with every key, is in
   (Add to Map, Show Footprint, ≡: Add as Feature Layers, Validate, Open Containing Folder).
   Keep every AutomationId, moving the ids onto the menu items.
 - Search: `SearchTextBox`, 8 px gutter.
-- Tree rows: 24 px; `SC_ProductTag` + name + right-aligned count or edition in Subdued mono;
-  "Missing" becomes a warning chip.
+- Tree rows: 24 px, one line; `SC_ProductTag` + name + right-aligned count or edition in Subdued mono;
+  "Missing" becomes a warning chip. The row's detail (a dataset's title, a source's location, a
+  status) follows the name in the caption size and trims first; the whole of it is the row's
+  tooltip. Rows fill the tree's width, so counts and editions share one right edge; each level
+  indents 16 px, and rows without children keep the twisty's space, so tags line up. Hover and
+  selection fill the whole row.
+- Details header buttons: Add to Map and Show Footprint with their glyphs and a bordered ≡, all
+  24 px (`Esri_Button` at `SC_ControlHeight`).
 - Splitter → `SC_Splitter`.
 - Details: `SC_ProductTag` + `SC_Title` (mono name), product line, actions, caution strip (only
   if marked), then Product / Validation / Time / Source groups with `SC_SectionHeader` +
@@ -542,6 +549,7 @@ From the colour dictionaries (§4.3). `{Tone}` is `Danger`, `Warning`, `Success`
 | `SC_{Tone}EdgeBrush` | Ink at 40%: chip, card and message bar edges |
 | `SC_CautionBackgroundBrush`, `SC_CautionBorderBrush`, `SC_CautionInkBrush` | NOT FOR NAVIGATION strip |
 | `SC_RuleBrush` | 1 px rules: toolbar, footers, splitters; replaces `Esri_BorderBrush` |
+| `SC_RowRuleBrush` | Faint 1 px rule between dense list rows (the Log); none in High Contrast |
 | `SC_TagBorderBrush` | Product tag borders, the splitter grip, the drop zone's dashed edge |
 | `SC_AppIcon` | A `BitmapImage`, not a brush: the app icon (the ribbon's About icon, 64 px for 32 px use), the light rendering in Light and High Contrast and the dark one in Dark. The About header. |
 
@@ -652,6 +660,7 @@ can't supply them.
 | `SC_SectionHeader` | `ContentControl` | Margin `0,12,0,4`: optional 12 px `sc:Ui.Glyph` in the `sc:Tone.Value` colour, overline content, optional `sc:Ui.Count` |
 | `SC_FoldableSectionHeader` | `Expander` | The same header with a 12 px chevron, as a keyboard-reachable toggle; `Header` is the text, the content is the section, `IsExpanded` folds it |
 | `SC_ListRow` | `HeaderedContentControl` | List row layout for an item template, padding `8,5`: `sc:Ui.Glyph` (in the `sc:Tone.Value` colour), `Header` as the row title, `Content` as a caption line (collapses when null), `sc:Ui.Trailing` at the right. Selection and hover stay Pro's item style. |
+| `SC_ListItem` | `ListBoxItem` | A flat row container for `ItemContainerStyle`: no padding or border of its own, full-width hover (`Esri_BackgroundHoverSelectedBrush`) and selection (`Esri_BackgroundSelectedBrush`). Self-contained, so it doesn't need Pro's `ListBoxItem` style at load time. The Log's rows. Use a `ListBox`, not a `ListView`, without a `GridView`: Pro's `ListView` expects one and shows empty rows otherwise. |
 | `SC_FieldGrid` | `ItemsControl` | Key/value list: a shared size scope. Item template: a two-column `Grid`, label column `SharedSizeGroup="SC_FieldLabel"`, `SC_FieldLabel` and `SC_FieldValue`, row margin `SC_FieldRowMargin`. |
 | `SC_FieldValue`, `SC_FieldValueMono` | `TextBox` | Read-only, chromeless, wrapping, selectable value (mono variant for ids and paths). Give it `AutomationProperties.Name`. |
 

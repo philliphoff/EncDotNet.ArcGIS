@@ -41,8 +41,10 @@
   <SolidColorBrush x:Key="SC_CautionBorderBrush" Color="#9A7A21" />
   <SolidColorBrush x:Key="SC_CautionInkBrush" Color="#FFD670" />
 
-  <!-- Lines: toolbar and footer rules, splitters, and product tag borders. -->
+  <!-- Lines: toolbar and footer rules, splitters, faint row rules (the Log)
+       and product tag borders. -->
   <SolidColorBrush x:Key="SC_RuleBrush" Color="#454545" />
+  <SolidColorBrush x:Key="SC_RowRuleBrush" Color="#3A3A3A" />
   <SolidColorBrush x:Key="SC_TagBorderBrush" Color="#5A5A5A" />
 
   <!-- The app icon (About), 64 px drawn at 32 so it stays sharp at 200%.

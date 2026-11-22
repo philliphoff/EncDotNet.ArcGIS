@@ -6,6 +6,7 @@
              xmlns:logging="clr-namespace:EncDotNet.SoundCharts.Logging;assembly=EncDotNet.ArcGIS.SoundCharts.Core"
              xmlns:res="clr-namespace:EncDotNet.SoundCharts.Resources"
              xmlns:sc="clr-namespace:EncDotNet.SoundCharts.Themes"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              AutomationProperties.AutomationId="LogPane">
   <UserControl.Resources>
     <ResourceDictionary>
@@ -21,7 +22,9 @@
       <GridLength x:Key="LogLevelColumn">70</GridLength>
       <GridLength x:Key="LogSourceColumn">150</GridLength>
       <Thickness x:Key="LogCellGap">0,0,8,0</Thickness>
-      <Thickness x:Key="LogRowPadding">4,2</Thickness>
+      <Thickness x:Key="LogRowPadding">8,2</Thickness>
+      <!-- 11.5 px mono at its line height plus 2 + 2: the mockup's 22 px row. -->
+      <sys:Double x:Key="LogRowHeight">22</sys:Double>
     </ResourceDictionary>
   </UserControl.Resources>
 
@@ -120,18 +123,31 @@
       </Grid>
     </Border>
 
-    <ListView ItemsSource="{Binding Entries}"
-              HorizontalContentAlignment="Stretch"
-              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-              VirtualizingPanel.IsVirtualizing="True"
-              VirtualizingPanel.VirtualizationMode="Recycling"
-              AutomationProperties.AutomationId="LogPane.Entries"
-              AutomationProperties.Name="{x:Static res:Strings.Log_Entries}">
-      <ListView.ItemTemplate>
+    <!-- A ListBox, not a ListView: Pro's ListViewItem template lays out a
+         GridView's columns (GridViewRowPresenter), so without a GridView it
+         shows empty rows and ignores the item template. SC_ListItem is a
+         flat row, so the cells line up under the column headers. -->
+    <ListBox ItemsSource="{Binding Entries}"
+             ItemContainerStyle="{StaticResource SC_ListItem}"
+             BorderThickness="0"
+             Background="Transparent"
+             HorizontalContentAlignment="Stretch"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+             VirtualizingPanel.IsVirtualizing="True"
+             VirtualizingPanel.VirtualizationMode="Recycling"
+             VirtualizingPanel.ScrollUnit="Item"
+             AutomationProperties.AutomationId="LogPane.Entries"
+             AutomationProperties.Name="{x:Static res:Strings.Log_Entries}">
+      <ListBox.ItemTemplate>
         <DataTemplate>
           <!-- Errors and warnings get a glyph and a row tint (the viewer's logs
                panel D5); Debug rows are subdued, not faded, for High Contrast. -->
-          <Border x:Name="Row" Padding="{StaticResource LogRowPadding}" Background="Transparent">
+          <Border x:Name="Row"
+                  Padding="{StaticResource LogRowPadding}"
+                  MinHeight="{StaticResource LogRowHeight}"
+                  BorderThickness="0,0,0,1"
+                  BorderBrush="{DynamicResource SC_RowRuleBrush}"
+                  Background="Transparent">
             <Grid>
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" SharedSizeGroup="LogTime" />
@@ -171,7 +187,7 @@
             </DataTrigger>
           </DataTemplate.Triggers>
         </DataTemplate>
-      </ListView.ItemTemplate>
-    </ListView>
+      </ListBox.ItemTemplate>
+    </ListBox>
   </DockPanel>
 </UserControl>

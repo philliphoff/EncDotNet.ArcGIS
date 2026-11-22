@@ -891,6 +891,37 @@
     </Setter>
   </Style>
 
+  <!-- A flat list row container for a ListBox's ItemContainerStyle: no
+       padding or border of its own (the item template lays out the row),
+       full-width hover and Pro's selection fill. Self-contained, so it
+       doesn't depend on finding Pro's ListBoxItem style at load time. -->
+  <Style x:Key="SC_ListItem" TargetType="ListBoxItem">
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Margin" Value="0" />
+    <Setter Property="Foreground" Value="{DynamicResource Esri_TextStyleDefaultBrush}" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="SnapsToDevicePixels" Value="True" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ListBoxItem">
+          <Border x:Name="Chrome" Background="Transparent" Padding="{TemplateBinding Padding}">
+            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Esri_BackgroundHoverSelectedBrush}" />
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+              <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Esri_BackgroundSelectedBrush}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
   <!-- Key/value grid: an ItemsControl whose item template is a two-column
        Grid, the label column SharedSizeGroup="SC_FieldLabel". -->
   <Style x:Key="SC_FieldGrid" TargetType="ItemsControl">
