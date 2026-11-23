@@ -11,10 +11,11 @@ namespace EncDotNet.SoundCharts;
 /// <summary>
 /// Makes Pro's map time drive the time-varying SoundCharts layers (design
 /// brief §6, D29–D33): on every map time change in the active map view it
-/// snaps the instant to each time layer's steps (<b>Water level</b>,
-/// <b>Surface currents</b> and <b>Weather</b>) and writes the step into the
-/// layer's WMTS <c>Time</c> dimension, or hides the layer and says so when
-/// there's no data then.
+/// resolves the instant for each time layer (<b>Water level</b>,
+/// <b>Surface currents</b> and <b>Weather</b>) by the layer's time selection
+/// (<see cref="TimeSteps.Resolve"/>, issue #64) and writes the step, or for a
+/// storm map time rounded down, into the layer's WMTS <c>Time</c> dimension;
+/// or hides the layer and says so when there's no data then.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -279,7 +280,9 @@ internal sealed class MapTimeController
             if (steps is not null)
             {
                 parameters.StepInterval = new TimeDelta(steps.Interval.TotalMinutes, TimeUnit.Minutes);
-                parameters.TimeRange = new TimeRange(steps.First, steps.Last);
+                // A storm's extent starts with its past track (issue #64).
+                var (start, end) = steps.Extent;
+                parameters.TimeRange = new TimeRange(start, end);
             }
 
             if (!layer.CanSetTime(parameters))
@@ -429,14 +432,23 @@ internal sealed class MapTimeController
             connection.Dimensions = dimensions;
         }
 
-        cim.UseVisibilityTimeExtent = true;
-        cim.VisibilityTimeExtent = new TimeExtent
+        if (wanted is { VisibleFrom: { } from, VisibleTo: { } to })
         {
-            StartTime = wanted.VisibleFrom,
-            StartTimeSpecified = true,
-            EndTime = wanted.VisibleTo,
-            EndTimeSpecified = true,
-        };
+            cim.UseVisibilityTimeExtent = true;
+            cim.VisibilityTimeExtent = new TimeExtent
+            {
+                StartTime = from,
+                StartTimeSpecified = true,
+                EndTime = to,
+                EndTimeSpecified = true,
+            };
+        }
+        else
+        {
+            // A continuous layer (a storm) draws its cone and track at every time.
+            cim.UseVisibilityTimeExtent = false;
+        }
+
         layer.SetDefinition(cim);
         return true;
     }

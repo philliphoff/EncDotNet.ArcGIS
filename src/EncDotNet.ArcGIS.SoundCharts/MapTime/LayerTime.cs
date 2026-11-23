@@ -20,15 +20,24 @@ namespace EncDotNet.SoundCharts.MapTime;
 /// add-in hears of a time change; with none it's an extent no map time
 /// reaches. The server would otherwise draw the last step (U6).
 /// </para>
+/// <para>
+/// A <see cref="TimeSelection.Continuous"/> layer (a tropical cyclone, issue
+/// #64) gets map time, rounded down, and no visibility extent: outside its
+/// range the server still draws the cone and track, without the storm, so
+/// the layer isn't hidden.
+/// </para>
 /// </remarks>
 /// <param name="TimeSegment">
 /// The <c>Time</c> dimension value to write, such as
 /// <c>2025-12-17T13:00:00Z</c>; <see langword="null"/> to leave it as it is
 /// (no data: the tiles already cached for the last step stay valid).
 /// </param>
-/// <param name="VisibleFrom">The start (UTC) of the layer's visibility time extent.</param>
-/// <param name="VisibleTo">The end (UTC) of the layer's visibility time extent.</param>
-public sealed record LayerTime(string? TimeSegment, DateTime VisibleFrom, DateTime VisibleTo)
+/// <param name="VisibleFrom">
+/// The start (UTC) of the layer's visibility time extent, or
+/// <see langword="null"/> for none: the layer draws at every map time.
+/// </param>
+/// <param name="VisibleTo">The end (UTC) of the layer's visibility time extent, or <see langword="null"/> for none.</param>
+public sealed record LayerTime(string? TimeSegment, DateTime? VisibleFrom, DateTime? VisibleTo)
 {
     /// <summary>The <c>Dimensions</c> key of the chart server's WMTS time dimension.</summary>
     public const string DimensionName = "Time";
@@ -39,6 +48,9 @@ public sealed record LayerTime(string? TimeSegment, DateTime VisibleFrom, DateTi
     /// </summary>
     public static readonly DateTime NeverVisible = new(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
+    /// <summary>Gets whether the layer has a visibility time extent.</summary>
+    public bool UsesVisibilityExtent => VisibleFrom is not null && VisibleTo is not null;
+
     /// <summary>Gets what to write for <paramref name="status"/> of a layer with <paramref name="steps"/>.</summary>
     /// <param name="steps">The layer's steps.</param>
     /// <param name="status">The layer's status at map time.</param>
@@ -46,6 +58,11 @@ public sealed record LayerTime(string? TimeSegment, DateTime VisibleFrom, DateTi
     {
         ArgumentNullException.ThrowIfNull(steps);
         ArgumentNullException.ThrowIfNull(status);
+        if (steps.Selection == TimeSelection.Continuous)
+        {
+            return new LayerTime(TimeSteps.FormatSegment(status.Step ?? TimeSteps.RoundDown(status.Instant)), null, null);
+        }
+
         if (status.Step is { } step)
         {
             var (start, end) = steps.Range;

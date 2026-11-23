@@ -92,9 +92,11 @@ public sealed class FootprintReaderTests : IDisposable
     }
 
     [Fact]
-    public void TropicalCyclone_TimesAreTheAdvisorysForecastPoints()
+    public void TropicalCyclone_TimesRunFromThePastTrackToTheLastForecastPoint()
     {
-        // Issue #62: the first and last of the processor's steps, not the wider time coverage with the past track.
+        // Issue #64: the chart server draws a storm from its past track's
+        // start to its last forecast point, its timeRange, so its footprint
+        // shows there too.
         var path = Upstream("TC/al092022/al092022_5day_020.zip");
         var dataset = new ChartLayerDataset(path, "TC", TimeVarying: true);
 
@@ -102,7 +104,7 @@ public sealed class FootprintReaderTests : IDisposable
 
         Assert.Null(error);
         Assert.NotNull(footprint);
-        Assert.Equal(new DateTime(2022, 9, 28, 0, 0, 0, DateTimeKind.Utc), footprint.FirstTime);
+        Assert.Equal(new DateTime(2022, 9, 22, 18, 0, 0, DateTimeKind.Utc), footprint.FirstTime);
         Assert.Equal(new DateTime(2022, 10, 2, 0, 0, 0, DateTimeKind.Utc), footprint.LastTime);
     }
 

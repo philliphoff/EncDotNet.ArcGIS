@@ -461,6 +461,22 @@
     <value>No data at map time · next {0}, {1} later</value>
     <comment>The viewer's wording. {0} is the next time with data, {1} how long after map time.</comment>
   </data>
+  <data name="Status_LayerEstimated" xml:space="preserve">
+    <value>{0} · est. {1}, between forecast points</value>
+    <comment>The viewer's "est." for a tropical cyclone between forecast points. {0} is a layer name, {1} the time drawn.</comment>
+  </data>
+  <data name="Status_LayerBestTrack" xml:space="preserve">
+    <value>{0} · {1} · best track</value>
+    <comment>The viewer's wording for a tropical cyclone on its past track, before the advisory. {0} is a layer name, {1} the time drawn.</comment>
+  </data>
+  <data name="Status_BeyondForecast" xml:space="preserve">
+    <value>Beyond forecast · last forecast point {0}, {1} earlier</value>
+    <comment>The viewer's wording for a tropical cyclone after its last forecast point, where the cone and track still draw. {0} is the last forecast point, {1} how long before map time.</comment>
+  </data>
+  <data name="Status_BeforeTrack" xml:space="preserve">
+    <value>Before track · track starts {0}, {1} later</value>
+    <comment>The viewer's wording for a tropical cyclone before its track starts, where the cone and track still draw. {0} is where the track starts, {1} how long after map time.</comment>
+  </data>
   <data name="Status_NoTimeLayers" xml:space="preserve">
     <value>No Water level, Surface currents or Weather layer in this map.</value>
   </data>
