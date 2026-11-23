@@ -3,20 +3,28 @@ using EncDotNet.S100;
 using EncDotNet.S100.Collections;
 using EncDotNet.S100.Core;
 using EncDotNet.S100.Datasets.Pipelines;
+using EncDotNet.SoundCharts.Charts;
 
 namespace EncDotNet.SoundCharts.Library;
 
 /// <summary>
-/// Reads the little the Library needs from one dataset file in-process,
+/// Reads the little the Library needs from one dataset in-process,
 /// with the same dataset processors as Object information: the metadata of
 /// a loose dataset while it's indexed (<see cref="Probe"/>), and the time
 /// steps (<see cref="ReadTimeSteps"/>) and extent (<see cref="ReadFootprint"/>)
 /// of the dataset the user selects.
 /// </summary>
 /// <remarks>
-/// Nothing is drawn or kept open: each call opens the file, reads, and
-/// closes it. Never throws for a bad file; a file that can't be read gives
+/// <para>
+/// A dataset is a file, or an NHC tropical cyclone advisory folder
+/// (<see cref="DatasetSource.IsAdvisoryFolder"/>), which EncDotNet.S100's
+/// indexer lists as one item at the folder (issue #69).
+/// </para>
+/// <para>
+/// Nothing is drawn or kept open: each call opens the dataset, reads, and
+/// closes it. Never throws for a bad file; a dataset that can't be read gives
 /// <see langword="null"/>. Call it off Pro's UI thread and the MCT.
+/// </para>
 /// </remarks>
 public sealed class LibraryDatasetReader : IDisposable
 {
@@ -44,9 +52,9 @@ public sealed class LibraryDatasetReader : IDisposable
     /// extent, display scales, time coverage), the
     /// <see cref="S100.Collections.Indexing.DatasetProbe"/> the library calls.
     /// </summary>
-    /// <param name="path">The file.</param>
-    /// <param name="cancellationToken">Not observed: one file is read at a time.</param>
-    /// <returns>The metadata, or <see langword="null"/> when the file isn't a dataset or can't be read.</returns>
+    /// <param name="path">The file or folder.</param>
+    /// <param name="cancellationToken">Not observed: one dataset is read at a time.</param>
+    /// <returns>The metadata, or <see langword="null"/> when the path isn't a dataset or can't be read.</returns>
     public DatasetMetadata? Probe(string path, CancellationToken cancellationToken)
     {
         if (!IsCandidate(path))
@@ -62,7 +70,7 @@ public sealed class LibraryDatasetReader : IDisposable
     /// surface currents, weather, sea ice, tropical cyclone advisories) has
     /// data for, in UTC: its processor's time steps.
     /// </summary>
-    /// <param name="path">The dataset file.</param>
+    /// <param name="path">The dataset file or advisory folder.</param>
     /// <returns>The times in order; empty for a dataset without time steps, or one that can't be read.</returns>
     public IReadOnlyList<DateTime> ReadTimeSteps(string path)
     {
@@ -81,7 +89,7 @@ public sealed class LibraryDatasetReader : IDisposable
     /// Footprint</b> when the Library's index has none (an exchange set
     /// whose catalogue gives no bounds).
     /// </summary>
-    /// <param name="path">The dataset file.</param>
+    /// <param name="path">The dataset file or advisory folder.</param>
     /// <returns>The bounding box, or <see langword="null"/> when the dataset has no geographic extent or can't be read.</returns>
     public LibraryFootprint? ReadFootprint(string path)
     {
@@ -108,7 +116,9 @@ public sealed class LibraryDatasetReader : IDisposable
     {
         try
         {
-            return File.Exists(path) && DatasetPipelineFactory.DetectProductSpec(path) is not null;
+            return File.Exists(path)
+                ? DatasetPipelineFactory.DetectProductSpec(path) is not null
+                : DatasetSource.IsAdvisoryFolder(path);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {

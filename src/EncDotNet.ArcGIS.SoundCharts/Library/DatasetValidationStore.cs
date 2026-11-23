@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.IO;
+using EncDotNet.SoundCharts.Charts;
 
 namespace EncDotNet.SoundCharts.Library;
 
@@ -69,10 +70,16 @@ public sealed class DatasetValidationStore
     }
 
     // The file's size and last write time: a different edition or a new update changes it.
+    // An advisory folder's revision covers its files, so a newer advisory changes it.
     private static string Stamp(string path)
     {
         try
         {
+            if (Directory.Exists(path))
+            {
+                return DataRevision.Of([DatasetSource.Dataset(path)]);
+            }
+
             var file = new FileInfo(path);
             return file.Exists ? $"{file.Length}:{file.LastWriteTimeUtc.Ticks}:{UpdatesStamp(file)}" : string.Empty;
         }

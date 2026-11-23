@@ -183,7 +183,7 @@ function Get-RunTime {
 $groups = [System.Collections.Generic.List[object]]::new()
 
 # Storm: one advisory's three zips in one folder, which SoundCharts reads as
-# one dataset.
+# one dataset, and the Library lists as one item at the folder.
 if ('Storm' -notin $Skip) {
     $folder = Join-Path $Path "Storm/${Storm}_$Advisory"
     Write-Host "Storm: $($Storm.ToUpperInvariant()) advisory $Advisory..."

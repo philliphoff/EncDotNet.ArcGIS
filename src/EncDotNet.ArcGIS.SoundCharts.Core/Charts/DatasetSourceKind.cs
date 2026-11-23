@@ -3,7 +3,11 @@ namespace EncDotNet.SoundCharts.Charts;
 /// <summary>What a <see cref="DatasetSource"/> path points at.</summary>
 public enum DatasetSourceKind
 {
-    /// <summary>One dataset file, such as an S-101 <c>.000</c> or an S-104 <c>.h5</c>.</summary>
+    /// <summary>
+    /// One dataset: a file, such as an S-101 <c>.000</c> or an S-104
+    /// <c>.h5</c>, or a folder read as one dataset, such as an NHC tropical
+    /// cyclone advisory folder (<see cref="DatasetSource.IsAdvisoryFolder"/>).
+    /// </summary>
     Dataset,
 
     /// <summary>

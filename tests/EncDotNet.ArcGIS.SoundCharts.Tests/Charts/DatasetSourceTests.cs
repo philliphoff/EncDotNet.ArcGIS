@@ -114,6 +114,46 @@ public class DatasetSourceTests
         Assert.Equal(@"D:\", DatasetSource.Folder(@"D:\").Path);
     }
 
+    [Fact]
+    public void IsAdvisoryFolder_AStormsFolder_IsAndStaysAFolderSource()
+    {
+        // Issue #69: the folder is one TC dataset to EncDotNet.S100, but a
+        // folder to the inspector, which may find charts beside the storm.
+        using var temp = new TempFolder();
+        var folder = Path.Combine(temp.Path, "ian");
+        Assert.SkipUnless(Fixtures.CopyUpstreamStorm(folder), $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+
+        Assert.True(DatasetSource.IsAdvisoryFolder(folder));
+        Assert.Equal(DatasetSourceKind.Folder, DatasetSource.FromPath(folder).Kind);
+    }
+
+    [Fact]
+    public void IsAdvisoryFolder_SeveralStormsOrNone_IsNot()
+    {
+        using var temp = new TempFolder();
+        var storms = Path.Combine(temp.Path, "storms");
+        Assert.SkipUnless(Fixtures.CopyUpstreamStorm(storms), $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        Fixtures.CopyUpstreamStorm(storms, atcfId: "ep012022");
+
+        Assert.False(DatasetSource.IsAdvisoryFolder(storms));
+        Assert.False(DatasetSource.IsAdvisoryFolder(temp.Folder("empty")));
+        Assert.False(DatasetSource.IsAdvisoryFolder(Path.Combine(temp.Path, "missing")));
+    }
+
+    [Fact]
+    public void IsAdvisoryFolder_AGrib2RunWithAStorm_IsNot()
+    {
+        // EncDotNet.S100 reads such a folder as the run, and lists the storm's forecast zip.
+        var grib = Upstream("GRIB2/gfswave-useast.grib2");
+        using var temp = new TempFolder();
+        var folder = Path.Combine(temp.Path, "run");
+        Assert.SkipUnless(Fixtures.CopyUpstreamStorm(folder), "No TC fixture.");
+        File.Copy(grib, Path.Combine(folder, "a.grib2"));
+        File.Copy(Upstream("GRIB2/gfswave-useast-filter.grib2"), Path.Combine(folder, "b.grib2"));
+
+        Assert.False(DatasetSource.IsAdvisoryFolder(folder));
+    }
+
     private static string Upstream(string relativePath)
     {
         var path = Fixtures.Upstream(relativePath);

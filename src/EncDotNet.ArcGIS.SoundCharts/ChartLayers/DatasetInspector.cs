@@ -8,6 +8,7 @@ using EncDotNet.S100.Core;
 using EncDotNet.S100.Crs.ProjNet;
 using EncDotNet.S100.Datasets.Pipelines;
 using EncDotNet.S100.Datasets.S57;
+using EncDotNet.S100.Datasets.TropicalCyclones;
 using EncDotNet.S100.ExchangeSets;
 using EncDotNet.S100.Pipelines;
 using EncDotNet.SoundCharts.Charts;
@@ -31,6 +32,13 @@ namespace EncDotNet.SoundCharts.ChartLayers;
 /// edition, and its metadata the footprint. The edition is assessed against
 /// the editions EncDotNet.S100 supports, and an exchange set's catalogue is
 /// checked against each dataset's content.
+/// </para>
+/// <para>
+/// A folder of one storm's NHC tropical cyclone advisory zips
+/// (<see cref="DatasetSource.IsAdvisoryFolder"/>) is one <c>TC</c> dataset
+/// located at the folder, as the Library lists it (issue #69), whether it's
+/// what the user chose or a folder inside it. Other files in it are read as
+/// in any folder.
 /// </para>
 /// <para>
 /// A <c>.zip</c> exchange set is extracted to <see cref="ExtractionFolder"/>
@@ -223,8 +231,8 @@ public sealed class DatasetInspector : IDisposable
         }
     }
 
-    /// <summary>Reads one dataset file; <see langword="null"/> with a warning when it can't be drawn.</summary>
-    /// <param name="path">The file.</param>
+    /// <summary>Reads one dataset; <see langword="null"/> with a warning when it can't be drawn.</summary>
+    /// <param name="path">The file, or a folder read as one dataset.</param>
     /// <param name="declared">What an exchange set's catalogue says the file is, if anything.</param>
     /// <param name="warnings">Collects warnings.</param>
     private ChartLayerDataset? Inspect(string path, Declared? declared, List<string> warnings)
@@ -372,12 +380,28 @@ public sealed class DatasetInspector : IDisposable
         CancellationToken cancellationToken)
     {
         var skipped = 0;
+        var storms = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
         var options = new EnumerationOptions { RecurseSubdirectories = true, IgnoreInaccessible = true };
         foreach (var path in Directory.EnumerateFiles(root, "*", options).Order(StringComparer.OrdinalIgnoreCase))
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (IsUpdateFile(path) || Path.GetFileName(path) == CompleteMarker)
             {
+                continue;
+            }
+
+            // An advisory folder's zips are read together, as one dataset at the folder (issue #69).
+            if (AdvisoryFolderOf(path, storms) is { } advisory)
+            {
+                if (datasets.All(d => !string.Equals(d.Path, advisory, StringComparison.OrdinalIgnoreCase)))
+                {
+                    progress?.Report(Path.GetFileName(advisory));
+                    if (Inspect(advisory, null, warnings) is { } storm)
+                    {
+                        datasets.Add(storm);
+                    }
+                }
+
                 continue;
             }
 
@@ -409,6 +433,34 @@ public sealed class DatasetInspector : IDisposable
         {
             warnings.Add(string.Format(CultureInfo.CurrentCulture, Strings.AddData_SkippedFiles, skipped, Path.GetFileName(root)));
         }
+    }
+
+    /// <summary>
+    /// Gets the advisory folder <paramref name="path"/> belongs to: its
+    /// folder, when that is an advisory folder and the file is one of its
+    /// storm's NHC zips; otherwise <see langword="null"/>.
+    /// </summary>
+    /// <param name="path">A file in the folder being inspected.</param>
+    /// <param name="storms">Each folder seen so far and its storm's ATCF id, <see langword="null"/> when it isn't an advisory folder.</param>
+    private static string? AdvisoryFolderOf(string path, Dictionary<string, string?> storms)
+    {
+        if (!NhcAdvisoryFiles.TryParseFileName(Path.GetFileName(path), out _, out var atcfId, out _)
+            || Path.GetDirectoryName(path) is not { } folder)
+        {
+            return null;
+        }
+
+        if (!storms.TryGetValue(folder, out var storm))
+        {
+            storm = DatasetSource.IsAdvisoryFolder(folder)
+                && NhcAdvisoryFiles.Find(folder) is { } advisory
+                && NhcAdvisoryFiles.TryParseFileName(Path.GetFileName(advisory.ForecastZip), out _, out var id, out _)
+                    ? id
+                    : null;
+            storms[folder] = storm;
+        }
+
+        return string.Equals(storm, atcfId, StringComparison.Ordinal) ? folder : null;
     }
 
     /// <summary>Extracts a <c>.zip</c> exchange set once per version of the file; returns the extracted folder.</summary>

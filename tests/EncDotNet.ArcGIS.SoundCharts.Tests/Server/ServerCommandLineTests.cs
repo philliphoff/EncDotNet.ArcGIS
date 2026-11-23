@@ -43,6 +43,39 @@ public class ServerCommandLineTests
     }
 
     [Fact]
+    public void Inputs_AnAdvisoryFolder_IsItsLatestForecastZip()
+    {
+        // Issue #69: tiles serve refuses a folder as a --layer, and would read
+        // charts beside the storm's zips if given the folder as its input.
+        using var temp = new TempFolder();
+        var folder = Path.Combine(temp.Path, "ian");
+        Assert.SkipUnless(Fixtures.CopyUpstreamStorm(folder, advisory: "019"), $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        Fixtures.CopyUpstreamStorm(folder);
+        var forecast = Path.Combine(folder, "al092022_5day_020.zip");
+        var storm = DatasetSource.Dataset(folder);
+
+        Assert.Equal([forecast], ServerCommandLine.Inputs(new DatasetSet([storm])));
+        var cell = temp.File("a.000");
+        var layers = ServerCommandLine.Inputs(new DatasetSet([storm, DatasetSource.Dataset(cell)]));
+        Assert.Equal(["--layer", "--layer"], layers.Where((_, i) => i % 2 == 0));
+        Assert.Equal(new[] { cell, forecast }.Order(StringComparer.Ordinal), layers.Where((_, i) => i % 2 == 1).Order(StringComparer.Ordinal));
+
+        // A folder source is what the user chose, and is served as they chose it.
+        Assert.Equal(folder, ServerCommandLine.InputPath(DatasetSource.Folder(folder)));
+    }
+
+    [Fact]
+    public void InputPath_AFileOrAnOrdinaryFolder_IsItsPath()
+    {
+        using var temp = new TempFolder();
+        var folder = temp.Folder("charts");
+        var cell = temp.File("a.000");
+
+        Assert.Equal(cell, ServerCommandLine.InputPath(DatasetSource.Dataset(cell)));
+        Assert.Equal(folder, ServerCommandLine.InputPath(DatasetSource.Dataset(folder)));
+    }
+
+    [Fact]
     public void Build_RejectsAnExchangeSetMixedWithDatasets()
     {
         var set = new DatasetSet([DatasetSource.ExchangeSet(@"C:\Charts\US_ENC"), DatasetSource.Dataset(@"C:\Charts\a.000")]);

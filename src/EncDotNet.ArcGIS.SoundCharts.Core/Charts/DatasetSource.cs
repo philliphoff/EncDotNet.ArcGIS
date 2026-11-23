@@ -1,4 +1,6 @@
+using EncDotNet.S100.Core;
 using EncDotNet.S100.Datasets.Pipelines;
+using EncDotNet.S100.Datasets.TropicalCyclones;
 
 namespace EncDotNet.SoundCharts.Charts;
 
@@ -35,7 +37,7 @@ public sealed class DatasetSource : IEquatable<DatasetSource>
     /// <summary>Gets the file or folder name, for display.</summary>
     public string Name => System.IO.Path.GetFileName(Path) is { Length: > 0 } name ? name : Path;
 
-    /// <summary>Creates a source for one dataset file.</summary>
+    /// <summary>Creates a source for one dataset: a file, or a folder read as one dataset (<see cref="IsAdvisoryFolder"/>).</summary>
     /// <param name="path">The dataset's path.</param>
     public static DatasetSource Dataset(string path) => new(path, DatasetSourceKind.Dataset);
 
@@ -108,6 +110,36 @@ public sealed class DatasetSource : IEquatable<DatasetSource>
             return DatasetPipelineFactory.DetectProductSpec(path) is not null;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Gets whether <paramref name="path"/> is a folder EncDotNet.S100 reads
+    /// as one tropical cyclone dataset: an NHC advisory folder, holding one
+    /// storm's zips (<c>al092022_5day_020.zip</c> and its wind radii and best
+    /// track zips), read as the storm's latest advisory.
+    /// </summary>
+    /// <remarks>
+    /// The Library lists such a folder as one <c>TC</c> dataset located at
+    /// the folder (issue #69). Other files in it, such as charts, are
+    /// datasets of their own. A folder that is also a GRIB2 model run is read
+    /// by EncDotNet.S100 as the run, so it gives <see langword="false"/>, and
+    /// the Library lists the storm's forecast zip instead; the add-in reads
+    /// GRIB2 runs file by file. A missing or unreadable folder gives
+    /// <see langword="false"/>.
+    /// </remarks>
+    /// <param name="path">The folder's path.</param>
+    public static bool IsAdvisoryFolder(string path)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
+        try
+        {
+            return NhcAdvisoryFiles.IsAdvisoryFolder(path)
+                && DatasetPipelineFactory.DetectProductSpec(path) == SpecName.TropicalCyclone;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
         {
             return false;
         }

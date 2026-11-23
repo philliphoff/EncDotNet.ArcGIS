@@ -31,7 +31,11 @@ public sealed class SoundChartsLibrary : IDisposable
 
     /// <summary>Creates a library stored in <paramref name="root"/>.</summary>
     /// <param name="root">The folder for <c>collections.json</c> and the index cache.</param>
-    /// <param name="probe">Reads loose dataset files; <see langword="null"/> recognizes only S-57 cells, without bounds.</param>
+    /// <param name="probe">
+    /// Reads loose dataset files and NHC advisory folders, such as
+    /// <see cref="LibraryDatasetReader.Probe"/>; <see langword="null"/>
+    /// recognizes only S-57 cells, without bounds.
+    /// </param>
     /// <param name="logger">Logs store, cache and indexing failures; <see langword="null"/> for none.</param>
     /// <param name="timeProvider">The clock; <see langword="null"/> for the system clock.</param>
     public SoundChartsLibrary(string root, DatasetProbe? probe = null, ILogger? logger = null, TimeProvider? timeProvider = null)
@@ -40,29 +44,14 @@ public sealed class SoundChartsLibrary : IDisposable
         Root = root;
         var paths = new LibraryDataPaths(root);
         _library = new CollectionLibrary(
-            CreateIndexer(probe),
+            // EncDotNet.S100's own indexers. They list NHC tropical cyclone
+            // advisories, a folder of one storm's zips as one item at the
+            // folder (issue #69), when the probe reads advisory folders.
+            CollectionIndexer.CreateDefault(probe),
             new CollectionLibraryOptions(paths.CollectionsFile, paths.IndexCacheDirectory),
             logger,
             timeProvider);
         _library.Changed += (_, e) => Changed?.Invoke(this, e);
-    }
-
-    /// <summary>
-    /// Creates the indexer: <see cref="CollectionIndexer.CreateDefault"/>'s,
-    /// with folders and exchange sets indexed through
-    /// <see cref="ZippedDatasetIndexer"/>, so a <c>.zip</c> that is a dataset
-    /// of its own, such as an NHC tropical cyclone advisory, is listed.
-    /// </summary>
-    /// <param name="probe">Reads loose and zipped dataset files.</param>
-    internal static CollectionIndexer CreateIndexer(DatasetProbe? probe)
-    {
-        var local = new LocalSourceIndexer(probe);
-        return new CollectionIndexer(
-        [
-            new ZippedDatasetIndexer(local, probe),
-            new LocalManifestIndexer(local),
-            new S128CatalogueIndexer(),
-        ]);
     }
 
     /// <summary>Raised after any change to <see cref="Collections"/>, on the changing thread.</summary>

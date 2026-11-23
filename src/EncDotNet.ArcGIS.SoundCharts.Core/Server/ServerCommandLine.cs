@@ -1,4 +1,5 @@
 using System.Globalization;
+using EncDotNet.S100.Datasets.TropicalCyclones;
 using EncDotNet.SoundCharts.Charts;
 
 namespace EncDotNet.SoundCharts.Server;
@@ -47,7 +48,8 @@ public static class ServerCommandLine
     /// <summary>
     /// Gets the input arguments for <paramref name="datasets"/>: one source
     /// as the positional input, whatever its kind; several dataset files as
-    /// repeated <c>--layer</c>.
+    /// repeated <c>--layer</c>. Each source is given by its
+    /// <see cref="InputPath"/>.
     /// </summary>
     /// <remarks>
     /// <c>tiles serve</c> takes one exchange set or folder, or any number of
@@ -62,7 +64,7 @@ public static class ServerCommandLine
 
         if (datasets.Sources.Count == 1)
         {
-            return [datasets.Sources[0].Path];
+            return [InputPath(datasets.Sources[0])];
         }
 
         if (datasets.Sources.Any(source => source.Kind != DatasetSourceKind.Dataset))
@@ -71,6 +73,32 @@ public static class ServerCommandLine
                 "The chart server takes one exchange set or folder, or several dataset files, but not a mix of them.");
         }
 
-        return [.. datasets.Sources.SelectMany(source => new[] { "--layer", source.Path })];
+        return [.. datasets.Sources.SelectMany(source => new[] { "--layer", InputPath(source) })];
+    }
+
+    /// <summary>
+    /// Gets the path the server is given for <paramref name="source"/>: its
+    /// own path, except for a dataset that is an NHC tropical cyclone
+    /// advisory folder, which is given as its latest forecast zip.
+    /// </summary>
+    /// <remarks>
+    /// The Library lists a folder of one storm's zips as one dataset at the
+    /// folder (issue #69). <c>tiles serve</c> refuses a folder as a
+    /// <c>--layer</c>, and reads a folder given as its input as a folder of
+    /// datasets, any charts beside the storm's zips included. The forecast
+    /// zip is read with the wind radii and best track zips beside it, so the
+    /// server draws the same advisory. <see cref="DataRevision"/> still
+    /// covers the whole folder, so a newer advisory saved there restarts the
+    /// server on it.
+    /// </remarks>
+    /// <param name="source">The source.</param>
+    public static string InputPath(DatasetSource source)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        return source.Kind == DatasetSourceKind.Dataset
+            && DatasetSource.IsAdvisoryFolder(source.Path)
+            && NhcAdvisoryFiles.Find(source.Path) is { } advisory
+                ? advisory.ForecastZip
+                : source.Path;
     }
 }

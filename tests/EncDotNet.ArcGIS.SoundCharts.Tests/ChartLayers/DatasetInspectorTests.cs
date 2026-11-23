@@ -123,16 +123,74 @@ public sealed class DatasetInspectorTests : IDisposable
     }
 
     [Fact]
-    public async Task Dataset_AdvisoryFolder_ListsOnlyTheForecastZip()
+    public async Task Folder_AdvisoryFolder_IsOneTropicalCycloneDatasetAtTheFolder()
     {
-        // The wind radii and best track zips are read with the forecast zip, not on their own.
+        // Issue #69: the Library's item for a storm's folder is the folder,
+        // so Add to Map passes it. Its zips are read together, as one
+        // dataset, and aren't counted as files that aren't datasets.
         var folder = Path.GetDirectoryName(Upstream("TC/al092022/al092022_5day_020.zip"))!;
 
         var inspection = await _inspector.InspectAsync(folder, cancellationToken: TestContext.Current.CancellationToken);
 
         var dataset = Assert.Single(inspection.Datasets);
         Assert.Equal("TC", dataset.Product);
-        Assert.Equal("al092022_5day_020.zip", Path.GetFileName(dataset.Path));
+        Assert.Equal(Path.GetFullPath(folder), dataset.Path);
+        Assert.Equal("al092022", dataset.Name);
+        Assert.True(dataset.TimeVarying);
+        Assert.Equal(ChartLayerKind.Weather, dataset.Kind);
+        Assert.True(dataset.Exists);
+        Assert.NotNull(dataset.Extent);
+        Assert.Equal("al092022", inspection.Input);
+        Assert.Empty(inspection.Warnings);
+    }
+
+    [Fact]
+    public async Task Folder_AdvisoryFolderWithAChart_FindsTheStormAndTheChart()
+    {
+        var cell = Upstream("S57/US5MA1BO/US5MA1BO.000");
+        var folder = Path.Combine(_temp.Path, "mixed");
+        Assert.True(Fixtures.CopyUpstreamStorm(folder));
+        File.Copy(cell, Path.Combine(folder, "US5MA1BO.000"));
+
+        var inspection = await _inspector.InspectAsync(folder, cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.Equal(
+            [("S-57", Path.Combine(folder, "US5MA1BO.000")), ("TC", folder)],
+            inspection.Datasets.Select(d => (d.Product, d.Path)).OrderBy(d => d.Product, StringComparer.Ordinal));
+        Assert.Empty(inspection.Warnings);
+    }
+
+    [Fact]
+    public async Task Folder_WithAnAdvisorySubfolder_FindsTheSubfolder()
+    {
+        Upstream("TC/al092022/al092022_5day_020.zip");
+        var root = Path.Combine(_temp.Path, "charts");
+        var storm = Path.Combine(root, "ian");
+        Assert.True(Fixtures.CopyUpstreamStorm(storm));
+
+        var inspection = await _inspector.InspectAsync(root, cancellationToken: TestContext.Current.CancellationToken);
+
+        var dataset = Assert.Single(inspection.Datasets);
+        Assert.Equal("TC", dataset.Product);
+        Assert.Equal(storm, dataset.Path);
+        Assert.Empty(inspection.Warnings);
+    }
+
+    [Fact]
+    public async Task Folder_WithSeveralStorms_FindsEachForecastZip()
+    {
+        // Not an advisory folder: each storm's forecast zip is a dataset, as before.
+        Upstream("TC/al092022/al092022_5day_020.zip");
+        var folder = Path.Combine(_temp.Path, "storms");
+        Assert.True(Fixtures.CopyUpstreamStorm(folder));
+        Assert.True(Fixtures.CopyUpstreamStorm(folder, atcfId: "ep012022", advisory: "003"));
+
+        var inspection = await _inspector.InspectAsync(folder, cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.Equal(
+            ["al092022_5day_020.zip", "ep012022_5day_003.zip"],
+            inspection.Datasets.Select(d => Path.GetFileName(d.Path)).Order(StringComparer.Ordinal));
+        Assert.All(inspection.Datasets, d => Assert.Equal("TC", d.Product));
     }
 
     [Fact]

@@ -90,7 +90,8 @@ jobs:
       - name: Check out EncDotNet.S100 test datasets
         # Object information's coverage tests (S-102, S-104, S-111), Add
         # SoundCharts Data's content detection tests (S-57, S-101 exchange
-        # set and its .zip, S-124, the TC advisory zips), the feature table
+        # set and its .zip, S-124, the TC advisory zips), the Library's
+        # advisory tests (TC, and GRIB2 for a storm beside a run), the feature table
         # tests (S-57, S-101, S-124, S-421) and the route check tests (S-57,
         # and the S-421 and RTZ route fixtures) use EncDotNet.S100's own test datasets, so no
         # real data is committed here. Cone mode also brings the files at
@@ -102,6 +103,7 @@ jobs:
           ref: v0.30.2
           path: s100-datasets
           sparse-checkout: |
+            tests/datasets/GRIB2
             tests/datasets/S57
             tests/datasets/S101
             tests/datasets/S102
