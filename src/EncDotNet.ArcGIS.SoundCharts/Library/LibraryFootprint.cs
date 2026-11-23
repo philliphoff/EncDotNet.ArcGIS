@@ -21,6 +21,8 @@ public sealed record LibraryFootprint(
     double North,
     bool IsBoundingBox)
 {
+    private static readonly double[] AntimeridianShifts = [-360, 0, 360];
+
     /// <summary>Gets the footprint of <paramref name="item"/>.</summary>
     /// <param name="item">The dataset.</param>
     /// <returns>The footprint, or <see langword="null"/> when the index has neither coverage nor bounds.</returns>
@@ -58,6 +60,44 @@ public sealed record LibraryFootprint(
         IReadOnlyList<(double, double)> box = [(b.West, b.South), (b.West, b.North), (east, b.North), (east, b.South), (b.West, b.South)];
         return new LibraryFootprint([box], b.West, b.South, east, b.North, IsBoundingBox: true);
     }
+
+    /// <summary>
+    /// Gets whether the footprint's bounds overlap a box, such as the map's
+    /// extent, in WGS-84: <b>Add Datasets in View</b>. Bounds, not the
+    /// coverage polygons, so a dataset near the view's corner may be included.
+    /// Either box may cross the antimeridian (east past 180, or east less than west).
+    /// </summary>
+    /// <param name="west">The box's west edge.</param>
+    /// <param name="south">The box's south edge.</param>
+    /// <param name="east">The box's east edge.</param>
+    /// <param name="north">The box's north edge.</param>
+    public bool Intersects(double west, double south, double east, double north)
+    {
+        if (South > north || south > North)
+        {
+            return false;
+        }
+
+        if (east - west >= 360 || East - West >= 360)
+        {
+            return true;
+        }
+
+        var (w1, e1) = Unwrap(West, East);
+        var (w2, e2) = Unwrap(west, east);
+        foreach (var shift in AntimeridianShifts)
+        {
+            if (w1 <= e2 + shift && w2 + shift <= e1)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static (double West, double East) Unwrap(double west, double east) =>
+        east < west ? (west, east + 360) : (west, east);
 
     private static IReadOnlyList<(double, double)> Close(IEnumerable<(double, double)> vertices)
     {

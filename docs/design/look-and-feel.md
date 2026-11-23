@@ -284,7 +284,12 @@ This table is the proposal. What was built, with every key, is in
 - Splitter → `SC_Splitter`.
 - Details: `SC_ProductTag` + `SC_Title` (mono name), product line, actions, caution strip (only
   if marked), then Product / Validation / Time / Source groups with `SC_SectionHeader` +
-  `SC_FieldGrid`. Validation status becomes a tone chip (Valid → success, Not valid → danger,
+  `SC_FieldGrid`. The header, actions and caution strip stay put; only the groups scroll, so the
+  buttons never scroll out of reach.
+- A selected collection or source shows its name, how many datasets the filter shows under it,
+  **Add All to Map**, which adds them all to one chart (asking first above 100 datasets), and
+  **Add Datasets in View**, which adds only those whose indexed footprint overlaps the map's
+  current extent. The Library ≡ menu has Add Datasets in View across every collection shown. Validation status becomes a tone chip (Valid → success, Not valid → danger,
   Validating… → spinner). Compatibility gets a tone chip (Supported, Partly supported → warning,
   Not supported → danger).
 - Footer: `SC_PaneFooter` "Not for navigation". Remove the duplicate box text.

@@ -30,6 +30,34 @@ public class LibrarySmallPartsTests
         Assert.Equal(5, Assert.Single(footprint.Rings).Count);
     }
 
+    [Theory]
+    [InlineData(-70.4, 41.2, -70.3, 41.3, true)] // overlaps the south-west corner
+    [InlineData(-71, 40, -69, 42, true)] // contains it
+    [InlineData(-70.32, 41.28, -70.30, 41.30, true)] // inside it
+    [InlineData(-70.2, 41.2, -70.1, 41.3, false)] // east of it
+    [InlineData(-70.4, 41.4, -70.3, 41.5, false)] // north of it
+    [InlineData(-180, -90, 180, 90, true)] // the world
+    public void Footprint_Intersects_TheView(double west, double south, double east, double north, bool expected)
+    {
+        var footprint = LibraryFootprint.Of(Item("A", bounds: new GeoBounds(41.25, -70.35, 41.325, -70.275)))!;
+
+        Assert.Equal(expected, footprint.Intersects(west, south, east, north));
+    }
+
+    [Theory]
+    [InlineData(175, -15, 179, -12, true)] // west of the antimeridian
+    [InlineData(-179, -15, -175, -12, true)] // east of it
+    [InlineData(178, -15, -178, -12, true)] // a view across it, east less than west
+    [InlineData(178, -15, 182, -12, true)] // a view across it, east past 180
+    [InlineData(-160, -15, -150, -12, false)]
+    [InlineData(150, -15, 160, -12, false)]
+    public void Footprint_AcrossTheAntimeridian_IntersectsEitherSide(double west, double south, double east, double north, bool expected)
+    {
+        var footprint = LibraryFootprint.Of(Item("A", bounds: new GeoBounds(-20, 170, -10, -170)))!;
+
+        Assert.Equal(expected, footprint.Intersects(west, south, east, north));
+    }
+
     [Fact]
     public void Footprint_AcrossTheAntimeridian_RunsEastPast180()
     {
