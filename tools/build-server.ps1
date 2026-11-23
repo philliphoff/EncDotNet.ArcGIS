@@ -7,10 +7,9 @@ SoundCharts draws charts from `s100 tiles serve`, run out of process. The
 add-in ships a pinned s100 build (design brief D21), one for each Windows
 runtime: win-arm64 runs natively on Arm64 Windows, win-x64 everywhere else.
 
-EncDotNet.S100 releases serve WMTS from v0.30.0, but the add-in needs
-`tiles serve` changes newer than the latest release, such as each dataset's
-time selection, and the nightly release's assets are replaced every night,
-so the pin is a commit:
+The pin is a commit, so it can run ahead of the latest EncDotNet.S100
+release when the add-in needs a `tiles serve` change before it ships, and
+the nightly release's assets are replaced every night:
 tools/s100-server.json names the repository, the commit and the version to
 stamp. This script fetches that commit and publishes the CLI self-contained
 for each runtime into artifacts/server/<rid>/. The add-in project packages
