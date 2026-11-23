@@ -39,3 +39,6 @@ SoundCharts charts are not for navigation.
   install it into Pro.
 - [SoundCharts Tools](toolbox.md): the geoprocessing tools, their parameters
   and how to run them from Python.
+- [Show a hurricane crossing a port](hurricane-showcase.md): download a
+  storm, wave forecast and harbour charts, and step through a landfall with
+  the time slider.
