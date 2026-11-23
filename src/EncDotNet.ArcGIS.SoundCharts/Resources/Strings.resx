@@ -1020,6 +1020,20 @@
   <data name="Library_AddToMap" xml:space="preserve">
     <value>Add to Map</value>
   </data>
+  <data name="Library_AddAllToMap" xml:space="preserve">
+    <value>Add All to Map</value>
+  </data>
+  <data name="Library_AddAllConfirmFormat" xml:space="preserve">
+    <value>Add {0} datasets to the map? The chart server reads every dataset it's given, so this can take a while.</value>
+    <comment>{0} is a number of datasets.</comment>
+  </data>
+  <data name="Library_AddAllNothing" xml:space="preserve">
+    <value>None of these datasets are on this computer. Refresh the Library to update it.</value>
+  </data>
+  <data name="Library_AddAllSkippedFormat" xml:space="preserve">
+    <value>{0} file(s) weren't there any more and were skipped; the SoundCharts Log lists them. Refresh the Library to update it.</value>
+    <comment>{0} is a number of files.</comment>
+  </data>
   <data name="Library_ShowFootprint" xml:space="preserve">
     <value>Show Footprint</value>
   </data>
@@ -1055,6 +1069,9 @@
   </data>
   <data name="Tooltip_LibraryAddToMap" xml:space="preserve">
     <value>Add the selected dataset to the active map as a SoundCharts chart. A dataset in a .zip adds its whole exchange set.</value>
+  </data>
+  <data name="Tooltip_LibraryAddAllToMap" xml:space="preserve">
+    <value>Add every dataset in the selected collection or source to the active map as SoundCharts charts. With a filter, only the datasets it shows.</value>
   </data>
   <data name="Tooltip_LibraryShowFootprint" xml:space="preserve">
     <value>Show where the selected dataset is on the active map, from the Library's index.</value>

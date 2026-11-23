@@ -20,17 +20,22 @@ namespace EncDotNet.SoundCharts;
 /// EncDotNet.S100 dataset collections. Collections, their sources and their
 /// indexed datasets in a tree, the selected dataset's details, and the
 /// actions <b>Add to Map</b>, <b>Show Footprint</b>, <b>Validate</b> and
-/// <b>Open Containing Folder</b>. Nothing is loaded until asked.
+/// <b>Open Containing Folder</b>; for a collection or source,
+/// <b>Add All to Map</b>. Nothing is loaded until asked.
 /// </summary>
 internal sealed class LibraryPaneViewModel : DockPane
 {
     private const string DockPaneId = "SoundCharts_LibraryPane";
+
+    /// <summary>Above this many datasets, Add All to Map asks first.</summary>
+    private const int AddAllConfirmThreshold = 100;
 
     private readonly LibraryFootprintOverlay _footprint = new();
     private string _filterText = string.Empty;
     private LibraryNode? _selectedNode;
     private string? _selectedId;
     private LibraryDatasetDetails? _details;
+    private IReadOnlyList<EncDotNet.S100.Collections.Library.LibraryItemState> _groupItems = [];
     private bool _subscribed;
     private int _rebuildQueued;
 
@@ -43,6 +48,7 @@ internal sealed class LibraryPaneViewModel : DockPane
         RefreshCommand = new RelayCommand(Refresh);
         RemoveCommand = new RelayCommand(Remove, () => _selectedNode?.Kind is LibraryNodeKind.Collection or LibraryNodeKind.Source);
         AddToMapCommand = new RelayCommand(AddToMapAsync, () => _selectedNode?.Item is not null && MapView.Active is not null);
+        AddAllToMapCommand = new RelayCommand(AddAllToMapAsync, () => _groupItems.Count > 0 && MapView.Active is not null);
         AddFeatureLayersCommand = new RelayCommand(AddFeatureLayersAsync, () => _selectedNode?.Item is not null && MapView.Active is not null);
         ShowFootprintCommand = new RelayCommand(ShowFootprintAsync, () => _selectedNode?.Item is not null);
         ValidateCommand = new RelayCommand(ValidateAsync, () => _selectedNode?.Item is not null && !IsValidating);
@@ -74,6 +80,7 @@ internal sealed class LibraryPaneViewModel : DockPane
             if (SetProperty(ref _selectedNode, value))
             {
                 _selectedId = value?.Id;
+                UpdateGroup();
                 UpdateDetails(readTimeSteps: true);
                 CommandManager.InvalidateRequerySuggested();
             }
@@ -98,7 +105,16 @@ internal sealed class LibraryPaneViewModel : DockPane
     public bool HasDetails => _details is not null;
 
     /// <summary>Gets whether the details panel shows <b>Select a dataset to see its details</b>.</summary>
-    public bool ShowPlaceholder => _details is null && !IsEmpty;
+    public bool ShowPlaceholder => _details is null && !HasGroup && !IsEmpty;
+
+    /// <summary>Gets whether a collection or source is selected, with its <b>Add All to Map</b>.</summary>
+    public bool HasGroup => _selectedNode?.Kind is LibraryNodeKind.Collection or LibraryNodeKind.Source;
+
+    /// <summary>
+    /// Gets how many datasets <b>Add All to Map</b> adds for the selected
+    /// collection or source: those the filter shows, or <see langword="null"/>.
+    /// </summary>
+    public string? GroupSummary => HasGroup ? LibraryTreeBuilder.DatasetCount(_groupItems.Count) : null;
 
     /// <summary>Gets whether the library has no collections.</summary>
     public bool IsEmpty => LibraryHost.Library.Collections.Count == 0;
@@ -123,6 +139,9 @@ internal sealed class LibraryPaneViewModel : DockPane
 
     /// <summary>Gets the <b>Add to Map</b> command.</summary>
     public ICommand AddToMapCommand { get; }
+
+    /// <summary>Gets the <b>Add All to Map</b> command: every dataset the tree shows under the selected collection or source.</summary>
+    public ICommand AddAllToMapCommand { get; }
 
     /// <summary>Gets the <b>Add as Feature Layers</b> command (issue #15).</summary>
     public ICommand AddFeatureLayersCommand { get; }
@@ -252,9 +271,20 @@ internal sealed class LibraryPaneViewModel : DockPane
         _selectedNode = nodes.SelectMany(n => n.SelfAndDescendants()).FirstOrDefault(n => n.Id == _selectedId);
         NotifyPropertyChanged(nameof(SelectedNode));
         NotifyPropertyChanged(nameof(IsEmpty));
-        NotifyPropertyChanged(nameof(ShowPlaceholder));
+        UpdateGroup();
         UpdateDetails(readTimeSteps: true);
         CommandManager.InvalidateRequerySuggested();
+    }
+
+    private void UpdateGroup()
+    {
+        // The datasets the tree shows under the row, so a filter narrows what's added.
+        _groupItems = HasGroup && _selectedNode is { } node
+            ? [.. node.SelfAndDescendants().Select(n => n.Item).OfType<EncDotNet.S100.Collections.Library.LibraryItemState>()]
+            : [];
+        NotifyPropertyChanged(nameof(HasGroup));
+        NotifyPropertyChanged(nameof(GroupSummary));
+        NotifyPropertyChanged(nameof(ShowPlaceholder));
     }
 
     private void UpdateDetails(bool readTimeSteps)
@@ -399,6 +429,57 @@ internal sealed class LibraryPaneViewModel : DockPane
         catch (Exception ex)
         {
             Fail("Add to Map", ex);
+        }
+    }
+
+    private async Task AddAllToMapAsync()
+    {
+        try
+        {
+            if (_groupItems.Count == 0 || MapView.Active is not { } view)
+            {
+                return;
+            }
+
+            // Each file once, and a zipped exchange set once however many of its datasets.
+            var paths = LibraryItemPaths.AddToMapPaths(_groupItems.Select(s => s.Item));
+            var missing = paths.Where(p => !LibraryItemPaths.Exists(p)).ToList();
+            foreach (var path in missing)
+            {
+                AddInLog.Write(LogLevel.Warning, $"SoundCharts Library: Add All to Map skipped {path}: it isn't there any more.");
+            }
+
+            var present = paths.Except(missing, StringComparer.OrdinalIgnoreCase).ToList();
+            if (present.Count == 0)
+            {
+                Say(Strings.Library_AddAllNothing, MessageBoxImage.Information);
+                return;
+            }
+
+            if (_groupItems.Count > AddAllConfirmThreshold)
+            {
+                var answer = MessageBox.Show(
+                    string.Format(CultureInfo.CurrentCulture, Strings.Library_AddAllConfirmFormat, _groupItems.Count),
+                    Strings.Library_Caption,
+                    MessageBoxButton.OKCancel,
+                    MessageBoxImage.Question);
+                if (answer != MessageBoxResult.OK)
+                {
+                    return;
+                }
+            }
+
+            AddInLog.Write($"SoundCharts Library: adding {present.Count} path(s) from {_selectedNode?.Title} to the map.");
+            await AddSoundChartsData.RunAsync(view, present);
+
+            if (missing.Count > 0)
+            {
+                Say(string.Format(CultureInfo.CurrentCulture, Strings.Library_AddAllSkippedFormat, missing.Count), MessageBoxImage.Warning);
+            }
+        }
+        catch (Exception ex)
+        {
+            Fail("Add All to Map", ex);
         }
     }
 

@@ -334,7 +334,8 @@
         <RowDefinition Height="Auto" />
         <RowDefinition Height="*" MinHeight="80" />
         <RowDefinition Height="Auto" />
-        <RowDefinition Height="*" MinHeight="80" />
+        <!-- Room for the sticky header and its buttons at least. -->
+        <RowDefinition Height="*" MinHeight="120" />
       </Grid.RowDefinitions>
 
       <!-- The viewer's filter. -->
@@ -364,17 +365,46 @@
                     Style="{StaticResource SC_Splitter}"
                     AutomationProperties.AutomationId="Library.Splitter" />
 
-      <!-- The selected dataset: its details and actions. -->
-      <ScrollViewer Grid.Row="3"
-                    VerticalScrollBarVisibility="Auto"
-                    HorizontalScrollBarVisibility="Disabled"
-                    Focusable="False"
-                    AutomationProperties.AutomationId="Library.Details"
-                    AutomationProperties.Name="{x:Static res:Strings.Library_Details}">
-        <StackPanel Margin="0,8,0,0">
+      <!-- The selection's header and actions stay put; only the dataset's
+           properties scroll under them. -->
+      <Grid Grid.Row="3" Margin="0,8,0,0">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
           <TextBlock Text="{x:Static res:Strings.Library_SelectItemPlaceholder}"
                      Style="{StaticResource SC_Caption}"
                      Visibility="{Binding ShowPlaceholder, Converter={StaticResource BooleanToVisibility}}" />
+
+          <!-- A collection or source: its name, how many datasets, and Add All to Map. -->
+          <StackPanel Visibility="{Binding HasGroup, Converter={StaticResource BooleanToVisibility}}">
+            <DockPanel>
+              <ContentControl DockPanel.Dock="Left"
+                              Content="{Binding SelectedNode.ProductTag}"
+                              Style="{StaticResource SC_OptionalProductTag}"
+                              Margin="0,0,4,0" />
+              <TextBlock Text="{Binding SelectedNode.Title}" Style="{StaticResource SC_Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+            </DockPanel>
+            <TextBlock Text="{Binding GroupSummary}" Style="{StaticResource SC_OptionalCaption}" Margin="0,2,0,0" />
+            <WrapPanel Margin="0,8,0,0">
+              <Button ToolTip="{x:Static res:Strings.Tooltip_LibraryAddAllToMap}"
+                      Command="{Binding AddAllToMapCommand}"
+                      Style="{DynamicResource Esri_Button}"
+                      Height="{StaticResource SC_ControlHeight}"
+                      MinWidth="0"
+                      Padding="{StaticResource DetailsButtonPadding}"
+                      AutomationProperties.Name="{x:Static res:Strings.Library_AddAllToMap}"
+                      AutomationProperties.AutomationId="Library.AddAllToMap"
+                      AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_LibraryAddAllToMap}">
+                <StackPanel Orientation="Horizontal">
+                  <Path Style="{StaticResource SC_Glyph}" Data="{StaticResource SC_GlyphAdd}" Margin="0,0,4,0" />
+                  <TextBlock Text="{x:Static res:Strings.Library_AddAllToMap}" VerticalAlignment="Center" />
+                </StackPanel>
+              </Button>
+            </WrapPanel>
+          </StackPanel>
 
           <StackPanel DataContext="{Binding Details}"
                       Visibility="{Binding DataContext.HasDetails, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibility}}">
@@ -462,49 +492,58 @@
                             AutomationProperties.AutomationId="Library.NotForNavigation"
                             AutomationProperties.Name="{x:Static res:Strings.Library_NotForNavigation}"
                             AutomationProperties.HelpText="{x:Static res:Strings.Library_NotForNavigationToolTip}" />
-
-            <!-- One label column across the groups. -->
-            <ItemsControl ItemsSource="{Binding Groups}" Focusable="False" Grid.IsSharedSizeScope="True">
-              <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <StackPanel>
-                    <ContentControl Content="{Binding Header}" Style="{StaticResource SC_SectionHeader}" />
-                    <ItemsControl ItemsSource="{Binding Fields}" Style="{StaticResource SC_FieldGrid}" Grid.IsSharedSizeScope="False">
-                      <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                          <Grid Margin="{StaticResource SC_FieldRowMargin}">
-                            <Grid.ColumnDefinitions>
-                              <ColumnDefinition Width="Auto" SharedSizeGroup="SC_FieldLabel" MaxWidth="200" />
-                              <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Label}" Style="{StaticResource SC_FieldLabel}" />
-                            <StackPanel Grid.Column="1">
-                              <StackPanel Orientation="Horizontal">
-                                <controls:CircularAnimationControl Width="{StaticResource SC_GlyphSizeSmall}"
-                                                                   Height="{StaticResource SC_GlyphSizeSmall}"
-                                                                   VerticalAlignment="Center"
-                                                                   Margin="0,0,4,0"
-                                                                   Visibility="{Binding IsWorking, Converter={StaticResource BooleanToVisibility}}" />
-                                <ContentControl Style="{StaticResource StatusChip}"
-                                                Content="{Binding Chip}"
-                                                AutomationProperties.Name="{Binding Chip}"
-                                                AutomationProperties.HelpText="{Binding Label}" />
-                              </StackPanel>
-                              <TextBox Text="{Binding Value, Mode=OneWay}"
-                                       Style="{StaticResource DetailValue}"
-                                       AutomationProperties.Name="{Binding Label}" />
-                            </StackPanel>
-                          </Grid>
-                        </DataTemplate>
-                      </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                  </StackPanel>
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
           </StackPanel>
         </StackPanel>
-      </ScrollViewer>
+
+        <!-- The selected dataset's properties. -->
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Focusable="False"
+                      Visibility="{Binding HasDetails, Converter={StaticResource BooleanToVisibility}}"
+                      AutomationProperties.AutomationId="Library.Details"
+                      AutomationProperties.Name="{x:Static res:Strings.Library_Details}">
+          <!-- One label column across the groups. -->
+          <ItemsControl DataContext="{Binding Details}" ItemsSource="{Binding Groups}" Focusable="False" Grid.IsSharedSizeScope="True" Margin="0,0,0,8">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <StackPanel>
+                  <ContentControl Content="{Binding Header}" Style="{StaticResource SC_SectionHeader}" />
+                  <ItemsControl ItemsSource="{Binding Fields}" Style="{StaticResource SC_FieldGrid}" Grid.IsSharedSizeScope="False">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <Grid Margin="{StaticResource SC_FieldRowMargin}">
+                          <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SC_FieldLabel" MaxWidth="200" />
+                            <ColumnDefinition Width="*" />
+                          </Grid.ColumnDefinitions>
+                          <TextBlock Text="{Binding Label}" Style="{StaticResource SC_FieldLabel}" />
+                          <StackPanel Grid.Column="1">
+                            <StackPanel Orientation="Horizontal">
+                              <controls:CircularAnimationControl Width="{StaticResource SC_GlyphSizeSmall}"
+                                                                 Height="{StaticResource SC_GlyphSizeSmall}"
+                                                                 VerticalAlignment="Center"
+                                                                 Margin="0,0,4,0"
+                                                                 Visibility="{Binding IsWorking, Converter={StaticResource BooleanToVisibility}}" />
+                              <ContentControl Style="{StaticResource StatusChip}"
+                                              Content="{Binding Chip}"
+                                              AutomationProperties.Name="{Binding Chip}"
+                                              AutomationProperties.HelpText="{Binding Label}" />
+                            </StackPanel>
+                            <TextBox Text="{Binding Value, Mode=OneWay}"
+                                     Style="{StaticResource DetailValue}"
+                                     AutomationProperties.Name="{Binding Label}" />
+                          </StackPanel>
+                        </Grid>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
     </Grid>
 
     <!-- The empty Library: what it's for, how to add to it, and where to drop. -->

@@ -918,6 +918,18 @@ public static class Strings
     /// <summary>Gets the Add to Map button's text.</summary>
     public static string Library_AddToMap => Get(nameof(Library_AddToMap));
 
+    /// <summary>Gets the Add All to Map button's text, for a collection or source.</summary>
+    public static string Library_AddAllToMap => Get(nameof(Library_AddAllToMap));
+
+    /// <summary>Gets the question before Add All to Map adds many datasets: <c>{0}</c> is how many.</summary>
+    public static string Library_AddAllConfirmFormat => Get(nameof(Library_AddAllConfirmFormat));
+
+    /// <summary>Gets the message when none of a collection's datasets are on this computer.</summary>
+    public static string Library_AddAllNothing => Get(nameof(Library_AddAllNothing));
+
+    /// <summary>Gets the message when Add All to Map skipped missing files: <c>{0}</c> is how many.</summary>
+    public static string Library_AddAllSkippedFormat => Get(nameof(Library_AddAllSkippedFormat));
+
     /// <summary>Gets the Show Footprint button's text.</summary>
     public static string Library_ShowFootprint => Get(nameof(Library_ShowFootprint));
 
@@ -950,6 +962,9 @@ public static class Strings
 
     /// <summary>Gets the Remove button's tooltip.</summary>
     public static string Tooltip_LibraryRemove => Get(nameof(Tooltip_LibraryRemove));
+
+    /// <summary>Gets the Add All to Map button's tooltip.</summary>
+    public static string Tooltip_LibraryAddAllToMap => Get(nameof(Tooltip_LibraryAddAllToMap));
 
     /// <summary>Gets the Add to Map button's tooltip.</summary>
     public static string Tooltip_LibraryAddToMap => Get(nameof(Tooltip_LibraryAddToMap));

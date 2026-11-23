@@ -703,7 +703,8 @@ Proposed, for the slices to cite once accepted.
    level filters, **Copy all** with paths redacted, **Open Log Folder**.
 9. **D9 Library pane.** The viewer's Library model (sources, indexed
    datasets, nothing loaded until asked) with the actions **Add to Map**,
-   **Show Footprint**, **Validate**, **Open Containing Folder**. Drag and drop
+   **Show Footprint**, **Validate**, **Open Containing Folder**, and **Add
+   All to Map** for a collection or source. Drag and drop
    onto the pane only.
 
 ### Layer model
