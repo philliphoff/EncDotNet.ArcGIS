@@ -72,7 +72,9 @@ upstream changes.
   other mariner setting.
 - **Time**: a WMTS `Time` dimension (REST segment after the style, or KVP
   `TIME=`), and `TIME` on WMS. Time snaps to each dataset's nearest step;
-  out of range it snaps to the last step without saying so.
+  out of range it snaps to the last step without saying so. (Since
+  EncDotNet.S100 #1686, each dataset picks its step by its own time
+  selection, and a tropical cyclone draws at the time itself; see §6.3.)
 - **Datasets are fixed at start.** The server re-checks files every
   `--refresh` seconds and reloads when they change, but has no call to add
   or remove a dataset.
@@ -515,13 +517,27 @@ Pro's time is converted to UTC before snapping; the server takes UTC.
 
 ### 6.3 Snapping and out of range
 
-- **Snap to the nearest step**, per layer, from the steps the add-in reads
-  from the datasets in-process (cheap metadata, §1.1). The server snaps each
-  dataset to its own nearest step, which is the same rule, so the URL's time
-  is the layer's nearest step and the server's choice per dataset is
-  unchanged.
-- **In range** means within half a step of the first or last step. Between
-  steps the nearest is drawn, as SoundCharts does.
+- **Snap per layer by its time selection** (issue #64). The server reports
+  each time-varying dataset's selection in `/datasets` and TileJSON
+  (EncDotNet.S100 #1686) and picks each dataset's step by it; the add-in
+  resolves map time the same way, so the URL's time is what the server
+  draws:
+  - **nearest** (S-111, GRIB2, NetCDF): the nearest step;
+  - **at or before** (S-104, S-411, S-412, CAP, surface analyses): the
+    latest step at or before map time, never a later one, so a warning
+    isn't drawn before it's in force;
+  - **continuous** (tropical cyclones): map time itself, rounded down to 15
+    minutes so Pro's tile cache still hits. The storm moves between forecast
+    points and is drawn on its past track before them, over the dataset's
+    `timeRange`. Its steps, the forecast points, are only what **‹ Previous
+    data** and **Next data ›** step between.
+
+  A layer whose datasets select differently is continuous when any is,
+  otherwise at or before.
+- **In range** means within half a step of the first or last step for a
+  nearest layer, up to one step after the last for an at-or-before layer,
+  and the server's `timeRange` for a continuous layer. Between steps the
+  nearest is drawn, as SoundCharts does.
 - **Out of range**, the layer draws nothing, and says so. The add-in points
   the layer's time segment at an out-of-range time once U6 lands, so the
   server answers empty tiles; until then it turns the layer's drawing off
@@ -558,10 +574,10 @@ question P5 if users ask for it.
 | Others (S-101, S-102, S-122...), and datasets with one time step | None | Nothing |
 
 The rule is the dataset's time steps, not its product name: a product
-upstream makes time-aware joins **Weather** without a change here. The
-add-in still snaps to the nearest step. A cyclone moving smoothly between
-forecast points needs the server to draw at map time rather than at a step
-(issue #64).
+upstream makes time-aware joins **Weather** without a change here. How map
+time picks the step is the dataset's time selection (§6.3): a cyclone moves
+smoothly between forecast points (issue #64). Outside its range a cyclone's
+cone and track still draw, without the storm, so its layer isn't hidden.
 
 ### 6.6 Previous and next data
 
@@ -810,7 +826,9 @@ Proposed, for the slices to cite once accepted.
     active map view. The **Coverage** layer is time-enabled to give the
     slider the data's extent and step.
 30. **D30 Instant and snapping.** The instant is the end of Pro's map time
-    range, in UTC, snapped per layer to the nearest step.
+    range, in UTC, snapped per layer by its time selection: the nearest
+    step, the step at or before it, or for a tropical cyclone the instant
+    itself, rounded down to 15 minutes (issue #64).
 31. **D31 Out of range.** More than half a step outside the range, or more
     than one step from the nearest step inside it, a layer draws nothing and
     says "No data at map time · last {time}, {span} earlier" (or "next ...

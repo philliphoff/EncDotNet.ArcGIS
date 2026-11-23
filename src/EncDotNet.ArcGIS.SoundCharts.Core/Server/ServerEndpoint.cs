@@ -56,6 +56,12 @@ public sealed record ServerEndpoint
     public Uri TileJsonUri => new(BaseUri, "tiles.json");
 
     /// <summary>
+    /// Gets the dataset metadata document: each dataset's bounds, time steps
+    /// and, for time-varying data, its time selection and range.
+    /// </summary>
+    public Uri DatasetsUri => new(BaseUri, "datasets");
+
+    /// <summary>
     /// Gets the RESTful WMTS tile template for <paramref name="style"/> (a
     /// palette: <c>day</c>, <c>dusk</c> or <c>night</c>), with the OGC
     /// <c>{TileMatrix}</c>, <c>{TileRow}</c> and <c>{TileCol}</c> placeholders.

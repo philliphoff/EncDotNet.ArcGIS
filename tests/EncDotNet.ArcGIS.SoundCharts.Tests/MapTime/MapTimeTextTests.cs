@@ -60,6 +60,25 @@ public class MapTimeTextTests
             MapTimeText.Describe("Surface currents", status));
     }
 
+    [Theory]
+    [InlineData(2022, 9, 28, 3, "Weather · est. 28 Sep 2022 03:00 UTC, between forecast points")]
+    [InlineData(2022, 9, 28, 12, "Weather · 28 Sep 2022 12:00 UTC")]
+    [InlineData(2022, 9, 25, 12, "Weather · 25 Sep 2022 12:00 UTC · best track")]
+    [InlineData(2022, 10, 5, 0, "Weather · Beyond forecast · last forecast point 2 Oct 2022 00:00 UTC, 3 days earlier")]
+    [InlineData(2022, 9, 21, 18, "Weather · Before track · track starts 22 Sep 2022 18:00 UTC, 24 h later")]
+    public void Describe_AStormSaysWhereItIsOnItsTrack(int year, int month, int day, int hour, string expected)
+    {
+        // Issue #64: Hurricane Ian advisory 20, forecast points 28 Sep 00Z to
+        // 2 Oct 00Z, past track from 22 Sep 18Z.
+        using var culture = new CultureScope("en-US");
+        var ian = TimeSteps.Create(
+            [Utc(2022, 9, 28, 0), Utc(2022, 9, 28, 12), Utc(2022, 9, 29, 0), Utc(2022, 10, 2, 0)],
+            TimeSelection.Continuous,
+            (Utc(2022, 9, 22, 18), Utc(2022, 10, 2, 0)))!;
+
+        Assert.Equal(expected, MapTimeText.Describe("Weather", ian.Resolve(Utc(year, month, day, hour))));
+    }
+
     [Fact]
     public void Summarize_SaysWhenThereIsNothingToFollow()
     {
@@ -78,6 +97,8 @@ public class MapTimeTextTests
 
         Assert.Equal(2, summary.Split(Environment.NewLine).Length);
     }
+
+    private static DateTime Utc(int year, int month, int day, int hour) => new(year, month, day, hour, 0, 0, DateTimeKind.Utc);
 
     private sealed class CultureScope : IDisposable
     {

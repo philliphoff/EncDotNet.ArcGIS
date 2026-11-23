@@ -135,10 +135,11 @@ point, after the landfall.
 At each step, look at:
 
 - **The storm.** The advisory's forecast points are at 12:00 UTC on 9 October
-  and 00:00 UTC on 10 October, the hour of landfall. The storm, drawn in a
-  ring with its class, wind and pressure, and its 34, 50 and 64 knot wind
-  radii, sit on one of those points. The cone and the forecast track don't
-  move.
+  and 00:00 UTC on 10 October, the hour of landfall. Between them, the
+  storm, drawn in a ring with its class, wind and pressure, and its 34, 50
+  and 64 knot wind radii, moves along the forecast track each hour, at a
+  position estimated between the points: its ring is dashed and its label
+  says "est.". The cone and the forecast track don't move.
 - **The wind and waves.** The wind barbs and the wave height fill change every
   hour, as the winds turn around the storm.
 - **The charts.** The Chart layer doesn't follow map time. Zoom in for the
@@ -147,16 +148,11 @@ At each step, look at:
 **Go to Nearest Data**'s tooltip names the time the **Weather** layer draws,
 such as "Weather · 10 Oct 2024 00:00 UTC".
 
-> [!NOTE]
-> Between forecast points the storm stays on the earlier point, so it jumps
-> from 12:00 UTC on 9 October to 00:00 UTC on 10 October rather than moving
-> along the track
-> ([#64](https://github.com/philliphoff/EncDotNet.ArcGIS/issues/64)).
-
-> [!NOTE]
-> The wave height fill is drawn north of where it belongs, by about 3.5° at
-> Tampa Bay's latitude, so it covers the Florida peninsula. The wind barbs
-> are in the right place.
+The storm draws at map time itself, rounded down to a quarter of an hour, so
+you can also drag the time slider between the steps. Before the advisory,
+the storm is drawn on its past track, from the best track. Before the track
+starts or after the last forecast point, the cone and track still draw,
+without the storm, and the tooltip says "Before track" or "Beyond forecast".
 
 ## Gather another storm
 

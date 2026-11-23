@@ -292,7 +292,7 @@ internal sealed partial class ChartLayerManager
 
         var tileJson = await ReadTileJsonAsync(endpoint, lease.Server.LogSource).ConfigureAwait(false);
         var minScale = TileJsonZoom.MinScale(ReadMinZoom(tileJson, lease.Server.LogSource));
-        var steps = ReadSteps(tileJson, lease.Server.LogSource);
+        var steps = await ReadStepsAsync(endpoint, tileJson, lease.Server.LogSource).ConfigureAwait(false);
         var definition = new ChartLayerDefinition(
             marker, endpoint.WmtsCapabilitiesUri, Style: Settings.Effective.Style, MinScale: minScale, ServerVersion: ServerVersion);
         return new Prepared(lease, definition, steps);
@@ -318,18 +318,35 @@ internal sealed partial class ChartLayerManager
         return minZoom;
     }
 
-    /// <summary>The time steps the server advertises (A8, §6.3), or <see langword="null"/> for a chart without time.</summary>
-    private static TimeSteps? ReadSteps(string? tileJson, string logSource)
+    /// <summary>
+    /// The time steps the server advertises (A8, §6.3), with how its datasets
+    /// pick what they draw and, for a storm, the range it draws in (issue
+    /// #64), from <c>/datasets</c>; <see langword="null"/> for a chart without time.
+    /// </summary>
+    private static async Task<TimeSteps?> ReadStepsAsync(ServerEndpoint endpoint, string? tileJson, string logSource)
     {
-        var steps = TimeSteps.TryReadTileJson(tileJson);
-        if (steps is not null)
+        if (TimeSteps.TryReadTileJson(tileJson) is not { } steps)
         {
-            SoundChartsSession.Log.Write(
-                LogLevel.Debug,
-                logSource,
-                $"{steps.Steps.Count} time step(s), {MapTimeText.FormatTime(steps.First)} to {MapTimeText.FormatTime(steps.Last)}, every {MapTimeText.FormatSpan(steps.Interval)}.");
+            return null;
         }
 
+        try
+        {
+            var datasets = await Http.GetStringAsync(endpoint.DatasetsUri).ConfigureAwait(false);
+            steps = steps.With(DatasetTimes.TryRead(datasets));
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+        {
+            // TileJSON's selections are enough; only a storm's past track is lost.
+            SoundChartsSession.Log.Write(LogLevel.Warning, logSource, $"Couldn't read the datasets: {ex.Message}");
+        }
+
+        var (start, end) = steps.Range;
+        SoundChartsSession.Log.Write(
+            LogLevel.Debug,
+            logSource,
+            $"{steps.Steps.Count} time step(s), {MapTimeText.FormatTime(steps.First)} to {MapTimeText.FormatTime(steps.Last)}, every {MapTimeText.FormatSpan(steps.Interval)}; "
+            + $"{TimeSelections.Name(steps.Selection)}, data from {MapTimeText.FormatTime(start)} to {MapTimeText.FormatTime(end)}.");
         return steps;
     }
 

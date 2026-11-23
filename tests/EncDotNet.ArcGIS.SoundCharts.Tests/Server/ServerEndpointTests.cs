@@ -15,6 +15,7 @@ public class ServerEndpointTests
             Endpoint.WmtsCapabilitiesUri.AbsoluteUri);
         Assert.Equal("http://127.0.0.1:52448/Zm9vYmFyYmF6cXV4cXV1eA-3f9a1c02/wms", Endpoint.WmsUri.AbsoluteUri);
         Assert.Equal("http://127.0.0.1:52448/Zm9vYmFyYmF6cXV4cXV1eA-3f9a1c02/tiles.json", Endpoint.TileJsonUri.AbsoluteUri);
+        Assert.Equal("http://127.0.0.1:52448/Zm9vYmFyYmF6cXV4cXV1eA-3f9a1c02/datasets", Endpoint.DatasetsUri.AbsoluteUri);
     }
 
     [Fact]

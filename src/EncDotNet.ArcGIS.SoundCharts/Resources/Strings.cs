@@ -300,6 +300,18 @@ public static class Strings
     /// <summary>Gets the no-data text pointing forward: <c>{0}</c> the next step, <c>{1}</c> the span.</summary>
     public static string Status_NoDataNext => Get(nameof(Status_NoDataNext));
 
+    /// <summary>Gets a storm's status between forecast points: <c>{0}</c> the layer, <c>{1}</c> the time drawn.</summary>
+    public static string Status_LayerEstimated => Get(nameof(Status_LayerEstimated));
+
+    /// <summary>Gets a storm's status on its past track: <c>{0}</c> the layer, <c>{1}</c> the time drawn.</summary>
+    public static string Status_LayerBestTrack => Get(nameof(Status_LayerBestTrack));
+
+    /// <summary>Gets a storm's text after its last forecast point: <c>{0}</c> the point, <c>{1}</c> the span.</summary>
+    public static string Status_BeyondForecast => Get(nameof(Status_BeyondForecast));
+
+    /// <summary>Gets a storm's text before its track starts: <c>{0}</c> the start, <c>{1}</c> the span.</summary>
+    public static string Status_BeforeTrack => Get(nameof(Status_BeforeTrack));
+
     /// <summary>Gets the time status when the map has no time layers.</summary>
     public static string Status_NoTimeLayers => Get(nameof(Status_NoTimeLayers));
 

@@ -37,7 +37,11 @@ public static class MapTimeText
     /// <summary>
     /// Describes a layer's status: <c>Water level · 17 Dec 2025 13:00 UTC</c>
     /// with data, and with none the viewer's "No data at map time · last
-    /// {time}, {span} earlier" (or "next {time}, {span} later").
+    /// {time}, {span} earlier" (or "next {time}, {span} later"). A storm
+    /// (<see cref="TimeSelection.Continuous"/>) has the viewer's words for
+    /// one: "est. {time}, between forecast points", "{time} · best track",
+    /// and outside its range, where its cone and track still draw, "Beyond
+    /// forecast" or "Before track".
     /// </summary>
     /// <param name="layerName">The layer's name, such as <b>Water level</b>.</param>
     /// <param name="status">The layer's status.</param>
@@ -48,11 +52,22 @@ public static class MapTimeText
         ArgumentNullException.ThrowIfNull(status);
         if (status.Step is { } step)
         {
-            return Format(Strings.Status_LayerAtTime, layerName, FormatTime(step, format));
+            var text = status.IsBeforeSteps ? Strings.Status_LayerBestTrack
+                : status.IsBetweenSteps ? Strings.Status_LayerEstimated
+                : Strings.Status_LayerAtTime;
+            return Format(text, layerName, FormatTime(step, format));
         }
 
         // Point to the nearer side, as Go to Nearest Data goes there.
         var nearest = status.Nearest;
+        if (status.Selection == TimeSelection.Continuous && nearest is { } end)
+        {
+            var outside = end <= status.Instant
+                ? Format(Strings.Status_BeyondForecast, FormatTime(end, format), FormatSpan(status.Instant - end))
+                : Format(Strings.Status_BeforeTrack, FormatTime(end, format), FormatSpan(end - status.Instant));
+            return Format(Strings.Status_LayerNoData, layerName, outside);
+        }
+
         var noData = nearest switch
         {
             null => Strings.Status_NoData,

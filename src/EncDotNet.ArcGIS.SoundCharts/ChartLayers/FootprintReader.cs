@@ -171,8 +171,8 @@ public sealed class FootprintReader : IDisposable
     /// <param name="timeSteps">
     /// Whether to take the first and last time from the processor's time
     /// steps rather than the metadata's time coverage: the steps are what the
-    /// chart server draws, and a dataset's coverage can be wider (a storm's
-    /// past track).
+    /// chart server draws. A storm's start is its past track's, as the
+    /// server's <c>timeRange</c> says.
     /// </param>
     private void ReadWithProcessor(string path, Found read, bool timeSteps)
     {
@@ -189,6 +189,14 @@ public sealed class FootprintReader : IDisposable
             {
                 read.FirstTime = steps.Min();
                 read.LastTime = steps.Max();
+
+                // A storm draws from its past track on (issue #64): the
+                // server's timeRange starts its validity before the first
+                // forecast point, as upstream's TimeStepSelector.RangeOf does.
+                if (timed.TimeSemantics is { Selection: TimeStepSelection.Continuous, Validity: { } lead } && lead > TimeSpan.Zero)
+                {
+                    read.FirstTime -= lead;
+                }
             }
             else if (metadata.TimeCoverage is { } time)
             {
