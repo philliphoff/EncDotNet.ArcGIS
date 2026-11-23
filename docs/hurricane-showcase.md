@@ -154,11 +154,6 @@ the storm is drawn on its past track, from the best track. Before the track
 starts or after the last forecast point, the cone and track still draw,
 without the storm, and the tooltip says "Before track" or "Beyond forecast".
 
-> [!NOTE]
-> The wave height fill is drawn north of where it belongs, by about 3.5° at
-> Tampa Bay's latitude, so it covers the Florida peninsula. The wind barbs
-> are in the right place.
-
 ## Gather another storm
 
 The script takes the storm, the hours and the area as parameters, so it can
