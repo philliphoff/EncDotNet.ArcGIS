@@ -4,6 +4,8 @@
   href: install.md
 - name: SoundCharts Tools
   href: toolbox.md
+- name: Show a hurricane crossing a port
+  href: hurricane-showcase.md
 - name: Contributing
   items:
     - name: C# coding style
