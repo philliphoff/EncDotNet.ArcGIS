@@ -90,6 +90,39 @@ public class LibraryDatasetDetailsBuilderTests
     }
 
     [Fact]
+    public void Build_WeatherDataset_ReadsItsTimeSteps()
+    {
+        // Issue #62: any dataset whose index gives a time window, not only S-104 and S-111.
+        var item = Item("al092022_5day_020", product: "TC", properties: new Dictionary<string, string>
+        {
+            ["timeStart"] = "2022-09-28T00:00:00Z",
+            ["timeEnd"] = "2022-10-02T00:00:00Z",
+        });
+        var state = new LibraryItemState(item, Source(@"C:\storms", item));
+
+        var details = LibraryDatasetDetailsBuilder.Build(state, null, DatasetValidation.NotValidated, timeSteps: null);
+
+        Assert.True(LibraryDatasetDetailsBuilder.HasTimeSteps(state));
+        Assert.Contains(details.Groups[1].Fields, f => f.Label == "Time steps" && f.Value == "Reading...");
+    }
+
+    [Fact]
+    public void HasTimeSteps_WaterLevelWithoutATimeWindow_StillReads()
+    {
+        var item = Item("104US004SC1BO", product: "S-104");
+
+        Assert.True(LibraryDatasetDetailsBuilder.HasTimeSteps(new LibraryItemState(item, Source(@"C:\charts", item))));
+    }
+
+    [Fact]
+    public void HasTimeSteps_ChartCell_IsNotOpenedForSteps()
+    {
+        var item = Item("101AA00DS0003");
+
+        Assert.False(LibraryDatasetDetailsBuilder.HasTimeSteps(new LibraryItemState(item, Source(@"C:\charts", item))));
+    }
+
+    [Fact]
     public void Build_StaticDataset_HasNoTimeGroup()
     {
         var item = Item("101AA00DS0003");

@@ -143,7 +143,8 @@ public sealed record ChartLayerMarker
                     d.Edition,
                     d.Extent is { Length: 4 } e ? new GeoExtent(e[0], e[1], e[2], e[3]) : null,
                     d.Producer,
-                    d.NotForNavigation))
+                    d.NotForNavigation,
+                    d.TimeVarying))
                 .ToList();
             return datasets.Count == 0 ? null : ForLayer(kind, datasets);
         }
@@ -171,6 +172,7 @@ public sealed record ChartLayerMarker
                     Edition = d.Edition,
                     Producer = d.Producer,
                     NotForNavigation = d.NotForNavigation,
+                    TimeVarying = d.TimeVarying,
                     Extent = d.Extent is { } e ? [e.West, e.South, e.East, e.North] : null,
                 })],
         };
@@ -230,6 +232,9 @@ public sealed record ChartLayerMarker
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool NotForNavigation { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public bool TimeVarying { get; set; }
 
         public double[]? Extent { get; set; }
     }

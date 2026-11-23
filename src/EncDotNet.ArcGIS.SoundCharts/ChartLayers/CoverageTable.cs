@@ -26,7 +26,7 @@ public static class CoverageTable
     /// <summary>The product edition, such as <c>2.0.0</c>; empty when the dataset says none.</summary>
     public const string EditionField = "Edition";
 
-    /// <summary>The chart layer drawing the dataset: <c>chart</c>, <c>water-level</c> or <c>surface-currents</c>.</summary>
+    /// <summary>The chart layer drawing the dataset: <c>chart</c>, <c>water-level</c>, <c>surface-currents</c> or <c>weather</c>.</summary>
     public const string LayerField = "ChartLayer";
 
     /// <summary>The dataset file's full path; identifies the feature.</summary>

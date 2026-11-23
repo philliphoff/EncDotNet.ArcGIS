@@ -1,3 +1,5 @@
+using EncDotNet.S100;
+using EncDotNet.S100.Datasets.Pipelines;
 using EncDotNet.SoundCharts.ChartLayers;
 
 namespace EncDotNet.SoundCharts.Tests.ChartLayers;
@@ -48,6 +50,59 @@ public sealed class DatasetInspectorTests : IDisposable
             // Within a degree or so: the footprint is the dataset's own, not a union.
             Assert.InRange(latitude, dataset.Extent.Value.South - 1, dataset.Extent.Value.North + 1);
             Assert.InRange(longitude, dataset.Extent.Value.West - 1, dataset.Extent.Value.East + 1);
+        }
+    }
+
+    [Theory]
+    [InlineData("GRIB2/gfswave-useast.grib2", "GRIB2", ChartLayerKind.Weather)]
+    [InlineData("GRIB2/gfs-1p00-ugrd10m-f003.grib2", "GRIB2", ChartLayerKind.Chart)]
+    [InlineData("CAP/nws-gale-warning-pzz560.xml", "CAP", ChartLayerKind.Weather)]
+    [InlineData("S412/synthetic_all_warnings.gml", "S-412", ChartLayerKind.Weather)]
+    [InlineData("S412/4122C00_TESTDS1.GML", "S-412", ChartLayerKind.Chart)]
+    [InlineData("S411/iho_4112C00TDS001.gml", "S-411", ChartLayerKind.Chart)]
+    [InlineData("S104/104US004SC1BO_20251217T12Z.h5", "S-104", ChartLayerKind.WaterLevel)]
+    [InlineData("S102/102US004MI1CI262227.h5", "S-102", ChartLayerKind.Chart)]
+    [InlineData("S124/navwarn_ccg_ed2.gml", "S-124", ChartLayerKind.Chart)]
+    public async Task Dataset_WithMoreThanOneTimeStep_GoesInATimeLayer(string relativePath, string product, ChartLayerKind kind)
+    {
+        // Issue #62: the layer follows the dataset's time steps, not its product. One step stays in Chart.
+        var inspection = await _inspector.InspectAsync(Upstream(relativePath), cancellationToken: TestContext.Current.CancellationToken);
+
+        var dataset = Assert.Single(inspection.Datasets);
+        Assert.Equal(product, dataset.Product);
+        Assert.Equal(kind, dataset.Kind);
+        Assert.Equal(kind != ChartLayerKind.Chart, dataset.TimeVarying);
+    }
+
+    [Fact]
+    public void IsTimeVarying_ATropicalCycloneAdvisory_IsTimeVarying()
+    {
+        // Hurricane Ian, advisory 20: eight forecast points. Read through the processor,
+        // as Inspect does, since adding the .zip itself is issue #63's.
+        using var factory = BundledFactory();
+        var processor = ((IDatasetProcessorFactory)factory).CreateProcessor(Upstream("TC/al092022/al092022_5day_020.zip"));
+        try
+        {
+            Assert.True(DatasetInspector.IsTimeVarying(processor));
+        }
+        finally
+        {
+            (processor as IDisposable)?.Dispose();
+        }
+    }
+
+    [Fact]
+    public void IsTimeVarying_WithoutTimeSteps_IsFalse()
+    {
+        using var factory = BundledFactory();
+        var processor = ((IDatasetProcessorFactory)factory).CreateProcessor(Upstream("S411/cis_seaice_synthetic.gml"));
+        try
+        {
+            Assert.False(DatasetInspector.IsTimeVarying(processor));
+        }
+        finally
+        {
+            (processor as IDisposable)?.Dispose();
         }
     }
 
@@ -276,6 +331,8 @@ public sealed class DatasetInspectorTests : IDisposable
     {
         Assert.Equal(expected, DatasetInspector.ProducerCodeFromName(path));
     }
+
+    private static IDisposable BundledFactory() => (IDisposable)BundledDatasetProcessorFactory.Create();
 
     private static string Upstream(string relativePath)
     {

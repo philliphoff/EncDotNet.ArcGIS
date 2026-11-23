@@ -6,25 +6,54 @@ namespace EncDotNet.SoundCharts.Tests.ChartLayers;
 public class SmallPartsTests
 {
     [Theory]
-    [InlineData("S-104", ChartLayerKind.WaterLevel)]
-    [InlineData("S-111", ChartLayerKind.SurfaceCurrents)]
-    [InlineData("S-57", ChartLayerKind.Chart)]
-    [InlineData("S-101", ChartLayerKind.Chart)]
-    [InlineData("S-102", ChartLayerKind.Chart)]
-    [InlineData("S-124", ChartLayerKind.Chart)]
-    public void Kinds_ByTimeBehaviour(string product, ChartLayerKind kind)
+    [InlineData("S-104", false, ChartLayerKind.WaterLevel)]
+    [InlineData("S-104", true, ChartLayerKind.WaterLevel)]
+    [InlineData("S-111", true, ChartLayerKind.SurfaceCurrents)]
+    [InlineData("S-57", false, ChartLayerKind.Chart)]
+    [InlineData("S-101", false, ChartLayerKind.Chart)]
+    [InlineData("S-102", false, ChartLayerKind.Chart)]
+    [InlineData("S-124", false, ChartLayerKind.Chart)]
+    [InlineData("TC", true, ChartLayerKind.Weather)]
+    [InlineData("CAP", true, ChartLayerKind.Weather)]
+    [InlineData("GRIB2", true, ChartLayerKind.Weather)]
+    [InlineData("GRIB2", false, ChartLayerKind.Chart)]
+    [InlineData("S-411", true, ChartLayerKind.Weather)]
+    [InlineData("S-412", false, ChartLayerKind.Chart)]
+    public void Kinds_ByTimeBehaviour(string product, bool timeVarying, ChartLayerKind kind)
     {
-        Assert.Equal(kind, ChartLayerKinds.ForProduct(product));
+        Assert.Equal(kind, ChartLayerKinds.ForProduct(product, timeVarying));
+        Assert.Equal(kind, new ChartLayerDataset("x", product, TimeVarying: timeVarying).Kind);
     }
 
     [Theory]
-    [InlineData(ChartLayerKind.Chart, "Chart")]
-    [InlineData(ChartLayerKind.WaterLevel, "Water level")]
-    [InlineData(ChartLayerKind.SurfaceCurrents, "Surface currents")]
-    public void Kinds_NamesAndIdsRoundTrip(ChartLayerKind kind, string name)
+    [InlineData(ChartLayerKind.Chart, "Chart", "chart")]
+    [InlineData(ChartLayerKind.WaterLevel, "Water level", "water-level")]
+    [InlineData(ChartLayerKind.SurfaceCurrents, "Surface currents", "surface-currents")]
+    [InlineData(ChartLayerKind.Weather, "Weather", "weather")]
+    public void Kinds_NamesAndIdsRoundTrip(ChartLayerKind kind, string name, string id)
     {
         Assert.Equal(name, ChartLayerKinds.DisplayName(kind));
+        Assert.Equal(id, ChartLayerKinds.Id(kind));
         Assert.Equal(kind, ChartLayerKinds.FromId(ChartLayerKinds.Id(kind)));
+    }
+
+    [Fact]
+    public void Kinds_TimeLayersAreAboveChart_WeatherUnderWaterLevelAndCurrents()
+    {
+        Assert.Equal(
+            [ChartLayerKind.SurfaceCurrents, ChartLayerKind.WaterLevel, ChartLayerKind.Weather, ChartLayerKind.Chart],
+            ChartLayerKinds.TopFirst);
+        Assert.Equal(Enum.GetValues<ChartLayerKind>().Order(), ChartLayerKinds.TopFirst.Order());
+    }
+
+    [Theory]
+    [InlineData(ChartLayerKind.Chart, false)]
+    [InlineData(ChartLayerKind.WaterLevel, true)]
+    [InlineData(ChartLayerKind.SurfaceCurrents, true)]
+    [InlineData(ChartLayerKind.Weather, true)]
+    public void Kinds_EveryLayerButChartFollowsMapTime(ChartLayerKind kind, bool timeLayer)
+    {
+        Assert.Equal(timeLayer, ChartLayerKinds.IsTimeLayer(kind));
     }
 
     [Fact]

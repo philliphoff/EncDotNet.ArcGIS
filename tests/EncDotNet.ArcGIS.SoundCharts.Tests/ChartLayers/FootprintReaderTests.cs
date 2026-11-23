@@ -1,3 +1,4 @@
+using System.Globalization;
 using EncDotNet.S100.DataModel;
 using EncDotNet.S100.Features;
 using EncDotNet.S100.Pipelines.Vector;
@@ -88,6 +89,56 @@ public sealed class FootprintReaderTests : IDisposable
             Assert.NotNull(footprint.LastTime);
             Assert.True(footprint.FirstTime <= footprint.LastTime);
         }
+    }
+
+    [Fact]
+    public void TropicalCyclone_TimesAreTheAdvisorysForecastPoints()
+    {
+        // Issue #62: the first and last of the processor's steps, not the wider time coverage with the past track.
+        var path = Upstream("TC/al092022/al092022_5day_020.zip");
+        var dataset = new ChartLayerDataset(path, "TC", TimeVarying: true);
+
+        var footprint = _reader.Read(dataset, out var error);
+
+        Assert.Null(error);
+        Assert.NotNull(footprint);
+        Assert.Equal(new DateTime(2022, 9, 28, 0, 0, 0, DateTimeKind.Utc), footprint.FirstTime);
+        Assert.Equal(new DateTime(2022, 10, 2, 0, 0, 0, DateTimeKind.Utc), footprint.LastTime);
+    }
+
+    [Theory]
+    [InlineData("GRIB2/gfswave-useast.grib2", "2026-10-25T00:00:00Z", "2026-10-25T06:00:00Z")]
+    [InlineData("S412/synthetic_all_warnings.gml", "2026-11-07T00:00:00Z", null)]
+    public async Task Weather_HasFirstAndLastTimes(string relativePath, string first, string? last)
+    {
+        var dataset = await InspectAsync(relativePath);
+
+        var footprint = _reader.Read(dataset, out var error);
+
+        Assert.Null(error);
+        Assert.NotNull(footprint);
+        Assert.Equal(ChartLayerKind.Weather, dataset.Kind);
+        Assert.Equal(DateTime.Parse(first, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal), footprint.FirstTime);
+        Assert.NotNull(footprint.LastTime);
+        Assert.True(footprint.LastTime > footprint.FirstTime);
+        if (last is not null)
+        {
+            Assert.Equal(DateTime.Parse(last, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal), footprint.LastTime);
+        }
+    }
+
+    [Fact]
+    public async Task SingleStep_InChart_HasNoTimes()
+    {
+        // Chart draws it at every map time, so the time-enabled Coverage layer mustn't hide its footprint.
+        var dataset = await InspectAsync("GRIB2/gfs-1p00-ugrd10m-f003.grib2");
+
+        var footprint = _reader.Read(dataset, out _);
+
+        Assert.Equal(ChartLayerKind.Chart, dataset.Kind);
+        Assert.NotNull(footprint);
+        Assert.Null(footprint.FirstTime);
+        Assert.Null(footprint.LastTime);
     }
 
     [Fact]
@@ -194,10 +245,16 @@ public sealed class FootprintReaderTests : IDisposable
         Assert.Empty(FootprintReader.CoverageOf([Surface("DataCoverage", line)]));
     }
 
-    private async Task<ChartLayerDataset> InspectAsync(string relativePath)
+    private static string Upstream(string relativePath)
     {
         var path = Fixtures.Upstream(relativePath);
         Assert.SkipWhen(path is null, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        return path!;
+    }
+
+    private async Task<ChartLayerDataset> InspectAsync(string relativePath)
+    {
+        var path = Upstream(relativePath);
         var inspection = await _inspector.InspectAsync(path, cancellationToken: TestContext.Current.CancellationToken);
         return Assert.Single(inspection.Datasets);
     }

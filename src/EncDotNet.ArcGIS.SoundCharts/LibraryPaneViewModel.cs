@@ -308,7 +308,7 @@ internal sealed class LibraryPaneViewModel : DockPane
         IReadOnlyList<DateTime>? steps = file is null ? [] : LibraryHost.CachedTimeSteps(file);
         Details = LibraryDatasetDetailsBuilder.Build(state, node.Collection?.Definition.Name, validation, steps);
 
-        if (readTimeSteps && steps is null && file is not null && LibraryDatasetDetailsBuilder.HasTimeSteps(state.Item.ProductSpec))
+        if (readTimeSteps && steps is null && file is not null && LibraryDatasetDetailsBuilder.HasTimeSteps(state))
         {
             _ = ReadTimeStepsAsync(file);
         }

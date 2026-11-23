@@ -264,6 +264,9 @@ public static class Strings
     /// <summary>Gets the name of the Surface currents layer (S-111).</summary>
     public static string Layer_SurfaceCurrents => Get(nameof(Layer_SurfaceCurrents));
 
+    /// <summary>Gets the name of the Weather layer (other time-varying datasets).</summary>
+    public static string Layer_Weather => Get(nameof(Layer_Weather));
+
     /// <summary>Gets the line for a navigational warning in force at map time (D33).</summary>
     public static string ObjectInfo_InForce => Get(nameof(ObjectInfo_InForce));
 
@@ -311,6 +314,12 @@ public static class Strings
 
     /// <summary>Gets a layer's description: <c>{0}</c> is the products, <c>{1}</c> the producers.</summary>
     public static string Credits_Description => Get(nameof(Credits_Description));
+
+    /// <summary>
+    /// Gets the Weather layer's description, which says weather data is not
+    /// for navigation as upstream does: <c>{0}</c> is the products, <c>{1}</c> the producers.
+    /// </summary>
+    public static string Credits_WeatherDescription => Get(nameof(Credits_WeatherDescription));
 
     /// <summary>Gets a layer's credits: <c>{0}</c> is the producers, <c>{1}</c> the <c>s100</c> version.</summary>
     public static string Credits_Attribution => Get(nameof(Credits_Attribution));

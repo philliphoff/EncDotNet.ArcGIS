@@ -1,18 +1,26 @@
 # Map time in SoundCharts for ArcGIS
 
-How Pro's map time drives the **Water level** (S-104) and **Surface
-currents** (S-111) layers, and what slice A8 found about Pro 3.7 on the
-way. The decisions are the design brief's §6 and D29–D33; this page
+How Pro's map time drives the time layers, **Water level** (S-104),
+**Surface currents** (S-111) and **Weather** (every other dataset with more
+than one time step), and what slice A8 found about Pro 3.7 on the way. The decisions are the design brief's §6 and D29–D33; this page
 records how they're carried out and the answers to open questions P1, P2,
 P4 and P9.
 
 ## What happens
 
-1. When a chart layer's server starts, the add-in reads the server's time
+1. When **Add SoundCharts Data** inspects a dataset, it records whether the
+   dataset has more than one time step
+   (`ITimeAwareDatasetProcessor.AvailableTimes`); the layer marker keeps it
+   as `timeVarying`. That, not the product name, puts a tropical cyclone
+   advisory, CAP warning, GRIB2 or NetCDF grid, S-411 or S-412 dataset in
+   **Weather** (design brief §3.1). Markers saved before **Weather** don't
+   say, and load as they were.
+2. When a chart layer's server starts, the add-in reads the server's time
    steps from TileJSON (`s100.times`). These are also the WMTS `Time`
    dimension's `<Value>`s, so a step the add-in picks is one the server
-   accepts. A layer with no steps (**Chart**) isn't followed.
-2. On every map time change in the active map view
+   accepts. **Chart** isn't followed, even when it holds a dataset with a
+   single step; every time layer with steps is.
+3. On every map time change in the active map view
    (`MapViewTimeChangedEvent`), and when the active view changes, the add-in
    takes the end of the map time range as the instant (D30) and snaps it per
    layer (`TimeSteps.Resolve`):
@@ -20,30 +28,37 @@ P4 and P9.
      the nearest step;
    - between steps, a nearest step more than one interval away is a gap;
    - outside the range, or in a gap, there's no data (D31).
-3. With data, it writes the step into the layer's WMTS connection
+4. With data, it writes the step into the layer's WMTS connection
    (`Dimensions["Time"]`), so Pro requests
    `.../wmts/1.0.0/s100/{style}/{time}/WebMercatorQuad/{z}/{row}/{col}.png`.
    Each step has its own URLs, so Pro caches each one.
-4. With no data, it leaves the time alone and sets the layer's visibility
+5. With no data, it leaves the time alone and sets the layer's visibility
    time extent to one no map time reaches, so the layer draws nothing while
    its Contents check box stays as the user left it. With data, the extent
    is the data's range, which Pro applies by itself if map time moves out
    of range before the add-in hears of it.
-5. The **SoundCharts Layer** tab's **Time** group says what each layer
+6. The **SoundCharts Layer** tab's **Time** group says what each layer
    draws, in **Go to Nearest Data**'s tooltip: "Water level · 17 Dec 2025
    13:00 UTC", or "Water level · No data at map time · last 24 Dec 2025
    12:00 UTC, 3 h earlier". **Go to Nearest Data** moves map time to that
    data; **Now** sets map time to now, once.
-6. The first time the add-in sees map time on a map with time layers, and
+7. The first time the add-in sees map time on a map with time layers, and
    it's either all time or the data's full extent (what Pro picks by itself
    when a time-aware layer arrives), it sets map time to now, snapped, or
    the nearer end of the data (D32). Any other map time is the user's and
    is never moved.
-7. **Object information** samples water levels and currents at the
+8. **Object information** samples water levels and currents at the
    instant, and says whether each S-124 warning is "In force at map time"
    or "Not in force at map time" (D33): not before its `publicationTime`,
    not from its `cancellationDate`, and only within a part's
    `fixedDateRange`s when every dated part has them.
+
+The **Coverage** layer's first and last times come from the HDF5 metadata
+for S-104 and S-111, and from the processor's time steps for **Weather**
+datasets, which can be narrower than the dataset's time coverage (a
+cyclone advisory's coverage starts with its past track). **Chart** datasets
+get no times, so the time-enabled **Coverage** layer never hides a
+footprint whose chart draws at every time.
 
 The logic that doesn't need Pro is in `src/EncDotNet.ArcGIS.SoundCharts/MapTime/`
 (`TimeSteps`, `TimeStatus`, `LayerTime`, `TimeText`) and tested in
@@ -70,5 +85,8 @@ Charleston S-104 sample, through a proxy that logged every request.
   isn't filtered by validity; Object information is where it shows.
 - The validity rule combines the library's typed S-124 values; it belongs
   in EncDotNet.S100 once the library says "in force" itself.
+- **Weather** snaps to the nearest step like the other time layers: a
+  cyclone jumps between forecast points rather than moving smoothly
+  (issue #64).
 - **‹ Previous data** and **Next data ›** (§6.6) aren't in this slice.
   Times in the tab and the log follow A5's **Time format** setting (D28).

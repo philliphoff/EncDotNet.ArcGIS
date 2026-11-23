@@ -7,8 +7,8 @@
 **SoundCharts for ArcGIS** is an ArcGIS Pro add-in that brings S-100
 nautical chart portrayal from
 [EncDotNet.S100](https://github.com/philliphoff/EncDotNet.S100) into ArcGIS
-Pro: chart layers with mariner settings, time-aware S-104 and S-111 layers,
-object information, route checking and geoprocessing tools.
+Pro: chart layers with mariner settings, time-aware S-104, S-111 and
+weather layers, object information, route checking and geoprocessing tools.
 
 It's a work in progress, planned in the
 [SoundCharts for ArcGIS Pro epic](https://github.com/philliphoff/EncDotNet.ArcGIS/issues/1).

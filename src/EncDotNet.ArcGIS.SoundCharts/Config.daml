@@ -129,20 +129,20 @@
         <!-- Not loadOnClick: their tooltips carry the time layers' status. -->
         <button id="SoundCharts_GoToNearestData" className="GoToNearestDataButton" caption="Go to Nearest Data" keytip="G"
                 loadOnClick="false" condition="SoundCharts_HasChartLayerCondition" largeImage="MapTime32" smallImage="MapTime16">
-          <tooltip heading="Go to Nearest Data">Move map time to the nearest time a Water level or Surface currents layer has data. A layer with no data at map time draws nothing and says so here.<disabledText>Every Water level and Surface currents layer has data at map time.</disabledText></tooltip>
+          <tooltip heading="Go to Nearest Data">Move map time to the nearest time a Water level, Surface currents or Weather layer has data. A layer with no data at map time draws nothing and says so here.<disabledText>Every Water level, Surface currents and Weather layer has data at map time.</disabledText></tooltip>
         </button>
         <button id="SoundCharts_MapTimeNow" className="MapTimeNowButton" caption="Now" keytip="W"
                 loadOnClick="false" condition="esri_mapping_mapPane" largeImage="GenericTime32" smallImage="GenericTime16">
-          <tooltip heading="Now">Set map time to now, once. Water level and Surface currents draw their nearest time step.<disabledText>The map has no map time: add a time-aware layer, such as Coverage, to show the time slider.</disabledText></tooltip>
+          <tooltip heading="Now">Set map time to now, once. Water level, Surface currents and Weather draw their nearest time step.<disabledText>The map has no map time: add a time-aware layer, such as Coverage, to show the time slider.</disabledText></tooltip>
         </button>
         <!-- Design brief §6.6: step map time through the time layers' steps. -->
         <button id="SoundCharts_PreviousData" className="PreviousDataButton" caption="Previous Data" keytip="V"
                 loadOnClick="false" condition="esri_mapping_mapPane" largeImage="Images\PreviousData32.png" smallImage="Images\PreviousData16.png">
-          <tooltip heading="Previous Data">Move map time to the previous time step of any Water level or Surface currents layer in the map. Pro's Time tab still steps by its own interval.<disabledText>No Water level or Surface currents layer has a time step before map time.</disabledText></tooltip>
+          <tooltip heading="Previous Data">Move map time to the previous time step of any Water level, Surface currents or Weather layer in the map. Pro's Time tab still steps by its own interval.<disabledText>No Water level, Surface currents or Weather layer has a time step before map time.</disabledText></tooltip>
         </button>
         <button id="SoundCharts_NextData" className="NextDataButton" caption="Next Data" keytip="N"
                 loadOnClick="false" condition="esri_mapping_mapPane" largeImage="Images\NextData32.png" smallImage="Images\NextData16.png">
-          <tooltip heading="Next Data">Move map time to the next time step of any Water level or Surface currents layer in the map. Pro's Time tab still steps by its own interval.<disabledText>No Water level or Surface currents layer has a time step after map time.</disabledText></tooltip>
+          <tooltip heading="Next Data">Move map time to the next time step of any Water level, Surface currents or Weather layer in the map. Pro's Time tab still steps by its own interval.<disabledText>No Water level, Surface currents or Weather layer has a time step after map time.</disabledText></tooltip>
         </button>
         <checkBox id="SoundCharts_Footprints" className="FootprintsCheckBox" caption="Footprints" keytip="F"
                   loadOnClick="false" condition="SoundCharts_HasChartLayerCondition">

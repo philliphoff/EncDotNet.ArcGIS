@@ -81,6 +81,10 @@ Adds datasets, exchange sets or folders to a map as a SoundCharts chart: a
 are the layers **Add SoundCharts Data** makes on the ribbon, and the add-in
 treats them the same way.
 
+The tool doesn't read time steps, so S-411 and S-412 datasets go in **Chart**,
+drawn at their first time. For a **Weather** layer that follows map time, add
+them with **Add SoundCharts Data**.
+
 The tool reads each dataset with `s100 info`, writes a layer file (`.lyrx`)
 and adds it to the map. The add-in then starts a chart server for the layers'
 datasets and connects them, as it does when a project opens. Without the
