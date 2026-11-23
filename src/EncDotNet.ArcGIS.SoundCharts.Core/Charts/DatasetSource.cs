@@ -1,3 +1,5 @@
+using EncDotNet.S100.Datasets.Pipelines;
+
 namespace EncDotNet.SoundCharts.Charts;
 
 /// <summary>
@@ -52,6 +54,11 @@ public sealed class DatasetSource : IEquatable<DatasetSource>
     /// set, any other folder is a folder of datasets, and any other file is a
     /// dataset.
     /// </summary>
+    /// <remarks>
+    /// A <c>.zip</c> that EncDotNet.S100 reads as a dataset of its own, such
+    /// as an NHC tropical cyclone advisory (<c>al092022_5day_020.zip</c>,
+    /// product <c>TC</c>), is a dataset, not an exchange set (issue #63).
+    /// </remarks>
     /// <param name="path">The path to classify.</param>
     public static DatasetSource FromPath(string path)
     {
@@ -65,11 +72,45 @@ public sealed class DatasetSource : IEquatable<DatasetSource>
         }
 
         var fileName = System.IO.Path.GetFileName(path.TrimEnd('\\', '/'));
+        if (IsZip(fileName))
+        {
+            return IsZippedDataset(path) ? Dataset(path) : ExchangeSet(path);
+        }
+
         return fileName.Equals("CATALOG.XML", StringComparison.OrdinalIgnoreCase)
             || fileName.Equals("CATALOG.031", StringComparison.OrdinalIgnoreCase)
-            || System.IO.Path.GetExtension(fileName).Equals(".zip", StringComparison.OrdinalIgnoreCase)
             ? ExchangeSet(path)
             : Dataset(path);
+    }
+
+    /// <summary>
+    /// Gets whether <paramref name="path"/> is a <c>.zip</c> that
+    /// EncDotNet.S100 reads as one dataset, such as an NHC tropical cyclone
+    /// advisory's forecast zip, rather than as an exchange set.
+    /// </summary>
+    /// <remarks>
+    /// The zips an advisory's forecast zip reads from beside it (its wind
+    /// radii and best track zips) aren't datasets of their own, so they give
+    /// <see langword="false"/>. A missing or unreadable file gives
+    /// <see langword="false"/>.
+    /// </remarks>
+    /// <param name="path">The file's path.</param>
+    public static bool IsZippedDataset(string path)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
+        if (!IsZip(path) || !File.Exists(path))
+        {
+            return false;
+        }
+
+        try
+        {
+            return DatasetPipelineFactory.DetectProductSpec(path) is not null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            return false;
+        }
     }
 
     /// <inheritdoc/>
@@ -86,6 +127,9 @@ public sealed class DatasetSource : IEquatable<DatasetSource>
 
     /// <inheritdoc/>
     public override string ToString() => $"{Kind}: {Path}";
+
+    private static bool IsZip(string path) =>
+        System.IO.Path.GetExtension(path).Equals(".zip", StringComparison.OrdinalIgnoreCase);
 
     private static string Normalize(string path)
     {

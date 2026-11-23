@@ -107,6 +107,44 @@ public sealed class DatasetInspectorTests : IDisposable
     }
 
     [Fact]
+    public async Task Dataset_ZippedAdvisory_IsOneTropicalCycloneDataset_NotAnExchangeSet()
+    {
+        // Issue #63: an NHC advisory's forecast zip is a TC dataset, read in place.
+        var path = Upstream("TC/al092022/al092022_5day_020.zip");
+
+        var inspection = await _inspector.InspectAsync(path, cancellationToken: TestContext.Current.CancellationToken);
+
+        var dataset = Assert.Single(inspection.Datasets);
+        Assert.Equal("TC", dataset.Product);
+        Assert.Equal(Path.GetFullPath(path), dataset.Path);
+        Assert.Equal("al092022_5day_020", inspection.Input);
+        Assert.Empty(inspection.Warnings);
+        Assert.False(Directory.Exists(_inspector.ExtractionFolder) && Directory.EnumerateFileSystemEntries(_inspector.ExtractionFolder).Any());
+    }
+
+    [Fact]
+    public async Task Dataset_AdvisoryFolder_ListsOnlyTheForecastZip()
+    {
+        // The wind radii and best track zips are read with the forecast zip, not on their own.
+        var folder = Path.GetDirectoryName(Upstream("TC/al092022/al092022_5day_020.zip"))!;
+
+        var inspection = await _inspector.InspectAsync(folder, cancellationToken: TestContext.Current.CancellationToken);
+
+        var dataset = Assert.Single(inspection.Datasets);
+        Assert.Equal("TC", dataset.Product);
+        Assert.Equal("al092022_5day_020.zip", Path.GetFileName(dataset.Path));
+    }
+
+    [Fact]
+    public async Task Dataset_AdvisoryWindRadiiZipAlone_IsNoDataset()
+    {
+        var inspection = await _inspector.InspectAsync(Upstream("TC/al092022/al092022_fcst_020.zip"), cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.Empty(inspection.Datasets);
+        Assert.NotEmpty(inspection.Warnings);
+    }
+
+    [Fact]
     public async Task Dataset_NamedLikeAnotherProduct_IsWhatItsContentSays()
     {
         // An S-111 file named as if it were S-104: the HDF5 productSpecification decides.

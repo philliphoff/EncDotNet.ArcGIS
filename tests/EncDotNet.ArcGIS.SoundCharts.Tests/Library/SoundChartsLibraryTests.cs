@@ -212,6 +212,52 @@ public class SoundChartsLibraryTests
         Assert.NotNull(item.Bounds);
     }
 
+    [Fact]
+    public async Task Index_AdvisoryZip_IsOneTropicalCycloneDataset()
+    {
+        // Issue #63: an NHC advisory's forecast zip is a dataset, not an exchange set without a catalogue.
+        var zip = Fixtures.Upstream(Path.Combine("TC", "al092022", "al092022_5day_020.zip"));
+        Assert.SkipWhen(zip is null, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        using var temp = new TempFolder();
+        using var reader = new LibraryDatasetReader();
+        using var library = new SoundChartsLibrary(temp.Folder("library"), reader.Probe);
+        library.Initialize();
+
+        await library.ImportAsync([zip], cancellationToken: TestContext.Current.CancellationToken);
+        await library.WhenIdle();
+
+        var index = Assert.Single(Assert.Single(library.Collections).Sources).Index!;
+        var item = Assert.Single(index.Items);
+        Assert.Equal("TC", item.ProductSpec);
+        Assert.Equal("al092022_5day_020", item.Name);
+        Assert.Equal(Path.GetFullPath(zip), LibraryItemPaths.AddToMapPath(item));
+        Assert.DoesNotContain(index.Diagnostics, d => string.Equals(d.Path, Path.GetFullPath(zip), StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public async Task Index_AdvisoryFolder_ListsOnlyTheForecastZip()
+    {
+        var zip = Fixtures.Upstream(Path.Combine("TC", "al092022", "al092022_5day_020.zip"));
+        Assert.SkipWhen(zip is null, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        using var temp = new TempFolder();
+        var folder = temp.Folder("storm");
+        foreach (var file in Directory.EnumerateFiles(Path.GetDirectoryName(zip)!))
+        {
+            File.Copy(file, Path.Combine(folder, Path.GetFileName(file)));
+        }
+
+        using var reader = new LibraryDatasetReader();
+        using var library = new SoundChartsLibrary(temp.Folder("library"), reader.Probe);
+        library.Initialize();
+
+        await library.ImportAsync([folder], cancellationToken: TestContext.Current.CancellationToken);
+        await library.WhenIdle();
+
+        var item = Assert.Single(Assert.Single(Assert.Single(library.Collections).Sources).Index!.Items);
+        Assert.Equal("TC", item.ProductSpec);
+        Assert.Equal("al092022_5day_020.zip", item.Key);
+    }
+
     private static SoundChartsLibrary Create(TempFolder temp)
     {
         var library = new SoundChartsLibrary(Path.Combine(temp.Path, "library"));

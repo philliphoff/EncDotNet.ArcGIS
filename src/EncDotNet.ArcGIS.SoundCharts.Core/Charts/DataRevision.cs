@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using EncDotNet.S100.Datasets.TropicalCyclones;
 
 namespace EncDotNet.SoundCharts.Charts;
 
@@ -21,7 +22,9 @@ public static class DataRevision
     /// beside it with the same name and a three-digit extension
     /// (<c>US5MA1BO.001</c> for <c>US5MA1BO.000</c>). An exchange set or
     /// folder brings every file under it; an exchange-set catalogue file or
-    /// <c>.zip</c> brings the files of its folder, or itself.
+    /// <c>.zip</c> brings the files of its folder, or itself. An NHC tropical
+    /// cyclone advisory's forecast zip, a dataset, brings the wind radii and
+    /// best track zips the chart server reads from beside it.
     /// </remarks>
     /// <param name="sources">The chart's sources.</param>
     public static string Of(IEnumerable<DatasetSource> sources)
@@ -83,7 +86,7 @@ public static class DataRevision
                 return Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories).ToList();
             }
 
-            return [source.Path, .. UpdateFiles(source.Path)];
+            return [source.Path, .. UpdateFiles(source.Path), .. AdvisorySiblings(source.Path)];
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -102,6 +105,16 @@ public static class DataRevision
         return Directory.EnumerateFiles(folder, stem + ".*")
             .Where(file => !string.Equals(file, path, StringComparison.OrdinalIgnoreCase) && HasNumericExtension(file))
             .ToList();
+    }
+
+    private static IEnumerable<string> AdvisorySiblings(string path)
+    {
+        if (!path.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) || NhcAdvisoryFiles.Find(path) is not { } advisory)
+        {
+            return [];
+        }
+
+        return new[] { advisory.WindRadiiZip, advisory.BestTrackZip }.OfType<string>().ToList();
     }
 
     private static bool IsIso8211Base(string path) => string.Equals(Path.GetExtension(path), ".000", StringComparison.Ordinal);
