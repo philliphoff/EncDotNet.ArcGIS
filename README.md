@@ -1,80 +1,10 @@
-# EncDotNet.ArcGIS
+# Hurricane showcase stills
 
-[![CI](https://github.com/philliphoff/EncDotNet.ArcGIS/actions/workflows/ci.yml/badge.svg)](https://github.com/philliphoff/EncDotNet.ArcGIS/actions/workflows/ci.yml)
+Stills rendered for the hurricane-at-a-port showcase pull request, from
+`s100 tiles serve` (0.27.1-main.20261113, c62d2eb) over the data that
+`tools/get-hurricane-showcase.ps1` downloads. Each landfall frame is WMTS
+tiles from a Chart server (the ENCs) with a Weather server's tiles (advisory
+18 and GFS-Wave) on top, at the map time in its caption. Not for navigation.
 
-## Overview
-
-**SoundCharts for ArcGIS** is an ArcGIS Pro add-in that brings S-100
-nautical chart portrayal from
-[EncDotNet.S100](https://github.com/philliphoff/EncDotNet.S100) into ArcGIS
-Pro: chart layers with mariner settings, time-aware S-104, S-111 and
-weather layers, object information, route checking and geoprocessing tools.
-
-It's a work in progress, planned in the
-[SoundCharts for ArcGIS Pro epic](https://github.com/philliphoff/EncDotNet.ArcGIS/issues/1).
-So far the add-in adds a **SoundCharts** tab to the ribbon with a **Log**
-button, which opens the **SoundCharts Log** pane, and an **About
-SoundCharts** button, which shows the versions of the add-in,
-EncDotNet.S100, the chart server, ArcGIS Pro and .NET. It ships the chart
-server that later slices draw charts from: a pinned `s100 tiles serve`,
-run and supervised outside Pro's process.
-
-SoundCharts charts are not for navigation.
-
-## Requirements
-
-- ArcGIS Pro 3.7 or later, on Windows (x64, or Arm64 with Pro running under
-  emulation).
-
-## Install
-
-1. Download `EncDotNet.ArcGIS.SoundCharts.esriAddinX` and
-   `EncDotNet.ArcGIS.SoundCharts.Features.esriPlugin` from the
-   [latest release](https://github.com/philliphoff/EncDotNet.ArcGIS/releases/latest).
-2. Close ArcGIS Pro.
-3. Double-click each file, or run
-   [`tools/deploy-addin.ps1`](tools/deploy-addin.ps1) with `-Path` and
-   `-PluginPath` set to them.
-4. Start ArcGIS Pro and open the **SoundCharts** tab.
-
-See [Install SoundCharts for ArcGIS](docs/install.md) for details. Builds of
-`main` are in the **addin** artifact of each
-[CI run](https://github.com/philliphoff/EncDotNet.ArcGIS/actions/workflows/ci.yml).
-
-## Documentation
-
-The [documentation](docs/index.md) covers installing the add-in and
-[SoundCharts Tools](docs/toolbox.md). It's published to this repository's
-GitHub Pages site, and with EncDotNet.S100's in the
-[soundcharts.app documentation](https://soundcharts.app/docs/).
-
-## Building
-
-The add-in builds with Visual Studio's MSBuild. Esri's packaging targets
-don't run under `dotnet build`, which compiles and tests the add-in but
-doesn't produce the `.esriAddinX`.
-
-```powershell
-tools/build-server.ps1
-msbuild EncDotNet.ArcGIS.slnx /restore /p:Configuration=Release
-dotnet test EncDotNet.ArcGIS.slnx --no-build --configuration Release
-tools/deploy-addin.ps1
-```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for prerequisites and details.
-
-## Repository layout
-
-| Path | Contents |
-|---|---|
-| `src/EncDotNet.ArcGIS.SoundCharts/` | The ArcGIS Pro add-in: `Config.daml`, the module, ribbon controls, panes and windows |
-| `src/EncDotNet.ArcGIS.SoundCharts.Core/` | The add-in's logic that doesn't use the Pro SDK: dataset sets, the chart server and its supervisor, the SoundCharts log |
-| `src/EncDotNet.ArcGIS.SoundCharts/Toolboxes/` | **SoundCharts Tools**, the Python toolbox packaged with the add-in ([docs](docs/toolbox.md)) |
-| `tests/EncDotNet.ArcGIS.SoundCharts.Tests/` | xunit tests for the add-in's logic that doesn't need Pro |
-| `tests/toolbox/` | Python tests for the toolbox, runnable without Pro |
-| `tools/` | Developer scripts: `build-server.ps1` (the pinned chart server, pinned in `s100-server.json`), `deploy-addin.ps1` and `set-addin-version.ps1` (stamps a release version) |
-| `docs/` | The documentation (a DocFX site, `docfx.json`), contributor guides and design notes |
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+`grib-fill-render-vs-tiles-z6.png` compares `s100 render` (left) with
+`s100 tiles serve` (right) for the same bounds and GFS-Wave file.
