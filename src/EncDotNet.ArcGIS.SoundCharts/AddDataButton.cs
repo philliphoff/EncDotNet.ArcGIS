@@ -9,8 +9,9 @@ namespace EncDotNet.SoundCharts;
 
 /// <summary>
 /// <b>Add SoundCharts Data</b> (<c>SoundCharts_AddData</c> in Config.daml):
-/// chooses dataset files, exchange-set catalogues or <c>.zip</c> exchange
-/// sets and adds them to the active map (design brief §2.1).
+/// chooses dataset files (an NHC advisory's forecast <c>.zip</c> among them),
+/// exchange-set catalogues or <c>.zip</c> exchange sets and adds them to the
+/// active map (design brief §2.1).
 /// </summary>
 /// <remarks>
 /// A Windows file dialog, not Pro's: Pro's browser shows <c>.000</c> cells as

@@ -247,6 +247,7 @@ public sealed class ContentProbeTests : IDisposable
     [InlineData("S102/102US004MI1CI262227.h5", "S-102")]
     [InlineData("S104/104US004SC1BO_20251217T12Z.h5", "S-104")]
     [InlineData("S124/navwarn_ccg_ed2.gml", "S-124")]
+    [InlineData("TC/al092022/al092022_5day_020.zip", "TC")]
     public void RealDataset_IsDetectedByEncDotNetS100(string relativePath, string product)
     {
         var path = Upstream(relativePath);

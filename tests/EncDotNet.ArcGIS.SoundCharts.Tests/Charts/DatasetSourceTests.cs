@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using EncDotNet.SoundCharts.Charts;
 
 namespace EncDotNet.SoundCharts.Tests.Charts;
@@ -46,6 +47,59 @@ public class DatasetSourceTests
     }
 
     [Fact]
+    public void FromPath_AZipWithACatalogue_IsAnExchangeSet()
+    {
+        using var temp = new TempFolder();
+        var path = Path.Combine(temp.Path, "set.zip");
+        using (var zip = ZipFile.Open(path, ZipArchiveMode.Create))
+        {
+            zip.CreateEntry("S100_ROOT/CATALOG.XML");
+        }
+
+        Assert.Equal(DatasetSourceKind.ExchangeSet, DatasetSource.FromPath(path).Kind);
+        Assert.False(DatasetSource.IsZippedDataset(path));
+    }
+
+    [Fact]
+    public void FromPath_AnS101ExchangeSetZip_IsAnExchangeSet()
+    {
+        var path = Upstream("S101.zip");
+
+        Assert.Equal(DatasetSourceKind.ExchangeSet, DatasetSource.FromPath(path).Kind);
+    }
+
+    [Fact]
+    public void FromPath_AnAdvisoryForecastZip_IsADataset()
+    {
+        // Issue #63: EncDotNet.S100 reads an NHC forecast zip as a TC dataset.
+        var path = Upstream("TC/al092022/al092022_5day_020.zip");
+
+        var source = DatasetSource.FromPath(path);
+
+        Assert.Equal(DatasetSourceKind.Dataset, source.Kind);
+        Assert.True(DatasetSource.IsZippedDataset(path));
+    }
+
+    [Theory]
+    [InlineData("TC/al092022/al092022_fcst_020.zip")]
+    [InlineData("TC/al092022/al092022_best_track.zip")]
+    public void IsZippedDataset_AnAdvisorysSiblingZip_IsFalse(string relativePath)
+    {
+        // Read with the forecast zip beside it, never on its own.
+        Assert.False(DatasetSource.IsZippedDataset(Upstream(relativePath)));
+    }
+
+    [Fact]
+    public void IsZippedDataset_AMissingOrNonZipFile_IsFalse()
+    {
+        using var temp = new TempFolder();
+        var text = temp.File("notes.txt", "text");
+
+        Assert.False(DatasetSource.IsZippedDataset(Path.Combine(temp.Path, "missing.zip")));
+        Assert.False(DatasetSource.IsZippedDataset(text));
+    }
+
+    [Fact]
     public void Path_IsMadeFull()
     {
         var source = DatasetSource.Dataset(@"charts\a.000");
@@ -58,5 +112,12 @@ public class DatasetSourceTests
     public void ARootFolder_KeepsItsSeparator()
     {
         Assert.Equal(@"D:\", DatasetSource.Folder(@"D:\").Path);
+    }
+
+    private static string Upstream(string relativePath)
+    {
+        var path = Fixtures.Upstream(relativePath);
+        Assert.SkipWhen(path is null, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        return path!;
     }
 }

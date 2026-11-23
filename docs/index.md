@@ -8,6 +8,9 @@ Pro. It adds a **SoundCharts** tab to the ribbon with commands to:
 - Add S-57 cells, S-1xx datasets and exchange sets to a map as a SoundCharts
   chart (**Add SoundCharts Data**, **Add Folder**), or as feature layers for
   selection, attribute tables and geoprocessing (**Add as Feature Layers**).
+  A `.zip` is read as an exchange set, unless it's a dataset of its own: an
+  NHC tropical cyclone advisory's forecast zip (`al092022_5day_020.zip`) is
+  added as one dataset, with the wind radii and best track zips beside it.
 - Browse folders, exchange sets and collection manifests without loading
   them (**Library**).
 - Set the palette, display category and mariner settings of a project's
