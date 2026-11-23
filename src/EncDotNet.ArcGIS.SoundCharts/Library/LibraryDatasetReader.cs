@@ -59,7 +59,8 @@ public sealed class LibraryDatasetReader : IDisposable
 
     /// <summary>
     /// Reads the times a time-varying dataset (S-104 water level, S-111
-    /// surface currents) has data for, in UTC.
+    /// surface currents, weather, sea ice, tropical cyclone advisories) has
+    /// data for, in UTC: its processor's time steps.
     /// </summary>
     /// <param name="path">The dataset file.</param>
     /// <returns>The times in order; empty for a dataset without time steps, or one that can't be read.</returns>

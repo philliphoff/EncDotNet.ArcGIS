@@ -38,12 +38,19 @@ public static class ChartCredits
         return producers.Count == 0 ? Strings.Credits_UnknownProducer : string.Join(", ", producers);
     }
 
-    /// <summary>Gets a layer's description.</summary>
+    /// <summary>
+    /// Gets a layer's description. When every dataset is weather (the
+    /// <b>Weather</b> layer), it says so: weather and ice forecasts and
+    /// warnings, not for navigation, follow official advisories.
+    /// </summary>
     /// <param name="datasets">The datasets it draws.</param>
     public static string Description(IReadOnlyCollection<ChartLayerDataset> datasets)
     {
         ArgumentNullException.ThrowIfNull(datasets);
-        return string.Format(CultureInfo.InvariantCulture, Strings.Credits_Description, Products(datasets), Producers(datasets));
+        var format = datasets.Count > 0 && datasets.All(d => d.Kind == ChartLayerKind.Weather)
+            ? Strings.Credits_WeatherDescription
+            : Strings.Credits_Description;
+        return string.Format(CultureInfo.InvariantCulture, format, Products(datasets), Producers(datasets));
     }
 
     /// <summary>Gets a layer's credits.</summary>

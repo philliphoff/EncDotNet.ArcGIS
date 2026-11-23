@@ -298,6 +298,10 @@
     <value>Surface currents</value>
     <comment>The SoundCharts layer for S-111 datasets, the viewer's Timeline name.</comment>
   </data>
+  <data name="Layer_Weather" xml:space="preserve">
+    <value>Weather</value>
+    <comment>The SoundCharts layer for other time-varying datasets: tropical cyclones, CAP, GRIB2, NetCDF, S-411 sea ice, S-412. The viewer's word for weather data.</comment>
+  </data>
   <data name="Group_Name" xml:space="preserve">
     <value>SoundCharts · {0}</value>
     <comment>{0} is the source: a cell or exchange set name, or Group_DatasetCount.</comment>
@@ -309,6 +313,10 @@
   <data name="Credits_Description" xml:space="preserve">
     <value>SoundCharts portrayal of {0} from {1}. Not for navigation.</value>
     <comment>{0} is the products, {1} the producers.</comment>
+  </data>
+  <data name="Credits_WeatherDescription" xml:space="preserve">
+    <value>SoundCharts portrayal of {0} from {1}. Weather and ice forecasts and warnings, not for navigation. Follow official forecasts and advisories.</value>
+    <comment>The Weather layer's description, after upstream's "Tropical cyclone forecast, not for navigation. Follow official NHC advisories." {0} is the products, {1} the producers.</comment>
   </data>
   <data name="Credits_Attribution" xml:space="preserve">
     <value>Data: {0}. Portrayal: SoundCharts ({1}). Not for navigation.</value>
@@ -454,7 +462,7 @@
     <comment>The viewer's wording. {0} is the next time with data, {1} how long after map time.</comment>
   </data>
   <data name="Status_NoTimeLayers" xml:space="preserve">
-    <value>No Water level or Surface currents layer in this map.</value>
+    <value>No Water level, Surface currents or Weather layer in this map.</value>
   </data>
   <data name="Status_NoMapTime" xml:space="preserve">
     <value>The map has no map time. Turn time on in the map's time slider.</value>

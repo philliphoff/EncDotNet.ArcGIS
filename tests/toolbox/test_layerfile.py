@@ -26,6 +26,8 @@ TIDE = layerfile.ChartDataset(r"C:\Charts\S104\104US004SC1BO_20251217T12Z.h5", "
                               (-80.1, 32.6, -79.8, 32.9), "US")
 CURRENTS = layerfile.ChartDataset(r"C:\Charts\S111\111US00_DBOFS_20260320T18Z_US4DE1BB.h5", "S-111", "2.0.0",
                                   (-75.6, 38.7, -75.0, 39.9), "US")
+STORM = layerfile.ChartDataset(r"C:\Charts\TC\al092022_5day_020.zip", "TC", "1.0.0", (-85.41, 12.3, -66.3, 38.35),
+                               time_varying=True)
 
 
 def definition(kind, *datasets):
@@ -48,6 +50,10 @@ class SnapshotTests(unittest.TestCase):
         text = layerfile.layer_document(definition(layerfile.SURFACE_CURRENTS, CURRENTS))
         self.assertEqual(snapshot("surface-currents.lyrx"), text)
 
+    def test_weather_layer_matches_the_add_in_snapshot(self):
+        text = layerfile.layer_document(definition(layerfile.WEATHER, STORM))
+        self.assertEqual(snapshot("weather.lyrx"), text)
+
 
 class StringsTests(unittest.TestCase):
     """The names and credits are the add-in's Strings.resx values."""
@@ -62,11 +68,13 @@ class StringsTests(unittest.TestCase):
             "Group_Name": layerfile.GROUP_NAME,
             "Group_DatasetCount": layerfile.GROUP_DATASET_COUNT,
             "Credits_Description": layerfile.CREDITS_DESCRIPTION,
+            "Credits_WeatherDescription": layerfile.CREDITS_WEATHER_DESCRIPTION,
             "Credits_Attribution": layerfile.CREDITS_ATTRIBUTION,
             "Credits_UnknownProducer": layerfile.CREDITS_UNKNOWN_PRODUCER,
             "Layer_Chart": layerfile.display_name(layerfile.CHART),
             "Layer_WaterLevel": layerfile.display_name(layerfile.WATER_LEVEL),
             "Layer_SurfaceCurrents": layerfile.display_name(layerfile.SURFACE_CURRENTS),
+            "Layer_Weather": layerfile.display_name(layerfile.WEATHER),
         }
         for key, value in expected.items():
             with self.subTest(key=key):
@@ -86,10 +94,16 @@ class ComposeTests(unittest.TestCase):
         self.assertEqual("SoundCharts · 2 datasets", name)
 
     def test_datasets_go_to_the_layer_of_their_kind_time_layers_on_top(self):
-        _, text = layerfile.compose(["Mixed"], [CELL, CURRENTS, TIDE, S101])
+        _, text = layerfile.compose(["Mixed"], [CELL, CURRENTS, STORM, TIDE, S101])
         group = json.loads(text)["layerDefinitions"][0]
         self.assertEqual(["CIMPATH=soundcharts/surface-currents.json", "CIMPATH=soundcharts/water-level.json",
-                          "CIMPATH=soundcharts/chart.json"], group["layers"])
+                          "CIMPATH=soundcharts/weather.json", "CIMPATH=soundcharts/chart.json"], group["layers"])
+
+    def test_a_dataset_with_one_time_step_stays_in_chart(self):
+        single = layerfile.ChartDataset(r"C:\Charts\gfs-f003.grib2", "GRIB2")
+        self.assertEqual(layerfile.CHART, single.kind)
+        self.assertEqual(layerfile.WEATHER, STORM.kind)
+        self.assertEqual(layerfile.WATER_LEVEL, layerfile.ChartDataset("a.h5", "S-104", time_varying=True).kind)
 
     def test_layers_point_at_the_placeholder_until_the_add_in_connects_them(self):
         _, text = layerfile.compose(["US5MA1BO"], [CELL], style="night")

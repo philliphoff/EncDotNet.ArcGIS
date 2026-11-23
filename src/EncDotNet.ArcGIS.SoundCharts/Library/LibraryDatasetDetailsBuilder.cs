@@ -16,12 +16,26 @@ namespace EncDotNet.SoundCharts.Library;
 /// </summary>
 public static class LibraryDatasetDetailsBuilder
 {
-    /// <summary>The products whose datasets change with time, which have time steps.</summary>
-    private static readonly HashSet<string> TimeVaryingProducts = new(StringComparer.Ordinal) { "S-104", "S-111" };
+    /// <summary>
+    /// The products whose index has no time coverage although their datasets
+    /// have time steps: the processor's lightweight metadata leaves an S-104
+    /// or S-111 file's time series out.
+    /// </summary>
+    private static readonly HashSet<string> StepsWithoutCoverage = new(StringComparer.Ordinal) { "S-104", "S-111" };
 
-    /// <summary>Gets whether datasets of <paramref name="product"/> have time steps to read.</summary>
-    /// <param name="product">The product, such as <c>S-104</c>.</param>
-    public static bool HasTimeSteps(string product) => TimeVaryingProducts.Contains(product);
+    /// <summary>
+    /// Gets whether <paramref name="state"/>'s dataset may have time steps to
+    /// read: its index gives the time its data covers (weather, tropical
+    /// cyclones, CAP, S-412 and other time-aware datasets), or it's an S-104
+    /// or S-111 dataset. Datasets without time, such as chart cells, aren't
+    /// opened for steps they don't have.
+    /// </summary>
+    /// <param name="state">The dataset.</param>
+    public static bool HasTimeSteps(LibraryItemState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        return state.ValidWindow is not null || StepsWithoutCoverage.Contains(state.Item.ProductSpec);
+    }
 
     /// <summary>Builds the details.</summary>
     /// <param name="state">The dataset.</param>
@@ -217,7 +231,7 @@ public static class LibraryDatasetDetailsBuilder
             fields.Add(new LibraryDetailField(Strings.Library_Field_TimeRange, $"{Format(range.Item1)} → {Format(range.Item2)}", IsMono: true));
         }
 
-        if (HasTimeSteps(state.Item.ProductSpec))
+        if (HasTimeSteps(state) || steps is { Count: > 0 })
         {
             var text = steps is null ? Strings.Library_TimeSteps_Reading : TimeStepsText(steps);
             fields.Add(new LibraryDetailField(Strings.Library_Field_TimeSteps, text));

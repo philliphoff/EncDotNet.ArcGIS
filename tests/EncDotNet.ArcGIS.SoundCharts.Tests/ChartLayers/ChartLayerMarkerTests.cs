@@ -21,6 +21,50 @@ public class ChartLayerMarkerTests
     }
 
     [Fact]
+    public void Weather_RoundTripsThroughJson_AndKeepsItsDatasetsTimeVarying()
+    {
+        var marker = ChartLayerMarker.ForLayer(ChartLayerKind.Weather, [Storm]);
+
+        var read = ChartLayerMarker.TryParse(marker.ToJson());
+
+        Assert.NotNull(read);
+        Assert.Equal(ChartLayerKind.Weather, read.Kind);
+        var storm = Assert.Single(read.Datasets);
+        Assert.True(storm.TimeVarying);
+        Assert.Equal(ChartLayerKind.Weather, storm.Kind);
+        Assert.Contains("\"timeVarying\":true", marker.ToJson(), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Layer_WithoutTimeVaryingDatasets_WritesTheMarkerAsBefore()
+    {
+        var json = ChartLayerMarker.ForLayer(ChartLayerKind.WaterLevel, [Tide]).ToJson();
+
+        Assert.DoesNotContain("timeVarying", json, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void MarkerFromBeforeTheWeatherLayer_LoadsAsItWas()
+    {
+        // A project saved before the Weather layer: no timeVarying, and a weather file in Chart.
+        const string json = """
+            {"version":1,"role":"layer","kind":"chart","datasets":[
+            {"path":"C:\\Charts\\US5MA1BO\\US5MA1BO.000","product":"S-57","producer":"US"},
+            {"path":"C:\\Charts\\gfswave-useast.grib2","product":"GRIB2","edition":"2.0.0"}]}
+            """;
+
+        var read = ChartLayerMarker.TryParse(json);
+
+        Assert.NotNull(read);
+        Assert.Equal(ChartLayerKind.Chart, read.Kind);
+        Assert.All(read.Datasets, d =>
+        {
+            Assert.False(d.TimeVarying);
+            Assert.Equal(ChartLayerKind.Chart, d.Kind);
+        });
+    }
+
+    [Fact]
     public void Group_RoundTripsThroughJson()
     {
         var marker = ChartLayerMarker.ForGroup(["US5MA1BO", "S101", "us5ma1bo"]);

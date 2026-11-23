@@ -178,9 +178,10 @@ Recommendation: each map holds at most one **SoundCharts** group layer, and
 **Add SoundCharts Data** adds to it. Inside the group:
 
 ```text
-SoundCharts · 4 datasets             group layer
+SoundCharts · 5 datasets             group layer
 ├── Surface currents                 WMTS, time-aware        (S-111 datasets)
 ├── Water level                      WMTS, time-aware        (S-104 datasets)
+├── Weather                          WMTS, time-aware        (other datasets with time steps)
 ├── Chart                            WMTS                    (everything else)
 └── Coverage                         feature layer           (footprints, A7)
 ```
@@ -191,12 +192,33 @@ SoundCharts · 4 datasets             group layer
   one WMTS layer per cell would overdraw overlapping bands, double text and
   cost a server (or a layer in one) per cell. Pro's own ENC support puts one
   layer per cell; ours is a chart, the way SoundCharts draws one.
-- **Split by time behaviour, not by product.** S-104 and S-111 change with
-  map time; the rest don't. In one composite layer, every time step would
-  re-request the whole chart. Separate layers let the static **Chart** stay
-  cached while only the time layers refetch. **Water level** and **Surface
-  currents** are the viewer's Timeline names for S-104 and S-111. They're
-  drawn above **Chart**, as their portrayal is an overlay.
+- **Split by time behaviour, not by product.** A dataset goes in a time
+  layer because it has more than one time step
+  (`ITimeAwareDatasetProcessor.AvailableTimes`), which
+  **Add SoundCharts Data** reads when it inspects the dataset and the layer
+  marker keeps (`timeVarying`). In one composite layer, every time step
+  would re-request the whole chart. Separate layers let the static
+  **Chart** stay cached while only the time layers refetch. **Water level**
+  and **Surface currents** are the viewer's Timeline names for S-104 and
+  S-111. They're drawn above **Chart**, as their portrayal is an overlay.
+- **Weather holds every other time-varying dataset** (issue #62): NHC
+  tropical cyclone advisories (`TC`), CAP warnings, GRIB2 and NetCDF grids,
+  surface analyses, S-411 sea ice and S-412. It's drawn above **Chart** and
+  below **Water level** and **Surface currents**, so their arrows and
+  values stay readable over weather areas. Its description says the data
+  is not for navigation and to follow official forecasts and advisories,
+  as `s100 info` does for a cyclone advisory.
+- **Sea ice shares Weather.** S-411 and S-412 are met-ocean overlays like
+  the rest, and the pinned server already time-steps them all in one WMTS
+  layer. A layer of its own would cost a chart server and a Contents row
+  for data that is rarely mixed with other weather. Rejected for now: an
+  **Ice** layer. Revisit if users need to turn ice and weather on and off
+  separately.
+- **One step isn't time-varying.** A dataset with a single time step (a
+  GRIB2 file of one forecast hour, an S-411 chart of one date) has nothing
+  to step through, and step snapping (§6.3) would hide it at almost every
+  map time. It stays in **Chart**, drawn at its step, until the add-in reads
+  how long a step stays valid (issue #64).
 - **S-124 stays in Chart for now.** It's time-dependent by validity, but the
   server doesn't filter warnings by time (U7). It moves to its own
   **Navigational warnings** layer when it does.
@@ -251,7 +273,7 @@ doubles the Contents width for a word the group already says.
 
 The add-in keeps a registry in the project (Pro module settings, saved with
 the `.aprx`): for each SoundCharts layer, its layer URI, kind (chart, water
-level, surface currents, coverage), dataset list and chart id. The registry,
+level, surface currents, weather, coverage), dataset list and chart id. The registry,
 not the name or URL, is what makes a layer a SoundCharts layer. A layer that
 has lost its registry entry (copied to another project by hand) is shown
 with its last URL and offered **Reconnect** if the datasets can be found.
@@ -531,12 +553,15 @@ question P5 if users ask for it.
 |---|---|---|
 | S-104 water level | Time steps of the series (fixed stations and grids) | Picks the step drawn in **Water level**; Object information samples there |
 | S-111 surface currents | Time steps | Picks the step drawn in **Surface currents**; Object information samples there |
+| Weather: TC, CAP, GRIB2, NetCDF, surface analyses, S-411, S-412 | The processor's time steps (`AvailableTimes`), when there's more than one | Picks the step drawn in **Weather** |
 | S-124 navigational warnings | Each warning's validity | Nothing on the map yet (U7). Object information says "In force at map time" or "Not in force at map time" per warning, from the library |
-| Others (S-101, S-102, S-122...) | None | Nothing |
+| Others (S-101, S-102, S-122...), and datasets with one time step | None | Nothing |
 
-Weather (GRIB2, NetCDF) and S-411 have time steps in the server too. They
-aren't in the MVP's product list; when they are, each gets a time layer by
-the same rule as S-104 and S-111.
+The rule is the dataset's time steps, not its product name: a product
+upstream makes time-aware joins **Weather** without a change here. The
+add-in still snaps to the nearest step. A cyclone moving smoothly between
+forecast points needs the server to draw at map time rather than at a step
+(issue #64).
 
 ### 6.6 Previous and next data
 
@@ -616,7 +641,7 @@ forecast for an observation:
 | chart (the composited SoundCharts layer) | map service, ENC layer |
 | dataset, exchange set, Library | cell (except for S-57/S-101 cells), catalog (Pro's word), collection (in UI text; it's the file format's word) |
 | Object information | Identify, Info, pick report |
-| Water level, Surface currents, Navigational warnings | S-104 layer, S-111 layer |
+| Water level, Surface currents, Weather, Navigational warnings | S-104 layer, S-111 layer, GRIB layer |
 | Day, Dusk, Night | day mode, night theme |
 | Mariner Settings | display settings, chart settings |
 | chart server (in the log and messages) | tile server, WMTS server, backend |
@@ -714,8 +739,9 @@ Proposed, for the slices to cite once accepted.
 11. **D11 One group per map.** A map has at most one **SoundCharts · {source}**
     group; **Add SoundCharts Data** adds to it.
 12. **D12 Layers by time behaviour.** In the group: **Surface currents**
-    (S-111), **Water level** (S-104), **Chart** (everything else, S-124
-    included until U7), **Coverage** (footprints). A layer exists only while
+    (S-111), **Water level** (S-104), **Weather** (every other dataset with
+    more than one time step, sea ice included), **Chart** (everything else,
+    S-124 included until U7), **Coverage** (footprints). A layer exists only while
     it has datasets. Removing a dataset is done from **Datasets...** or a
     selected footprint.
 13. **D13 Zoom floor.** The chart layers' minimum scale is the scale of
@@ -792,8 +818,10 @@ Proposed, for the slices to cite once accepted.
 32. **D32 Default time.** When the first time-varying layer arrives in a map
     with no map time: now if in range, otherwise the nearest end. User-set
     map time is never moved. **Now** sets it once; no live mode.
-33. **D33 Products.** S-104 and S-111 are time layers. S-124 is evaluated
-    for validity at map time in Object information only, until U7.
+33. **D33 Products.** S-104 and S-111 are time layers, and so is any other
+    dataset with more than one time step, in **Weather**. S-124 is
+    evaluated for validity at map time in Object information only, until
+    U7.
 
 ### Wording
 

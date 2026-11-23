@@ -22,7 +22,7 @@ namespace EncDotNet.SoundCharts.ChartLayers;
 /// exchange set (folder, <c>CATALOG.XML</c>, <c>CATALOG.031</c> or
 /// <c>.zip</c>) or a folder, and reads each one's product, edition and
 /// footprint from its content with EncDotNet.S100, never from the file
-/// extension (issue #5).
+/// extension (issue #5), and whether it changes with time.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -191,6 +191,38 @@ public sealed class DatasetInspector : IDisposable
             : null;
     }
 
+    /// <summary>
+    /// Gets whether a dataset changes with time: its processor is
+    /// time-aware (<see cref="ITimeAwareDatasetProcessor"/>) and lists more
+    /// than one distinct time step. Such a dataset goes in a time layer
+    /// (design brief §3.1, §6.5) whatever its product.
+    /// </summary>
+    /// <remarks>
+    /// A single step has nothing to step through, and step snapping would
+    /// hide it at almost every map time, so a dataset with one step stays in
+    /// <b>Chart</b>, drawn at that step. A processor that can't list its
+    /// steps counts as not time-varying.
+    /// </remarks>
+    /// <param name="processor">The dataset's processor.</param>
+    public static bool IsTimeVarying(IDatasetProcessor processor)
+    {
+        ArgumentNullException.ThrowIfNull(processor);
+        if (processor is not ITimeAwareDatasetProcessor timed)
+        {
+            return false;
+        }
+
+        try
+        {
+            return timed.AvailableTimes.Distinct().Skip(1).Any();
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            // The library reads files the user chose; a malformed one can throw almost anything.
+            return false;
+        }
+    }
+
     /// <summary>Reads one dataset file; <see langword="null"/> with a warning when it can't be drawn.</summary>
     /// <param name="path">The file.</param>
     /// <param name="declared">What an exchange set's catalogue says the file is, if anything.</param>
@@ -259,7 +291,8 @@ public sealed class DatasetInspector : IDisposable
                 edition,
                 extent,
                 declared?.Producer ?? ProducerCodeFromName(path),
-                declared?.NotForNavigation ?? false);
+                declared?.NotForNavigation ?? false,
+                IsTimeVarying(processor));
         }
         finally
         {

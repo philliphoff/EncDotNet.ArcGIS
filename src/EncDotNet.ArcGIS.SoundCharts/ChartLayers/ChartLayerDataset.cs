@@ -13,19 +13,25 @@ namespace EncDotNet.SoundCharts.ChartLayers;
 /// <param name="Extent">The WGS-84 footprint, or <see langword="null"/> when it isn't known.</param>
 /// <param name="Producer">The producing agency's name or code, or <see langword="null"/>.</param>
 /// <param name="NotForNavigation"><see langword="true"/> when the producer marks the dataset not for navigation.</param>
+/// <param name="TimeVarying">
+/// <see langword="true"/> when the dataset has more than one time step, so it
+/// changes with map time (design brief §3.1). Markers written before the
+/// <b>Weather</b> layer don't say, which reads as <see langword="false"/>.
+/// </param>
 public sealed record ChartLayerDataset(
     string Path,
     string Product,
     string? Edition = null,
     GeoExtent? Extent = null,
     string? Producer = null,
-    bool NotForNavigation = false)
+    bool NotForNavigation = false,
+    bool TimeVarying = false)
 {
     /// <summary>Gets the dataset's name: its file name without the extension, such as <c>US5MA1BO</c>.</summary>
     public string Name => System.IO.Path.GetFileNameWithoutExtension(Path);
 
     /// <summary>Gets the layer the dataset belongs to.</summary>
-    public ChartLayerKind Kind => ChartLayerKinds.ForProduct(Product);
+    public ChartLayerKind Kind => ChartLayerKinds.ForProduct(Product, TimeVarying);
 
     /// <summary>Gets the product and edition for display, such as <c>S-101 2.0.0</c>.</summary>
     public string ProductAndEdition => Edition is null ? Product : $"{Product} {Edition}";

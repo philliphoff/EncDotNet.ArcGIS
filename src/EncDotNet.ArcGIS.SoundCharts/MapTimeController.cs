@@ -11,9 +11,10 @@ namespace EncDotNet.SoundCharts;
 /// <summary>
 /// Makes Pro's map time drive the time-varying SoundCharts layers (design
 /// brief §6, D29–D33): on every map time change in the active map view it
-/// snaps the instant to each <b>Water level</b> and <b>Surface currents</b>
-/// layer's steps and writes the step into the layer's WMTS <c>Time</c>
-/// dimension, or hides the layer and says so when there's no data then.
+/// snaps the instant to each time layer's steps (<b>Water level</b>,
+/// <b>Surface currents</b> and <b>Weather</b>) and writes the step into the
+/// layer's WMTS <c>Time</c> dimension, or hides the layer and says so when
+/// there's no data then.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -76,9 +77,9 @@ internal sealed class MapTimeController
     }
 
     /// <summary>
-    /// Follows map time for <paramref name="layerUri"/>: a <b>Water level</b>
-    /// or <b>Surface currents</b> layer with <paramref name="steps"/>. Other
-    /// layers, and layers without steps, are forgotten.
+    /// Follows map time for <paramref name="layerUri"/>: a time layer
+    /// (<see cref="ChartLayerKinds.IsTimeLayer"/>) with <paramref name="steps"/>.
+    /// <b>Chart</b> layers, and layers without steps, are forgotten.
     /// </summary>
     /// <param name="map">The layer's map.</param>
     /// <param name="layerUri">The layer's URI.</param>
@@ -87,7 +88,7 @@ internal sealed class MapTimeController
     public void Track(Map map, string layerUri, ChartLayerKind kind, TimeSteps? steps)
     {
         ArgumentNullException.ThrowIfNull(map);
-        if (kind == ChartLayerKind.Chart || steps is null)
+        if (!ChartLayerKinds.IsTimeLayer(kind) || steps is null)
         {
             Forget(layerUri);
             return;

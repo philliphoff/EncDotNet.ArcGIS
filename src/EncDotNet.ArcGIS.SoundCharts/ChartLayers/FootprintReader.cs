@@ -27,7 +27,15 @@ namespace EncDotNet.SoundCharts.ChartLayers;
 ///   <c>DataCoverage</c> surfaces the processor exposes.</item>
 ///   <item>HDF5 grids (S-102, S-104, S-111): the bounds in the file's
 ///   metadata, and the first and last time step of a time series.</item>
+///   <item>Other datasets (weather, sea ice, CAP, tropical cyclones): the
+///   bounds in the metadata, and the first and last of the processor's time
+///   steps.</item>
 /// </list>
+/// <para>
+/// Only datasets of a time layer (<see cref="ChartLayerKinds.IsTimeLayer"/>)
+/// get a first and last time, so the time-enabled <b>Coverage</b> layer
+/// never hides the footprint of a dataset <b>Chart</b> draws at every time.
+/// </para>
 /// <para>
 /// Coverage marked "no coverage available" (<c>CATCOV</c> = 2) is left out,
 /// as the library's own coverage resolver does. A dataset with no coverage
@@ -84,9 +92,15 @@ public sealed class FootprintReader : IDisposable
                     ReadVector(S101Dataset.Open(dataset.Path), read);
                     break;
                 default:
-                    ReadWithProcessor(dataset.Path, read);
+                    ReadWithProcessor(dataset.Path, read, timeSteps: dataset.Kind == ChartLayerKind.Weather);
                     ReadTimeSeries(dataset, read);
                     break;
+            }
+
+            if (!ChartLayerKinds.IsTimeLayer(dataset.Kind))
+            {
+                read.FirstTime = null;
+                read.LastTime = null;
             }
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
@@ -151,7 +165,16 @@ public sealed class FootprintReader : IDisposable
     private static void ReadVector(S101Dataset dataset, Found read) =>
         read.Polygons.AddRange(CoverageOf(new S101VectorSource(dataset).GetFeatures()));
 
-    private void ReadWithProcessor(string path, Found read)
+    /// <summary>Reads a dataset's bounds, coverage and times with its processor.</summary>
+    /// <param name="path">The dataset file.</param>
+    /// <param name="read">Collects what's found.</param>
+    /// <param name="timeSteps">
+    /// Whether to take the first and last time from the processor's time
+    /// steps rather than the metadata's time coverage: the steps are what the
+    /// chart server draws, and a dataset's coverage can be wider (a storm's
+    /// past track).
+    /// </param>
+    private void ReadWithProcessor(string path, Found read, bool timeSteps)
     {
         var processor = _factory.CreateProcessor(path);
         try
@@ -162,7 +185,12 @@ public sealed class FootprintReader : IDisposable
                 read.Bounds = new GeoExtent(box.WestLongitude, box.SouthLatitude, box.EastLongitude, box.NorthLatitude);
             }
 
-            if (metadata.TimeCoverage is { } time)
+            if (timeSteps && processor is ITimeAwareDatasetProcessor timed && timed.AvailableTimes is { Count: > 0 } steps)
+            {
+                read.FirstTime = steps.Min();
+                read.LastTime = steps.Max();
+            }
+            else if (metadata.TimeCoverage is { } time)
             {
                 read.FirstTime = time.Start;
                 read.LastTime = time.End;
@@ -185,11 +213,11 @@ public sealed class FootprintReader : IDisposable
 
     /// <summary>
     /// Reads an S-104 or S-111 file's first and last time step from its
-    /// HDF5 metadata, which the processor's lightweight metadata leaves out.
+    /// HDF5 metadata, when the processor didn't give them.
     /// </summary>
     private static void ReadTimeSeries(ChartLayerDataset dataset, Found read)
     {
-        if (read.FirstTime is not null || dataset.Kind == ChartLayerKind.Chart)
+        if (read.FirstTime is not null || dataset.Kind is not (ChartLayerKind.WaterLevel or ChartLayerKind.SurfaceCurrents))
         {
             return;
         }

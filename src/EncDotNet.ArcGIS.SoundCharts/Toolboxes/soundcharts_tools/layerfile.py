@@ -48,20 +48,24 @@ GROUP_URI = _URI_PREFIX + "soundcharts.json"
 CHART = "chart"
 WATER_LEVEL = "water-level"
 SURFACE_CURRENTS = "surface-currents"
+WEATHER = "weather"
 
-TOP_FIRST = (SURFACE_CURRENTS, WATER_LEVEL, CHART)
+TOP_FIRST = (SURFACE_CURRENTS, WATER_LEVEL, WEATHER, CHART)
 """Layer kinds in drawing order, top first: time layers overlay the chart (§3.1)."""
 
 _NAMES = {
     CHART: "Chart",
     WATER_LEVEL: "Water level",
     SURFACE_CURRENTS: "Surface currents",
+    WEATHER: "Weather",
 }
 
 # The add-in's Strings.resx values; test_layerfile.py checks they still match.
 GROUP_NAME = "SoundCharts · {0}"
 GROUP_DATASET_COUNT = "{0} datasets"
 CREDITS_DESCRIPTION = "SoundCharts portrayal of {0} from {1}. Not for navigation."
+CREDITS_WEATHER_DESCRIPTION = ("SoundCharts portrayal of {0} from {1}. Weather and ice forecasts and warnings, "
+                               "not for navigation. Follow official forecasts and advisories.")
 CREDITS_ATTRIBUTION = "Data: {0}. Portrayal: SoundCharts ({1}). Not for navigation."
 CREDITS_UNKNOWN_PRODUCER = "unknown producer"
 UNKNOWN_VERSION = "unknown"
@@ -73,7 +77,8 @@ class ChartDataset:
     Mirrors the add-in's ``ChartLayerDataset``.
     """
 
-    def __init__(self, path, product, edition=None, extent=None, producer=None, not_for_navigation=False):
+    def __init__(self, path, product, edition=None, extent=None, producer=None, not_for_navigation=False,
+                 time_varying=False):
         """Creates a dataset.
 
         :param path: The dataset file's full path.
@@ -82,6 +87,7 @@ class ChartDataset:
         :param extent: The WGS-84 footprint ``(west, south, east, north)``, or ``None``.
         :param producer: The producer's name or code, or ``None``.
         :param not_for_navigation: Whether the producer marks it not for navigation.
+        :param time_varying: Whether it has more than one time step, so it changes with map time.
         """
         if not path or not product:
             raise ValueError("A dataset needs a path and a product.")
@@ -91,6 +97,7 @@ class ChartDataset:
         self.extent = tuple(extent) if extent is not None else None
         self.producer = producer
         self.not_for_navigation = bool(not_for_navigation)
+        self.time_varying = bool(time_varying)
 
     @property
     def name(self):
@@ -100,18 +107,24 @@ class ChartDataset:
     @property
     def kind(self):
         """The layer the dataset belongs to."""
-        return kind_for_product(self.product)
+        return kind_for_product(self.product, self.time_varying)
 
     def __repr__(self):
         return "ChartDataset({!r}, {!r})".format(self.path, self.product)
 
 
-def kind_for_product(product):
-    """Gets the layer kind for a product: S-104 water level, S-111 surface currents, else chart."""
+def kind_for_product(product, time_varying=False):
+    """Gets the layer kind for a dataset.
+
+    S-104 is water level and S-111 surface currents; any other dataset with
+    more than one time step is weather, and the rest is chart.
+    """
     if product == "S-104":
         return WATER_LEVEL
     if product == "S-111":
         return SURFACE_CURRENTS
+    if time_varying:
+        return WEATHER
     return CHART
 
 
@@ -163,8 +176,14 @@ def producers(datasets):
 
 
 def description(datasets):
-    """Gets a layer's description: what it portrays and who produced it."""
-    return CREDITS_DESCRIPTION.format(products(datasets), producers(datasets))
+    """Gets a layer's description: what it portrays and who produced it.
+
+    A layer of weather datasets only says they're not for navigation and to
+    follow official advisories.
+    """
+    weather = bool(datasets) and all(d.kind == WEATHER for d in datasets)
+    text = CREDITS_WEATHER_DESCRIPTION if weather else CREDITS_DESCRIPTION
+    return text.format(products(datasets), producers(datasets))
 
 
 def attribution(datasets, server_version):
@@ -197,6 +216,8 @@ def layer_marker(kind, datasets):
             item["producer"] = d.producer
         if d.not_for_navigation:
             item["notForNavigation"] = True
+        if d.time_varying:
+            item["timeVarying"] = True
         if d.extent is not None:
             item["extent"] = [_number(v) for v in d.extent]
         items.append(item)
@@ -264,7 +285,7 @@ class ChartLayer:
                  min_scale=0.0, server_version=None):
         """Creates a layer.
 
-        :param kind: ``chart``, ``water-level`` or ``surface-currents``.
+        :param kind: ``chart``, ``water-level``, ``surface-currents`` or ``weather``.
         :param datasets: The ``ChartDataset`` objects it draws.
         :param capabilities_url: The chart server's WMTS capabilities URL.
         :param style: The palette: ``day``, ``dusk`` or ``night``.

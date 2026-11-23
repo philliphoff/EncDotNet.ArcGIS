@@ -32,6 +32,24 @@ public class ChartLayerDocumentTests
     }
 
     [Fact]
+    public void Weather_MatchesSnapshot()
+    {
+        MatchSnapshot("weather.lyrx", ChartLayerDocument.ForLayer(Definition(ChartLayerKind.Weather, Storm)));
+    }
+
+    [Fact]
+    public void Weather_SaysItsNotForNavigationAndToFollowOfficialAdvisories()
+    {
+        var layer = ChartLayerDocument.Layer(Definition(ChartLayerKind.Weather, Storm));
+
+        Assert.Equal("Weather", (string?)layer["name"]);
+        Assert.Equal(
+            "SoundCharts portrayal of TC from unknown producer. Weather and ice forecasts and warnings, not for navigation. Follow official forecasts and advisories.",
+            (string?)layer["description"]);
+        Assert.EndsWith("Not for navigation.", (string?)layer["attribution"], StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Layer_IsATiledServiceLayerWithAWmtsConnectionToTheServer()
     {
         var layer = ChartLayerDocument.Layer(Definition(ChartLayerKind.Chart, Cell));
@@ -83,14 +101,14 @@ public class ChartLayerDocumentTests
         var json = ChartLayerDocument.ForGroup(
             "SoundCharts · 3 datasets",
             ChartLayerMarker.ForGroup(["a", "b"]),
-            [Definition(ChartLayerKind.Chart, Cell), Definition(ChartLayerKind.WaterLevel, Tide), Definition(ChartLayerKind.SurfaceCurrents, Currents)]);
+            [Definition(ChartLayerKind.Chart, Cell), Definition(ChartLayerKind.Weather, Storm), Definition(ChartLayerKind.WaterLevel, Tide), Definition(ChartLayerKind.SurfaceCurrents, Currents)]);
 
         var document = JsonNode.Parse(json)!;
         Assert.Equal([ChartLayerDocument.GroupUri], document["layers"]!.AsArray().Select(n => (string?)n));
         var group = document["layerDefinitions"]![0]!;
         Assert.Equal("CIMGroupLayer", (string?)group["type"]);
         Assert.Equal(
-            ["Surface currents", "Water level", "Chart"],
+            ["Surface currents", "Water level", "Weather", "Chart"],
             group["layers"]!.AsArray().Select(uri => (string?)document["layerDefinitions"]!.AsArray().Single(d => (string?)d!["uRI"] == (string?)uri)!["name"]));
     }
 

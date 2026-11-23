@@ -191,4 +191,18 @@ public class LibrarySmallPartsTests
         Assert.True(steps.Count > 1);
         Assert.True(steps.SequenceEqual(steps.Order()));
     }
+
+    [Fact]
+    public void Reader_TropicalCyclone_HasTheAdvisorysForecastPoints()
+    {
+        var dataset = Fixtures.Upstream(Path.Combine("TC", "al092022", "al092022_5day_020.zip"));
+        Assert.SkipWhen(dataset is null, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        using var reader = new LibraryDatasetReader();
+
+        var steps = reader.ReadTimeSteps(dataset);
+
+        Assert.Equal(8, steps.Count);
+        Assert.Equal(new DateTime(2022, 9, 28, 0, 0, 0, DateTimeKind.Utc), steps[0]);
+        Assert.Equal(new DateTime(2022, 10, 2, 0, 0, 0, DateTimeKind.Utc), steps[^1]);
+    }
 }
