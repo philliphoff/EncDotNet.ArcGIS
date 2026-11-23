@@ -3,8 +3,10 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
+using ArcGIS.Core.Geometry;
 using ArcGIS.Desktop.Framework;
 using ArcGIS.Desktop.Framework.Contracts;
+using ArcGIS.Desktop.Framework.Threading.Tasks;
 using ArcGIS.Desktop.Mapping;
 using EncDotNet.SoundCharts.Library;
 using EncDotNet.SoundCharts.Logging;
@@ -21,7 +23,7 @@ namespace EncDotNet.SoundCharts;
 /// indexed datasets in a tree, the selected dataset's details, and the
 /// actions <b>Add to Map</b>, <b>Show Footprint</b>, <b>Validate</b> and
 /// <b>Open Containing Folder</b>; for a collection or source,
-/// <b>Add All to Map</b>. Nothing is loaded until asked.
+/// <b>Add All to Map</b> and <b>Add Datasets in View</b>. Nothing is loaded until asked.
 /// </summary>
 internal sealed class LibraryPaneViewModel : DockPane
 {
@@ -49,6 +51,8 @@ internal sealed class LibraryPaneViewModel : DockPane
         RemoveCommand = new RelayCommand(Remove, () => _selectedNode?.Kind is LibraryNodeKind.Collection or LibraryNodeKind.Source);
         AddToMapCommand = new RelayCommand(AddToMapAsync, () => _selectedNode?.Item is not null && MapView.Active is not null);
         AddAllToMapCommand = new RelayCommand(AddAllToMapAsync, () => _groupItems.Count > 0 && MapView.Active is not null);
+        AddGroupInViewCommand = new RelayCommand(AddGroupInViewAsync, () => _groupItems.Count > 0 && MapView.Active is not null);
+        AddLibraryInViewCommand = new RelayCommand(AddLibraryInViewAsync, () => !IsEmpty && MapView.Active is not null);
         AddFeatureLayersCommand = new RelayCommand(AddFeatureLayersAsync, () => _selectedNode?.Item is not null && MapView.Active is not null);
         ShowFootprintCommand = new RelayCommand(ShowFootprintAsync, () => _selectedNode?.Item is not null);
         ValidateCommand = new RelayCommand(ValidateAsync, () => _selectedNode?.Item is not null && !IsValidating);
@@ -142,6 +146,12 @@ internal sealed class LibraryPaneViewModel : DockPane
 
     /// <summary>Gets the <b>Add All to Map</b> command: every dataset the tree shows under the selected collection or source.</summary>
     public ICommand AddAllToMapCommand { get; }
+
+    /// <summary>Gets the <b>Add Datasets in View</b> command for the selected collection or source.</summary>
+    public ICommand AddGroupInViewCommand { get; }
+
+    /// <summary>Gets the Library menu's <b>Add Datasets in View</b> command: every collection the tree shows.</summary>
+    public ICommand AddLibraryInViewCommand { get; }
 
     /// <summary>Gets the <b>Add as Feature Layers</b> command (issue #15).</summary>
     public ICommand AddFeatureLayersCommand { get; }
@@ -279,9 +289,7 @@ internal sealed class LibraryPaneViewModel : DockPane
     private void UpdateGroup()
     {
         // The datasets the tree shows under the row, so a filter narrows what's added.
-        _groupItems = HasGroup && _selectedNode is { } node
-            ? [.. node.SelfAndDescendants().Select(n => n.Item).OfType<EncDotNet.S100.Collections.Library.LibraryItemState>()]
-            : [];
+        _groupItems = HasGroup && _selectedNode is { } node ? ShownItems([node]) : [];
         NotifyPropertyChanged(nameof(HasGroup));
         NotifyPropertyChanged(nameof(GroupSummary));
         NotifyPropertyChanged(nameof(ShowPlaceholder));
@@ -432,54 +440,121 @@ internal sealed class LibraryPaneViewModel : DockPane
         }
     }
 
-    private async Task AddAllToMapAsync()
+    private Task AddAllToMapAsync() => Guarded("Add All to Map", () => AddItemsAsync(_groupItems, _selectedNode?.Title));
+
+    private Task AddGroupInViewAsync() => Guarded("Add Datasets in View", () => AddInViewAsync(_groupItems, _selectedNode?.Title));
+
+    private Task AddLibraryInViewAsync() =>
+        Guarded("Add Datasets in View", () => AddInViewAsync(ShownItems(Nodes), Strings.Library_Caption));
+
+    /// <summary>The datasets the tree shows under <paramref name="nodes"/>, so a filter narrows what's added.</summary>
+    private static List<EncDotNet.S100.Collections.Library.LibraryItemState> ShownItems(IEnumerable<LibraryNode> nodes) =>
+        [.. nodes.SelectMany(n => n.SelfAndDescendants()).Select(n => n.Item).OfType<EncDotNet.S100.Collections.Library.LibraryItemState>()];
+
+    private static async Task Guarded(string action, Func<Task> run)
     {
         try
         {
-            if (_groupItems.Count == 0 || MapView.Active is not { } view)
-            {
-                return;
-            }
-
-            // Each file once, and a zipped exchange set once however many of its datasets.
-            var paths = LibraryItemPaths.AddToMapPaths(_groupItems.Select(s => s.Item));
-            var missing = paths.Where(p => !LibraryItemPaths.Exists(p)).ToList();
-            foreach (var path in missing)
-            {
-                AddInLog.Write(LogLevel.Warning, $"SoundCharts Library: Add All to Map skipped {path}: it isn't there any more.");
-            }
-
-            var present = paths.Except(missing, StringComparer.OrdinalIgnoreCase).ToList();
-            if (present.Count == 0)
-            {
-                Say(Strings.Library_AddAllNothing, MessageBoxImage.Information);
-                return;
-            }
-
-            if (_groupItems.Count > AddAllConfirmThreshold)
-            {
-                var answer = MessageBox.Show(
-                    string.Format(CultureInfo.CurrentCulture, Strings.Library_AddAllConfirmFormat, _groupItems.Count),
-                    Strings.Library_Caption,
-                    MessageBoxButton.OKCancel,
-                    MessageBoxImage.Question);
-                if (answer != MessageBoxResult.OK)
-                {
-                    return;
-                }
-            }
-
-            AddInLog.Write($"SoundCharts Library: adding {present.Count} path(s) from {_selectedNode?.Title} to the map.");
-            await AddSoundChartsData.RunAsync(view, present);
-
-            if (missing.Count > 0)
-            {
-                Say(string.Format(CultureInfo.CurrentCulture, Strings.Library_AddAllSkippedFormat, missing.Count), MessageBoxImage.Warning);
-            }
+            await run();
         }
         catch (Exception ex)
         {
-            Fail("Add All to Map", ex);
+            Fail(action, ex);
+        }
+    }
+
+    /// <summary>
+    /// Adds those of <paramref name="items"/> whose indexed footprint
+    /// overlaps the active map's extent. Datasets the index has no footprint
+    /// for aren't opened to find one; the log counts them.
+    /// </summary>
+    private static async Task AddInViewAsync(IReadOnlyList<EncDotNet.S100.Collections.Library.LibraryItemState> items, string? scope)
+    {
+        if (items.Count == 0 || MapView.Active is not { } view)
+        {
+            return;
+        }
+
+        var extent = await QueuedTask.Run(() =>
+            view.Extent is { IsEmpty: false } e ? GeometryEngine.Instance.Project(e, SpatialReferences.WGS84)?.Extent : null);
+        if (extent is null)
+        {
+            Say(Strings.Library_AddInViewNoExtent, MessageBoxImage.Information);
+            return;
+        }
+
+        var unknown = 0;
+        var inView = new List<EncDotNet.S100.Collections.Library.LibraryItemState>();
+        foreach (var state in items)
+        {
+            if (LibraryFootprint.Of(state.Item) is not { } footprint)
+            {
+                unknown++;
+            }
+            else if (footprint.Intersects(extent.XMin, extent.YMin, extent.XMax, extent.YMax))
+            {
+                inView.Add(state);
+            }
+        }
+
+        AddInLog.Write(string.Create(
+            CultureInfo.InvariantCulture,
+            $"SoundCharts Library: Add Datasets in View found {inView.Count} of {items.Count} dataset(s) in {scope} in ({extent.XMin:0.###}, {extent.YMin:0.###}, {extent.XMax:0.###}, {extent.YMax:0.###}); {unknown} have no footprint in the index."));
+        if (inView.Count == 0)
+        {
+            Say(Strings.Library_AddInViewNothing, MessageBoxImage.Information);
+            return;
+        }
+
+        await AddItemsAsync(inView, scope);
+    }
+
+    /// <summary>
+    /// Adds <paramref name="items"/> to the active map in one pass: each file
+    /// once, and a zipped exchange set once however many of its datasets.
+    /// Files that are gone are skipped and logged; above
+    /// <see cref="AddAllConfirmThreshold"/> datasets it asks first.
+    /// </summary>
+    private static async Task AddItemsAsync(IReadOnlyList<EncDotNet.S100.Collections.Library.LibraryItemState> items, string? scope)
+    {
+        if (items.Count == 0 || MapView.Active is not { } view)
+        {
+            return;
+        }
+
+        var paths = LibraryItemPaths.AddToMapPaths(items.Select(s => s.Item));
+        var missing = paths.Where(p => !LibraryItemPaths.Exists(p)).ToList();
+        foreach (var path in missing)
+        {
+            AddInLog.Write(LogLevel.Warning, $"SoundCharts Library: skipped {path}: it isn't there any more.");
+        }
+
+        var present = paths.Except(missing, StringComparer.OrdinalIgnoreCase).ToList();
+        if (present.Count == 0)
+        {
+            Say(Strings.Library_AddAllNothing, MessageBoxImage.Information);
+            return;
+        }
+
+        if (items.Count > AddAllConfirmThreshold)
+        {
+            var answer = MessageBox.Show(
+                string.Format(CultureInfo.CurrentCulture, Strings.Library_AddAllConfirmFormat, items.Count),
+                Strings.Library_Caption,
+                MessageBoxButton.OKCancel,
+                MessageBoxImage.Question);
+            if (answer != MessageBoxResult.OK)
+            {
+                return;
+            }
+        }
+
+        AddInLog.Write($"SoundCharts Library: adding {present.Count} path(s) from {scope} to the map.");
+        await AddSoundChartsData.RunAsync(view, present);
+
+        if (missing.Count > 0)
+        {
+            Say(string.Format(CultureInfo.CurrentCulture, Strings.Library_AddAllSkippedFormat, missing.Count), MessageBoxImage.Warning);
         }
     }
 

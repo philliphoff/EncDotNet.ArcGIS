@@ -1034,6 +1034,15 @@
     <value>{0} file(s) weren't there any more and were skipped; the SoundCharts Log lists them. Refresh the Library to update it.</value>
     <comment>{0} is a number of files.</comment>
   </data>
+  <data name="Library_AddInView" xml:space="preserve">
+    <value>Add Datasets in View</value>
+  </data>
+  <data name="Library_AddInViewNothing" xml:space="preserve">
+    <value>None of these datasets cover the map's current extent. Pan or zoom to where they are, or use Add All to Map.</value>
+  </data>
+  <data name="Library_AddInViewNoExtent" xml:space="preserve">
+    <value>The map has no extent to look in yet.</value>
+  </data>
   <data name="Library_ShowFootprint" xml:space="preserve">
     <value>Show Footprint</value>
   </data>
@@ -1072,6 +1081,12 @@
   </data>
   <data name="Tooltip_LibraryAddAllToMap" xml:space="preserve">
     <value>Add every dataset in the selected collection or source to the active map as SoundCharts charts. With a filter, only the datasets it shows.</value>
+  </data>
+  <data name="Tooltip_LibraryAddInView" xml:space="preserve">
+    <value>Add the datasets in the selected collection or source whose footprint overlaps the map's current extent. With a filter, only the datasets it shows.</value>
+  </data>
+  <data name="Tooltip_LibraryAddAllInView" xml:space="preserve">
+    <value>Add the datasets anywhere in the Library whose footprint overlaps the map's current extent. With a filter, only the datasets it shows.</value>
   </data>
   <data name="Tooltip_LibraryShowFootprint" xml:space="preserve">
     <value>Show where the selected dataset is on the active map, from the Library's index.</value>

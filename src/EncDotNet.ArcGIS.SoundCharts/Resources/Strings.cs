@@ -930,6 +930,15 @@ public static class Strings
     /// <summary>Gets the message when Add All to Map skipped missing files: <c>{0}</c> is how many.</summary>
     public static string Library_AddAllSkippedFormat => Get(nameof(Library_AddAllSkippedFormat));
 
+    /// <summary>Gets the Add Datasets in View button's and menu item's text.</summary>
+    public static string Library_AddInView => Get(nameof(Library_AddInView));
+
+    /// <summary>Gets the message when no dataset's footprint is in the map's extent.</summary>
+    public static string Library_AddInViewNothing => Get(nameof(Library_AddInViewNothing));
+
+    /// <summary>Gets the message when the map has no extent to look in.</summary>
+    public static string Library_AddInViewNoExtent => Get(nameof(Library_AddInViewNoExtent));
+
     /// <summary>Gets the Show Footprint button's text.</summary>
     public static string Library_ShowFootprint => Get(nameof(Library_ShowFootprint));
 
@@ -965,6 +974,12 @@ public static class Strings
 
     /// <summary>Gets the Add All to Map button's tooltip.</summary>
     public static string Tooltip_LibraryAddAllToMap => Get(nameof(Tooltip_LibraryAddAllToMap));
+
+    /// <summary>Gets the Add Datasets in View button's tooltip, for a collection or source.</summary>
+    public static string Tooltip_LibraryAddInView => Get(nameof(Tooltip_LibraryAddInView));
+
+    /// <summary>Gets the Library menu's Add Datasets in View tooltip.</summary>
+    public static string Tooltip_LibraryAddAllInView => Get(nameof(Tooltip_LibraryAddAllInView));
 
     /// <summary>Gets the Add to Map button's tooltip.</summary>
     public static string Tooltip_LibraryAddToMap => Get(nameof(Tooltip_LibraryAddToMap));

@@ -303,6 +303,12 @@
               <MenuItem Header="{x:Static res:Strings.Library_AddExchangeSet}" ToolTip="{x:Static res:Strings.Tooltip_LibraryAddExchangeSet}" Command="{Binding AddExchangeSetCommand}" />
               <MenuItem Header="{x:Static res:Strings.Library_AddManifest}" ToolTip="{x:Static res:Strings.Tooltip_LibraryAddManifest}" Command="{Binding AddManifestCommand}" />
               <Separator />
+              <MenuItem Header="{x:Static res:Strings.Library_AddInView}"
+                        ToolTip="{x:Static res:Strings.Tooltip_LibraryAddAllInView}"
+                        Command="{Binding AddLibraryInViewCommand}"
+                        AutomationProperties.AutomationId="Library.AddAllInView"
+                        AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_LibraryAddAllInView}" />
+              <Separator />
               <MenuItem Header="{x:Static res:Strings.Library_Refresh}" ToolTip="{x:Static res:Strings.Tooltip_LibraryRefresh}" Command="{Binding RefreshCommand}" />
               <MenuItem Header="{x:Static res:Strings.Library_Remove}" ToolTip="{x:Static res:Strings.Tooltip_LibraryRemove}" Command="{Binding RemoveCommand}" />
             </ContextMenu>
@@ -401,6 +407,21 @@
                 <StackPanel Orientation="Horizontal">
                   <Path Style="{StaticResource SC_Glyph}" Data="{StaticResource SC_GlyphAdd}" Margin="0,0,4,0" />
                   <TextBlock Text="{x:Static res:Strings.Library_AddAllToMap}" VerticalAlignment="Center" />
+                </StackPanel>
+              </Button>
+              <Button ToolTip="{x:Static res:Strings.Tooltip_LibraryAddInView}"
+                      Command="{Binding AddGroupInViewCommand}"
+                      Style="{DynamicResource Esri_Button}"
+                      Height="{StaticResource SC_ControlHeight}"
+                      MinWidth="0"
+                      Padding="{StaticResource DetailsButtonPadding}"
+                      Margin="{StaticResource SC_ButtonGap}"
+                      AutomationProperties.Name="{x:Static res:Strings.Library_AddInView}"
+                      AutomationProperties.AutomationId="Library.AddInView"
+                      AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_LibraryAddInView}">
+                <StackPanel Orientation="Horizontal">
+                  <Path Style="{StaticResource SC_Glyph}" Data="{StaticResource SC_GlyphZoomTo}" Margin="0,0,4,0" />
+                  <TextBlock Text="{x:Static res:Strings.Library_AddInView}" VerticalAlignment="Center" />
                 </StackPanel>
               </Button>
             </WrapPanel>
