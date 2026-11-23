@@ -258,6 +258,33 @@ public class SoundChartsLibraryTests
         Assert.Equal("al092022_5day_020.zip", item.Key);
     }
 
+    [Fact]
+    public async Task Index_FolderWithAnAdvisorySubfolder_ListsTheAdvisoryOnce()
+    {
+        // EncDotNet.S100 0.30.2 lists advisories itself (issue #69); ZippedDatasetIndexer mustn't add them again.
+        var zip = Fixtures.Upstream(Path.Combine("TC", "al092022", "al092022_5day_020.zip"));
+        Assert.SkipWhen(zip is null, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        using var temp = new TempFolder();
+        var root = temp.Folder("charts");
+        var folder = Path.Combine(root, "ian");
+        Directory.CreateDirectory(folder);
+        foreach (var file in Directory.EnumerateFiles(Path.GetDirectoryName(zip)!))
+        {
+            File.Copy(file, Path.Combine(folder, Path.GetFileName(file)));
+        }
+
+        using var reader = new LibraryDatasetReader();
+        using var library = new SoundChartsLibrary(temp.Folder("library"), reader.Probe);
+        library.Initialize();
+
+        await library.ImportAsync([root], cancellationToken: TestContext.Current.CancellationToken);
+        await library.WhenIdle();
+
+        var item = Assert.Single(Assert.Single(Assert.Single(library.Collections).Sources).Index!.Items);
+        Assert.Equal("TC", item.ProductSpec);
+        Assert.Equal(Path.Combine(folder, "al092022_5day_020.zip"), LibraryItemPaths.AddToMapPath(item));
+    }
+
     private static SoundChartsLibrary Create(TempFolder temp)
     {
         var library = new SoundChartsLibrary(Path.Combine(temp.Path, "library"));

@@ -28,9 +28,10 @@ is silent, do what EncDotNet.S100 does.
 ### The chart server
 
 The add-in draws charts with `s100 tiles serve` from EncDotNet.S100, run as
-a separate process, and ships a pinned build of it (design brief D21). No
-EncDotNet.S100 release serves WMTS yet, so the pin is a commit, in
-`tools/s100-server.json`. Build it once, before the add-in:
+a separate process, and ships a pinned build of it (design brief D21).
+The pin is a commit, in `tools/s100-server.json`, so it can run ahead of
+the latest release when the add-in needs a `tiles serve` change before it
+ships. Build it once, before the add-in:
 
 ```powershell
 tools/build-server.ps1

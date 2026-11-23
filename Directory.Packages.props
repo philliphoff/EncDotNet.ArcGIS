@@ -6,7 +6,7 @@
          EncDotNet.S100.* reference uses this one version. Override it on the
          command line (`-p:EncDotNetS100Version=<version>`) to try another
          release locally. -->
-    <EncDotNetS100Version Condition="'$(EncDotNetS100Version)' == ''">0.27.0</EncDotNetS100Version>
+    <EncDotNetS100Version Condition="'$(EncDotNetS100Version)' == ''">0.30.2</EncDotNetS100Version>
   </PropertyGroup>
 
   <ItemGroup>

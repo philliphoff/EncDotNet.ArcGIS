@@ -21,7 +21,8 @@ namespace EncDotNet.SoundCharts.Library;
 /// same <see cref="DatasetProbe"/> as a loose dataset. The item's file is
 /// the zip itself, so <b>Add to Map</b> adds it as a dataset. An advisory's
 /// wind radii and best track zips aren't datasets of their own and stay
-/// unlisted.
+/// unlisted. EncDotNet.S100 0.30.2 and later list advisory zips themselves,
+/// so a zip the inner indexer already lists isn't added again (issue #69).
 /// </para>
 /// <para>
 /// The fingerprint is the inner indexer's, which already covers each
@@ -66,9 +67,19 @@ public sealed class ZippedDatasetIndexer : ICollectionSourceIndexer
         var diagnostics = index.Diagnostics
             .Where(d => d.Path is null || !found.Zips.Contains(d.Path, StringComparer.OrdinalIgnoreCase))
             .ToList();
+        var listed = index.Items
+            .Select(LibraryItemPaths.AddToMapPath)
+            .OfType<string>()
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
         foreach (var zip in found.Zips)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            if (listed.Contains(zip))
+            {
+                // EncDotNet.S100 0.30.2 and later list an advisory zip themselves (issue #69).
+                continue;
+            }
+
             progress?.Report(new IndexProgress(items.Count, zip));
             if (Read(root, zip, diagnostics, cancellationToken) is { } item)
             {
