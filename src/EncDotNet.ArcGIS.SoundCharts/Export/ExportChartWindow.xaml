@@ -1,0 +1,130 @@
+<controls:ProWindow x:Class="EncDotNet.SoundCharts.Export.ExportChartWindow"
+                    x:ClassModifier="internal"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"
+                    xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
+                    xmlns:res="clr-namespace:EncDotNet.SoundCharts.Resources"
+                    xmlns:sc="clr-namespace:EncDotNet.SoundCharts.Themes"
+                    Title="{x:Static res:Strings.Export_Title}"
+                    SizeToContent="WidthAndHeight"
+                    ResizeMode="NoResize"
+                    ShowInTaskbar="False"
+                    WindowStartupLocation="CenterOwner"
+                    AutomationProperties.AutomationId="ExportChart">
+  <controls:ProWindow.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml" />
+        <sc:SoundChartsTheme />
+      </ResourceDictionary.MergedDictionaries>
+
+      <!-- A form label: a Label for its access key and Target, with no
+           padding of its own so it lines up with its field (Esri_Label isn't
+           a Pro style). -->
+      <Style x:Key="FormLabel" TargetType="Label">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0,0,12,8" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="{StaticResource SC_FontSizeBody}" />
+        <Setter Property="Foreground" Value="{DynamicResource Esri_TextStyleDefaultBrush}" />
+      </Style>
+    </ResourceDictionary>
+  </controls:ProWindow.Resources>
+
+  <DockPanel Width="500">
+    <Border DockPanel.Dock="Bottom" Style="{StaticResource SC_DialogFooter}">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <Button Content="{x:Static res:Strings.Button_Export}"
+                Style="{DynamicResource Esri_Button}"
+                MinWidth="{StaticResource SC_DialogButtonMinWidth}"
+                IsDefault="True"
+                IsEnabled="{Binding CanExport}"
+                Click="OnExportClick"
+                AutomationProperties.AutomationId="ExportChart.Export" />
+        <Button Content="{x:Static res:Strings.Button_Cancel}"
+                Style="{DynamicResource Esri_Button}"
+                MinWidth="{StaticResource SC_DialogButtonMinWidth}"
+                Margin="{StaticResource SC_ButtonGap}"
+                IsCancel="True"
+                AutomationProperties.AutomationId="ExportChart.Cancel" />
+      </StackPanel>
+    </Border>
+
+    <StackPanel Margin="{StaticResource SC_DialogPadding}">
+      <TextBlock Text="{Binding Heading}" Style="{StaticResource SC_PageTitle}" />
+      <DockPanel Margin="0,4,0,16" TextElement.Foreground="{DynamicResource Esri_TextStyleSubduedBrush}">
+        <Path DockPanel.Dock="Left" Style="{StaticResource SC_Glyph}" Data="{StaticResource SC_GlyphLayers}" Margin="0,0,4,0" />
+        <TextBlock Text="{Binding Summary}" Style="{StaticResource SC_Caption}" VerticalAlignment="Center" />
+      </DockPanel>
+
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="{StaticResource SC_FormLabelColumnDialog}" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Label Content="{x:Static res:Strings.Export_FileLabel}"
+               Target="{Binding ElementName=OutputPath}"
+               Style="{StaticResource FormLabel}" />
+        <DockPanel Grid.Column="1" Margin="{StaticResource SC_FormRowMargin}">
+          <Button DockPanel.Dock="Right"
+                  Content="{x:Static res:Strings.Button_Browse}"
+                  ToolTip="{x:Static res:Strings.Tooltip_ExportBrowse}"
+                  Style="{DynamicResource Esri_Button}"
+                  MinWidth="{StaticResource SC_DialogButtonMinWidth}"
+                  Margin="{StaticResource SC_ButtonGap}"
+                  Click="OnBrowseClick"
+                  AutomationProperties.AutomationId="ExportChart.Browse"
+                  AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_ExportBrowse}" />
+          <TextBox x:Name="OutputPath"
+                   Text="{Binding OutputPath, UpdateSourceTrigger=PropertyChanged}"
+                   FontFamily="{StaticResource SC_MonoFontFamily}"
+                   VerticalContentAlignment="Center"
+                   AutomationProperties.AutomationId="ExportChart.File"
+                   AutomationProperties.Name="{x:Static res:Strings.Export_FileLabel}" />
+        </DockPanel>
+
+        <Label Grid.Row="1"
+               Content="{x:Static res:Strings.Export_FormatLabel}"
+               Target="{Binding ElementName=Format}"
+               Style="{StaticResource FormLabel}" />
+        <ComboBox x:Name="Format"
+                  Grid.Row="1"
+                  Grid.Column="1"
+                  ItemsSource="{Binding Formats}"
+                  SelectedItem="{Binding Format}"
+                  DisplayMemberPath="Label"
+                  ToolTip="{x:Static res:Strings.Tooltip_ExportFormat}"
+                  Margin="{StaticResource SC_FormRowMargin}"
+                  AutomationProperties.AutomationId="ExportChart.Format"
+                  AutomationProperties.Name="{x:Static res:Strings.Export_FormatLabel}" />
+
+        <Label Grid.Row="2"
+               Content="{x:Static res:Strings.Export_ResolutionLabel}"
+               Target="{Binding ElementName=Resolution}"
+               Style="{StaticResource FormLabel}" />
+        <ComboBox x:Name="Resolution"
+                  Grid.Row="2"
+                  Grid.Column="1"
+                  ItemsSource="{Binding Resolutions}"
+                  SelectedItem="{Binding Resolution}"
+                  DisplayMemberPath="Label"
+                  ToolTip="{x:Static res:Strings.Tooltip_ExportResolution}"
+                  Margin="{StaticResource SC_FormRowMargin}"
+                  AutomationProperties.AutomationId="ExportChart.Resolution"
+                  AutomationProperties.Name="{x:Static res:Strings.Export_ResolutionLabel}" />
+      </Grid>
+
+      <HeaderedContentControl Style="{StaticResource SC_MessageBar}"
+                              Content="{x:Static res:Strings.Export_Note}"
+                              Margin="0,8,0,0"
+                              AutomationProperties.AutomationId="ExportChart.Note" />
+    </StackPanel>
+  </DockPanel>
+</controls:ProWindow>

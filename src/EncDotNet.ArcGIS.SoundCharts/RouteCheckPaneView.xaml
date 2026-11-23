@@ -1,0 +1,419 @@
+<UserControl x:Class="EncDotNet.SoundCharts.RouteCheckPaneView"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
+             xmlns:res="clr-namespace:EncDotNet.SoundCharts.Resources"
+             xmlns:sc="clr-namespace:EncDotNet.SoundCharts.Themes"
+             x:Name="Root"
+             AutomationProperties.AutomationId="RouteCheck">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml" />
+        <sc:SoundChartsTheme />
+      </ResourceDictionary.MergedDictionaries>
+
+      <CollectionViewSource x:Key="GroupedItems" Source="{Binding Items}">
+        <CollectionViewSource.GroupDescriptions>
+          <PropertyGroupDescription PropertyName="Group" />
+        </CollectionViewSource.GroupDescriptions>
+      </CollectionViewSource>
+
+      <!-- The pane's layout follows the view model's State: Empty, Working, Verdict or Failed. -->
+      <Style x:Key="WhenVerdictOrWorking" TargetType="FrameworkElement">
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding State}" Value="Empty">
+            <Setter Property="Visibility" Value="Collapsed" />
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+
+      <Style x:Key="WhenVerdict" TargetType="FrameworkElement">
+        <Setter Property="Visibility" Value="Collapsed" />
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding State}" Value="Verdict">
+            <Setter Property="Visibility" Value="Visible" />
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+
+      <Style x:Key="EmptyState" TargetType="HeaderedContentControl" BasedOn="{StaticResource SC_EmptyState}">
+        <Setter Property="Visibility" Value="Collapsed" />
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding State}" Value="Empty">
+            <Setter Property="Visibility" Value="Visible" />
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+
+      <Style x:Key="WorkingCard" TargetType="ContentControl" BasedOn="{StaticResource SC_WorkingCard}">
+        <Setter Property="Visibility" Value="Collapsed" />
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding State}" Value="Working">
+            <Setter Property="Visibility" Value="Visible" />
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+
+      <!-- The verdict card takes the verdict's tone; it has no colour of its own. -->
+      <Style x:Key="VerdictCard" TargetType="Border" BasedOn="{StaticResource SC_VerdictCard}">
+        <Setter Property="sc:Tone.Value" Value="{Binding Tone, Converter={StaticResource SC_ToneConverter}}" />
+        <Setter Property="Visibility" Value="Collapsed" />
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding State}" Value="Verdict">
+            <Setter Property="Visibility" Value="Visible" />
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+
+      <!-- A failed check: an error message bar with the reason. -->
+      <Style x:Key="FailedBar" TargetType="HeaderedContentControl" BasedOn="{StaticResource SC_MessageBar}">
+        <Setter Property="sc:Tone.Value" Value="Danger" />
+        <Setter Property="Visibility" Value="Collapsed" />
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding State}" Value="Failed">
+            <Setter Property="Visibility" Value="Visible" />
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+
+      <!-- A summary row's chip, in the row's own tone; none when the row has no chip. -->
+      <Style x:Key="SummaryChip" TargetType="ContentControl" BasedOn="{StaticResource SC_MonoChip}">
+        <Setter Property="sc:Tone.Value" Value="{Binding ChipTone, Converter={StaticResource SC_ToneConverter}}" />
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding Chip}" Value="{x:Null}">
+            <Setter Property="Visibility" Value="Collapsed" />
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+
+      <!-- A group header: the severity's glyph and tone, its word and its count (D7). -->
+      <Style x:Key="GroupHeader" TargetType="ContentControl" BasedOn="{StaticResource SC_SectionHeader}">
+        <Setter Property="Content" Value="{Binding Name}" />
+        <Setter Property="sc:Ui.Count" Value="{Binding ItemCount}" />
+        <Setter Property="sc:Ui.Glyph" Value="{StaticResource SC_GlyphCheck}" />
+        <Setter Property="sc:Tone.Value" Value="Warning" />
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding Name}" Value="{x:Static res:Strings.RouteCheck_GroupMustReview}">
+            <Setter Property="sc:Ui.Glyph" Value="{StaticResource SC_GlyphMustReview}" />
+            <Setter Property="sc:Tone.Value" Value="Danger" />
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+
+      <!-- MUST REVIEW and CHECK: a header over the rows. -->
+      <ControlTemplate x:Key="GroupTemplate" TargetType="GroupItem">
+        <StackPanel>
+          <ContentControl Style="{StaticResource GroupHeader}" />
+          <ItemsPresenter />
+        </StackPanel>
+      </ControlTemplate>
+
+      <!-- INFO: a foldable header that starts folded, as in the viewer. -->
+      <ControlTemplate x:Key="FoldedGroupTemplate" TargetType="GroupItem">
+        <Expander Style="{StaticResource SC_FoldableSectionHeader}"
+                  Header="{Binding Name}"
+                  sc:Ui.Count="{Binding ItemCount}"
+                  sc:Ui.Glyph="{StaticResource SC_GlyphInfo}"
+                  sc:Tone.Value="Info"
+                  IsExpanded="False">
+          <ItemsPresenter />
+        </Expander>
+      </ControlTemplate>
+
+      <!-- A finding row: the severity's glyph in its tone (octagon, triangle, circle i). -->
+      <Style x:Key="FindingRow" TargetType="HeaderedContentControl" BasedOn="{StaticResource SC_ListRow}">
+        <Setter Property="sc:Tone.Value" Value="{Binding Tone, Converter={StaticResource SC_ToneConverter}}" />
+        <Setter Property="sc:Ui.Glyph" Value="{StaticResource SC_GlyphInfo}" />
+        <Setter Property="ToolTip" Value="{x:Static res:Strings.RouteCheck_ZoomTooltip}" />
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding Tone}" Value="Destructive">
+            <Setter Property="sc:Ui.Glyph" Value="{StaticResource SC_GlyphMustReview}" />
+          </DataTrigger>
+          <DataTrigger Binding="{Binding Tone}" Value="Warning">
+            <Setter Property="sc:Ui.Glyph" Value="{StaticResource SC_GlyphCheck}" />
+          </DataTrigger>
+          <DataTrigger Binding="{Binding HasLocation}" Value="False">
+            <Setter Property="ToolTip" Value="{x:Static res:Strings.RouteCheck_NoPlaceTooltip}" />
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+
+      <!-- The problems bar collapses when every dataset was read. -->
+      <Style x:Key="ProblemsBar" TargetType="HeaderedContentControl" BasedOn="{StaticResource SC_MessageBar}">
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding Problems.Count}" Value="0">
+            <Setter Property="Visibility" Value="Collapsed" />
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+    </ResourceDictionary>
+  </UserControl.Resources>
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" MinHeight="80" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <!-- What to check on the left; Check Again on the right. Below 360 px,
+         Open Route... moves into the ≡ menu (code-behind). -->
+    <Border Grid.Row="0" Style="{StaticResource SC_PaneToolbar}">
+      <DockPanel LastChildFill="False">
+        <Button DockPanel.Dock="Left"
+                Style="{StaticResource SC_ToolbarButton}"
+                sc:Ui.Glyph="{StaticResource SC_GlyphSelectLine}"
+                Content="{x:Static res:Strings.RouteCheck_CheckSelectedLine}"
+                ToolTip="{x:Static res:Strings.RouteCheck_CheckSelectedLineTooltip}"
+                Command="{Binding CheckSelectedLineCommand}"
+                AutomationProperties.AutomationId="RouteCheck.CheckSelectedLine" />
+        <Button DockPanel.Dock="Left"
+                Style="{StaticResource SC_ToolbarButton}"
+                sc:Ui.Glyph="{StaticResource SC_GlyphDraw}"
+                Content="{x:Static res:Strings.RouteCheck_DrawRoute}"
+                ToolTip="{x:Static res:Strings.RouteCheck_DrawRouteTooltip}"
+                Command="{Binding DrawRouteCommand}"
+                Margin="{StaticResource SC_ToolbarItemGap}"
+                AutomationProperties.AutomationId="RouteCheck.DrawRoute" />
+        <Button x:Name="OpenRouteButton"
+                DockPanel.Dock="Left"
+                Style="{StaticResource SC_ToolbarButton}"
+                sc:Ui.Glyph="{StaticResource SC_GlyphFolderOpen}"
+                Content="{x:Static res:Strings.RouteCheck_OpenRoute}"
+                ToolTip="{x:Static res:Strings.RouteCheck_OpenRouteTooltip}"
+                Command="{Binding OpenRouteCommand}"
+                Margin="{StaticResource SC_ToolbarItemGap}"
+                AutomationProperties.AutomationId="RouteCheck.OpenRoute" />
+        <Button x:Name="MoreButton"
+                DockPanel.Dock="Right"
+                Style="{StaticResource SC_BurgerButton}"
+                Margin="{StaticResource SC_ToolbarItemGap}"
+                Visibility="Collapsed"
+                ToolTip="{x:Static res:Strings.RouteCheck_MoreActions}"
+                AutomationProperties.Name="{x:Static res:Strings.RouteCheck_MoreActions}"
+                AutomationProperties.AutomationId="RouteCheck.More">
+          <Button.ContextMenu>
+            <ContextMenu>
+              <MenuItem x:Name="OpenRouteMenuItem"
+                        Header="{x:Static res:Strings.RouteCheck_OpenRoute}"
+                        ToolTip="{x:Static res:Strings.RouteCheck_OpenRouteTooltip}"
+                        Command="{Binding OpenRouteCommand}" />
+            </ContextMenu>
+          </Button.ContextMenu>
+        </Button>
+        <Button DockPanel.Dock="Right"
+                Style="{StaticResource SC_IconButton}"
+                sc:Ui.Glyph="{StaticResource SC_GlyphRefresh}"
+                Command="{Binding CheckAgainCommand}"
+                ToolTip="{x:Static res:Strings.RouteCheck_CheckAgainTooltip}"
+                AutomationProperties.Name="{x:Static res:Strings.RouteCheck_CheckAgain}"
+                AutomationProperties.AutomationId="RouteCheck.CheckAgain" />
+      </DockPanel>
+    </Border>
+
+    <!-- The route, its parameters and the verdict card. -->
+    <StackPanel Grid.Row="1" Margin="8,8,8,0" Style="{StaticResource WhenVerdictOrWorking}">
+      <TextBlock Text="{Binding Heading}"
+                 Style="{StaticResource SC_Title}"
+                 AutomationProperties.AutomationId="RouteCheck.Heading" />
+      <TextBlock Text="{Binding Parameters}"
+                 Style="{StaticResource SC_OptionalCaption}"
+                 Margin="0,2,0,0"
+                 AutomationProperties.AutomationId="RouteCheck.Parameters" />
+
+      <!-- Working: the card's shape with a spinner, so nothing jumps when the verdict lands. -->
+      <ContentControl Style="{StaticResource WorkingCard}" Margin="0,8,0,0">
+        <TextBlock Text="{Binding Title}"
+                   Style="{StaticResource SC_VerdictTitle}"
+                   AutomationProperties.LiveSetting="Polite"
+                   AutomationProperties.AutomationId="RouteCheck.Working" />
+      </ContentControl>
+
+      <!-- Failed: "Couldn't check the passage" and the reason. -->
+      <HeaderedContentControl Style="{StaticResource FailedBar}"
+                              Header="{Binding Title}"
+                              Content="{Binding Subtitle}"
+                              Margin="0,8,0,0"
+                              AutomationProperties.AutomationId="RouteCheck.Failed" />
+
+      <!-- The verdict: tone glyph and title, subtitle, summary rows and the confidence notes. -->
+      <Border Style="{StaticResource VerdictCard}" Margin="0,8,0,0">
+        <DockPanel>
+          <Path DockPanel.Dock="Left"
+                Style="{StaticResource SC_ToneGlyph}"
+                sc:Tone.Value="{Binding Tone, Converter={StaticResource SC_ToneConverter}}"
+                VerticalAlignment="Top"
+                Margin="0,0,8,0" />
+          <StackPanel>
+            <TextBlock Text="{Binding Title}"
+                       Style="{StaticResource SC_VerdictTitle}"
+                       AutomationProperties.AutomationId="RouteCheck.Verdict" />
+            <TextBlock Text="{Binding Subtitle}" Style="{StaticResource SC_OptionalCaption}" Margin="0,2,0,0" />
+            <ItemsControl ItemsSource="{Binding Rows}"
+                          Focusable="False"
+                          Margin="0,6,0,0"
+                          AutomationProperties.AutomationId="RouteCheck.Summary">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <ContentControl Style="{StaticResource SC_SummaryRowStatic}" AutomationProperties.Name="{Binding Label}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="{StaticResource SC_SummaryLabelColumn}" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="{Binding Label}"
+                                 Style="{StaticResource SC_Body}"
+                                 Foreground="{DynamicResource Esri_TextStyleSubduedBrush}"
+                                 TextWrapping="NoWrap"
+                                 TextTrimming="CharacterEllipsis"
+                                 VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="1"
+                                 Text="{Binding Text}"
+                                 Style="{StaticResource SC_Body}"
+                                 TextWrapping="NoWrap"
+                                 TextTrimming="CharacterEllipsis"
+                                 ToolTip="{Binding Text}"
+                                 VerticalAlignment="Center" />
+                      <ContentControl Grid.Column="2"
+                                      Style="{StaticResource SummaryChip}"
+                                      Content="{Binding Chip}"
+                                      Margin="8,0,0,0" />
+                    </Grid>
+                  </ContentControl>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <DockPanel Margin="0,6,0,0">
+              <DockPanel.Style>
+                <Style TargetType="DockPanel">
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding Confidence}" Value="{x:Null}">
+                      <Setter Property="Visibility" Value="Collapsed" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </DockPanel.Style>
+              <Path DockPanel.Dock="Left"
+                    Style="{StaticResource SC_GlyphSmall}"
+                    Data="{StaticResource SC_GlyphInfo}"
+                    TextElement.Foreground="{DynamicResource Esri_TextStyleSubduedBrush}"
+                    VerticalAlignment="Top"
+                    Margin="0,1,6,0" />
+              <TextBlock Text="{Binding Confidence}"
+                         Style="{StaticResource SC_OptionalCaption}"
+                         AutomationProperties.AutomationId="RouteCheck.Confidence" />
+            </DockPanel>
+          </StackPanel>
+        </DockPanel>
+      </Border>
+    </StackPanel>
+
+    <!-- Before any check: how to start one. -->
+    <HeaderedContentControl Grid.Row="1"
+                            Grid.RowSpan="2"
+                            Style="{StaticResource EmptyState}"
+                            sc:Ui.Glyph="{StaticResource SC_GlyphRoute}"
+                            Header="{Binding Heading}"
+                            Content="{Binding Parameters}"
+                            AutomationProperties.AutomationId="RouteCheck.EmptyState" />
+
+    <!-- The findings, grouped MUST REVIEW, CHECK, INFO (D7). INFO starts folded, as in the viewer. -->
+    <Grid Grid.Row="2" Margin="8,4,8,0" Style="{StaticResource WhenVerdict}">
+      <ListBox ItemsSource="{Binding Source={StaticResource GroupedItems}}"
+               SelectedItem="{Binding SelectedItem}"
+               BorderThickness="0"
+               Background="Transparent"
+               HorizontalContentAlignment="Stretch"
+               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+               AutomationProperties.AutomationId="RouteCheck.Findings"
+               AutomationProperties.Name="{x:Static res:Strings.RouteCheck_Findings}">
+        <ListBox.GroupStyle>
+          <GroupStyle>
+            <GroupStyle.ContainerStyle>
+              <Style TargetType="GroupItem">
+                <Setter Property="Template" Value="{StaticResource GroupTemplate}" />
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding Name}" Value="{x:Static res:Strings.RouteCheck_GroupInfo}">
+                    <Setter Property="Template" Value="{StaticResource FoldedGroupTemplate}" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </GroupStyle.ContainerStyle>
+          </GroupStyle>
+        </ListBox.GroupStyle>
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <HeaderedContentControl Style="{StaticResource FindingRow}"
+                                    Header="{Binding Title}"
+                                    Content="{Binding Meta}"
+                                    AutomationProperties.Name="{Binding Title}">
+              <sc:Ui.Trailing>
+                <StackPanel Orientation="Horizontal">
+                  <ContentControl Style="{StaticResource SC_Chip}" Content="{Binding Tag}" />
+                  <Button Style="{StaticResource SC_RowAction}"
+                          sc:Ui.Glyph="{StaticResource SC_GlyphObjectInfo}"
+                          Command="{Binding DataContext.ObjectInfoCommand, ElementName=Root}"
+                          CommandParameter="{Binding}"
+                          ToolTip="{x:Static res:Strings.RouteCheck_ObjectInformationTooltip}"
+                          Margin="4,0,0,0"
+                          AutomationProperties.Name="{x:Static res:Strings.RouteCheck_ObjectInformation}"
+                          AutomationProperties.AutomationId="RouteCheck.Finding.ObjectInfo" />
+                </StackPanel>
+              </sc:Ui.Trailing>
+            </HeaderedContentControl>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+      <TextBlock Text="{x:Static res:Strings.RouteCheck_Empty}"
+                 VerticalAlignment="Top"
+                 Margin="0,12,0,0"
+                 AutomationProperties.AutomationId="RouteCheck.Empty">
+        <TextBlock.Style>
+          <Style TargetType="TextBlock" BasedOn="{StaticResource SC_Body}">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding IsEmptyResult}" Value="True">
+                <Setter Property="Visibility" Value="Visible" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </TextBlock.Style>
+      </TextBlock>
+    </Grid>
+
+    <!-- The last action's message, and the datasets that couldn't be read. -->
+    <StackPanel Grid.Row="3" Margin="8,0,8,0">
+      <HeaderedContentControl Style="{StaticResource SC_OptionalMessageBar}"
+                              Content="{Binding Message}"
+                              Margin="0,8,0,0"
+                              AutomationProperties.AutomationId="RouteCheck.Message" />
+      <HeaderedContentControl Style="{StaticResource ProblemsBar}"
+                              sc:Tone.Value="Warning"
+                              Header="{x:Static res:Strings.RouteCheck_ProblemsHeading}"
+                              Margin="0,8,0,0">
+        <ItemsControl ItemsSource="{Binding Problems}"
+                      Focusable="False"
+                      AutomationProperties.AutomationId="RouteCheck.Problems"
+                      AutomationProperties.Name="{x:Static res:Strings.RouteCheck_ProblemsHeading}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding}" Style="{StaticResource SC_Body}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </HeaderedContentControl>
+    </StackPanel>
+
+    <!-- The viewer's footer, word for word (§7.1). -->
+    <ContentControl Grid.Row="4"
+                    Style="{StaticResource SC_OptionalPaneFooter}"
+                    Content="{Binding Footer}"
+                    Margin="0,8,0,0"
+                    AutomationProperties.AutomationId="RouteCheck.Footer" />
+  </Grid>
+</UserControl>

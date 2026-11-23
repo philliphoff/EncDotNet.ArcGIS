@@ -1,0 +1,193 @@
+<UserControl x:Class="EncDotNet.SoundCharts.LogPaneView"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
+             xmlns:logging="clr-namespace:EncDotNet.SoundCharts.Logging;assembly=EncDotNet.ArcGIS.SoundCharts.Core"
+             xmlns:res="clr-namespace:EncDotNet.SoundCharts.Resources"
+             xmlns:sc="clr-namespace:EncDotNet.SoundCharts.Themes"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             AutomationProperties.AutomationId="LogPane">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml" />
+        <sc:SoundChartsTheme />
+      </ResourceDictionary.MergedDictionaries>
+      <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+
+      <!-- Columns (look and feel design §6): Time fits the time format,
+           Level fits a glyph and the short label, Message fills the rest, so
+           there's no horizontal scroll. The header row uses the same ones. -->
+      <GridLength x:Key="LogLevelColumn">70</GridLength>
+      <GridLength x:Key="LogSourceColumn">150</GridLength>
+      <Thickness x:Key="LogCellGap">0,0,8,0</Thickness>
+      <Thickness x:Key="LogRowPadding">8,2</Thickness>
+      <!-- 11.5 px mono at its line height plus 2 + 2: the mockup's 22 px row. -->
+      <sys:Double x:Key="LogRowHeight">22</sys:Double>
+    </ResourceDictionary>
+  </UserControl.Resources>
+
+  <DockPanel Margin="{StaticResource SC_PaneGutter}" Grid.IsSharedSizeScope="True">
+    <Border DockPanel.Dock="Top" Style="{StaticResource SC_PaneToolbar}">
+      <DockPanel LastChildFill="False">
+        <ComboBox ItemsSource="{Binding Filters}"
+                  SelectedItem="{Binding SelectedFilter}"
+                  DisplayMemberPath="Label"
+                  Width="180"
+                  VerticalAlignment="Center"
+                  AutomationProperties.AutomationId="LogPane.Filter"
+                  AutomationProperties.Name="{x:Static res:Strings.Log_Filter}" />
+
+        <!-- Count chips (§10 decision 10), hidden at zero. A click sets the
+             level filter, as in the viewer. -->
+        <Button Style="{StaticResource SC_ChipButton}"
+                sc:Tone.Value="Danger"
+                sc:Ui.Glyph="{StaticResource SC_GlyphError}"
+                Content="{Binding Counts.ErrorsText}"
+                Command="{Binding ShowLevelCommand}"
+                CommandParameter="{x:Static logging:LogLevel.Error}"
+                ToolTip="{x:Static res:Strings.Tooltip_LogShowErrors}"
+                Margin="{StaticResource SC_ButtonGap}"
+                Visibility="{Binding Counts.HasErrors, Converter={StaticResource BooleanToVisibility}}"
+                AutomationProperties.AutomationId="LogPane.ErrorCount"
+                AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_LogShowErrors}" />
+        <Button Style="{StaticResource SC_ChipButton}"
+                sc:Tone.Value="Warning"
+                sc:Ui.Glyph="{StaticResource SC_GlyphCheck}"
+                Content="{Binding Counts.WarningsText}"
+                Command="{Binding ShowLevelCommand}"
+                CommandParameter="{x:Static logging:LogLevel.Warning}"
+                ToolTip="{x:Static res:Strings.Tooltip_LogShowWarnings}"
+                Margin="{StaticResource SC_ToolbarItemGap}"
+                Visibility="{Binding Counts.HasWarnings, Converter={StaticResource BooleanToVisibility}}"
+                AutomationProperties.AutomationId="LogPane.WarningCount"
+                AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_LogShowWarnings}" />
+
+        <!-- The chart filter from a chart's Log button, as a dismissible chip. -->
+        <ContentControl Style="{StaticResource SC_Chip}"
+                        sc:Tone.Value="Info"
+                        sc:Ui.Glyph="{StaticResource SC_GlyphFilter}"
+                        Margin="{StaticResource SC_ToolbarItemGap}"
+                        Visibility="{Binding HasSourceFilter, Converter={StaticResource BooleanToVisibility}}"
+                        AutomationProperties.AutomationId="LogPane.SourceFilter">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding SourceFilterText}" VerticalAlignment="Center" />
+            <Button Style="{StaticResource SC_ChipCloseButton}"
+                    sc:Ui.Glyph="{StaticResource SC_GlyphClose}"
+                    Command="{Binding ShowAllCommand}"
+                    ToolTip="{x:Static res:Strings.Tooltip_LogShowAll}"
+                    AutomationProperties.AutomationId="LogPane.ShowAll"
+                    AutomationProperties.Name="{x:Static res:Strings.Button_ShowAll}"
+                    AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_LogShowAll}" />
+          </StackPanel>
+        </ContentControl>
+
+        <!-- Right-aligned, as Pro's own pane toolbars: the first docked is rightmost. -->
+        <Button DockPanel.Dock="Right"
+                Style="{StaticResource SC_ToolbarButton}"
+                sc:Ui.Glyph="{StaticResource SC_GlyphFolderOpen}"
+                Content="{x:Static res:Strings.Button_OpenLogFolder}"
+                ToolTip="{x:Static res:Strings.Tooltip_LogOpenFolder}"
+                Command="{Binding OpenLogFolderCommand}"
+                Margin="{StaticResource SC_ToolbarItemGap}"
+                AutomationProperties.AutomationId="LogPane.OpenLogFolder"
+                AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_LogOpenFolder}" />
+        <Button DockPanel.Dock="Right"
+                Style="{StaticResource SC_ToolbarButton}"
+                sc:Ui.Glyph="{StaticResource SC_GlyphCopy}"
+                Content="{x:Static res:Strings.Button_CopyAll}"
+                ToolTip="{x:Static res:Strings.Tooltip_LogCopyAll}"
+                Command="{Binding CopyAllCommand}"
+                AutomationProperties.AutomationId="LogPane.CopyAll"
+                AutomationProperties.HelpText="{x:Static res:Strings.Tooltip_LogCopyAll}" />
+      </DockPanel>
+    </Border>
+
+    <!-- Column headers, in the UI font, over the rows' columns. -->
+    <Border DockPanel.Dock="Top"
+            Padding="{StaticResource LogRowPadding}"
+            BorderThickness="0,0,0,1"
+            BorderBrush="{DynamicResource SC_RuleBrush}">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" SharedSizeGroup="LogTime" />
+          <ColumnDefinition Width="{StaticResource LogLevelColumn}" />
+          <ColumnDefinition Width="{StaticResource LogSourceColumn}" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Column="0" Style="{StaticResource SC_ColumnHeader}" Margin="{StaticResource LogCellGap}" Text="{x:Static res:Strings.Log_Column_Time}" />
+        <TextBlock Grid.Column="1" Style="{StaticResource SC_ColumnHeader}" Margin="{StaticResource LogCellGap}" Text="{x:Static res:Strings.Log_Column_Level}" />
+        <TextBlock Grid.Column="2" Style="{StaticResource SC_ColumnHeader}" Margin="{StaticResource LogCellGap}" Text="{x:Static res:Strings.Log_Column_Source}" />
+        <TextBlock Grid.Column="3" Style="{StaticResource SC_ColumnHeader}" Text="{x:Static res:Strings.Log_Column_Message}" />
+      </Grid>
+    </Border>
+
+    <!-- A ListBox, not a ListView: Pro's ListViewItem template lays out a
+         GridView's columns (GridViewRowPresenter), so without a GridView it
+         shows empty rows and ignores the item template. SC_ListItem is a
+         flat row, so the cells line up under the column headers. -->
+    <ListBox ItemsSource="{Binding Entries}"
+             ItemContainerStyle="{StaticResource SC_ListItem}"
+             BorderThickness="0"
+             Background="Transparent"
+             HorizontalContentAlignment="Stretch"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+             VirtualizingPanel.IsVirtualizing="True"
+             VirtualizingPanel.VirtualizationMode="Recycling"
+             VirtualizingPanel.ScrollUnit="Item"
+             AutomationProperties.AutomationId="LogPane.Entries"
+             AutomationProperties.Name="{x:Static res:Strings.Log_Entries}">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <!-- Errors and warnings get a glyph and a row tint (the viewer's logs
+               panel D5); Debug rows are subdued, not faded, for High Contrast. -->
+          <Border x:Name="Row"
+                  Padding="{StaticResource LogRowPadding}"
+                  MinHeight="{StaticResource LogRowHeight}"
+                  BorderThickness="0,0,0,1"
+                  BorderBrush="{DynamicResource SC_RowRuleBrush}"
+                  Background="Transparent">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="LogTime" />
+                <ColumnDefinition Width="{StaticResource LogLevelColumn}" />
+                <ColumnDefinition Width="{StaticResource LogSourceColumn}" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <TextBlock Grid.Column="0" Style="{StaticResource SC_MonoCellSubdued}" Margin="{StaticResource LogCellGap}" Text="{Binding Time}" />
+              <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="{StaticResource LogCellGap}">
+                <Path x:Name="LevelGlyph"
+                      Style="{StaticResource SC_GlyphSmall}"
+                      Margin="0,0,4,0"
+                      Visibility="Collapsed" />
+                <TextBlock x:Name="LevelText" Style="{StaticResource SC_MonoCellSubdued}" Text="{Binding Level}" />
+              </StackPanel>
+              <TextBlock Grid.Column="2" Style="{StaticResource SC_MonoCellSubdued}" Margin="{StaticResource LogCellGap}" Text="{Binding Source}" />
+              <TextBlock x:Name="MessageText" Grid.Column="3" Style="{StaticResource SC_MonoCell}" Text="{Binding Message}" ToolTip="{Binding Message}" />
+            </Grid>
+          </Border>
+          <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Tone}" Value="Danger">
+              <Setter TargetName="Row" Property="Background" Value="{DynamicResource SC_DangerTintBrush}" />
+              <Setter TargetName="LevelGlyph" Property="Data" Value="{StaticResource SC_GlyphError}" />
+              <Setter TargetName="LevelGlyph" Property="TextElement.Foreground" Value="{DynamicResource SC_DangerBrush}" />
+              <Setter TargetName="LevelGlyph" Property="Visibility" Value="Visible" />
+              <Setter TargetName="LevelText" Property="Foreground" Value="{DynamicResource SC_DangerBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tone}" Value="Warning">
+              <Setter TargetName="Row" Property="Background" Value="{DynamicResource SC_WarningTintBrush}" />
+              <Setter TargetName="LevelGlyph" Property="Data" Value="{StaticResource SC_GlyphCheck}" />
+              <Setter TargetName="LevelGlyph" Property="TextElement.Foreground" Value="{DynamicResource SC_WarningBrush}" />
+              <Setter TargetName="LevelGlyph" Property="Visibility" Value="Visible" />
+              <Setter TargetName="LevelText" Property="Foreground" Value="{DynamicResource SC_WarningBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsDebug}" Value="True">
+              <Setter TargetName="MessageText" Property="Foreground" Value="{DynamicResource Esri_TextStyleSubduedBrush}" />
+            </DataTrigger>
+          </DataTemplate.Triggers>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </DockPanel>
+</UserControl>

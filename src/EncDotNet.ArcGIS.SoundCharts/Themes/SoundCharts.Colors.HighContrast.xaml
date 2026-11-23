@@ -1,0 +1,54 @@
+<!-- SoundCharts tone brushes for Pro's High Contrast theme. SoundChartsTheme
+     merges this file when Pro's ApplicationTheme is HighContrast, or Windows
+     has a contrast theme on. Every key here is also in the Light and Dark
+     files; keep the three in step.
+
+     The design's High Contrast rule: no fills, a 1 px WindowText edge, and the
+     glyph and the word carry the severity. Colours come from the Windows
+     contrast theme (SystemColors) as dynamic resources, so they follow it. -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Tone inks: text, glyphs and bars. -->
+  <SolidColorBrush x:Key="SC_DangerBrush" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
+  <SolidColorBrush x:Key="SC_WarningBrush" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
+  <SolidColorBrush x:Key="SC_SuccessBrush" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
+  <SolidColorBrush x:Key="SC_InfoBrush" Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}" />
+  <SolidColorBrush x:Key="SC_NeutralBrush" Color="{DynamicResource {x:Static SystemColors.GrayTextColorKey}}" />
+
+  <!-- No fills or tints in High Contrast. -->
+  <SolidColorBrush x:Key="SC_DangerFillBrush" Color="Transparent" />
+  <SolidColorBrush x:Key="SC_WarningFillBrush" Color="Transparent" />
+  <SolidColorBrush x:Key="SC_SuccessFillBrush" Color="Transparent" />
+  <SolidColorBrush x:Key="SC_InfoFillBrush" Color="Transparent" />
+  <SolidColorBrush x:Key="SC_NeutralFillBrush" Color="Transparent" />
+
+  <SolidColorBrush x:Key="SC_DangerTintBrush" Color="Transparent" />
+  <SolidColorBrush x:Key="SC_WarningTintBrush" Color="Transparent" />
+  <SolidColorBrush x:Key="SC_SuccessTintBrush" Color="Transparent" />
+  <SolidColorBrush x:Key="SC_InfoTintBrush" Color="Transparent" />
+  <SolidColorBrush x:Key="SC_NeutralTintBrush" Color="Transparent" />
+
+  <!-- Edges: WindowText. -->
+  <SolidColorBrush x:Key="SC_DangerEdgeBrush" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
+  <SolidColorBrush x:Key="SC_WarningEdgeBrush" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
+  <SolidColorBrush x:Key="SC_SuccessEdgeBrush" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
+  <SolidColorBrush x:Key="SC_InfoEdgeBrush" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
+  <SolidColorBrush x:Key="SC_NeutralEdgeBrush" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
+
+  <!-- NOT FOR NAVIGATION strip. -->
+  <SolidColorBrush x:Key="SC_CautionBackgroundBrush" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
+  <SolidColorBrush x:Key="SC_CautionBorderBrush" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
+  <SolidColorBrush x:Key="SC_CautionInkBrush" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
+
+  <!-- Lines: toolbar and footer rules, splitters, faint row rules (the Log)
+       and product tag borders. -->
+  <SolidColorBrush x:Key="SC_RuleBrush" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
+  <SolidColorBrush x:Key="SC_RowRuleBrush" Color="Transparent" />
+  <SolidColorBrush x:Key="SC_TagBorderBrush" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
+
+  <!-- The app icon (About), 64 px drawn at 32 so it stays sharp at 200%.
+       The light rendering: a filled disc that reads on light and dark contrast themes. -->
+  <BitmapImage x:Key="SC_AppIcon" UriSource="pack://application:,,,/EncDotNet.ArcGIS.SoundCharts;component/Images/AboutSoundCharts32.scale-200.png" />
+
+</ResourceDictionary>

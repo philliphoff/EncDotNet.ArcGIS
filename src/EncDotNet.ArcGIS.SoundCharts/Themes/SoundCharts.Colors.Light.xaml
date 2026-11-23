@@ -1,0 +1,55 @@
+<!-- SoundCharts tone brushes for Pro's Light (Default) theme. SoundChartsTheme
+     merges this file when Pro's ApplicationTheme is Default. Every key here is
+     also in the Dark and HighContrast files; keep the three in step.
+
+     Ink brushes meet 4.5:1 on their own 11% fill over a white pane (and over
+     #F7F7F7). Fills and edges are the ink with alpha: 11% (1C) for chips, 6%
+     (0F) for cards, bars and rows, 40% (66) for edges. See "Using the theme"
+     in docs/design/look-and-feel.md. -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Tone inks: text, glyphs and bars. -->
+  <SolidColorBrush x:Key="SC_DangerBrush" Color="#C0271A" />
+  <SolidColorBrush x:Key="SC_WarningBrush" Color="#9A5200" />
+  <SolidColorBrush x:Key="SC_SuccessBrush" Color="#217538" />
+  <SolidColorBrush x:Key="SC_InfoBrush" Color="#006AA5" />
+  <SolidColorBrush x:Key="SC_NeutralBrush" Color="#666666" />
+
+  <!-- Chip fills: the ink at 11%. -->
+  <SolidColorBrush x:Key="SC_DangerFillBrush" Color="#1CC0271A" />
+  <SolidColorBrush x:Key="SC_WarningFillBrush" Color="#1C9A5200" />
+  <SolidColorBrush x:Key="SC_SuccessFillBrush" Color="#1C217538" />
+  <SolidColorBrush x:Key="SC_InfoFillBrush" Color="#1C006AA5" />
+  <SolidColorBrush x:Key="SC_NeutralFillBrush" Color="#1C666666" />
+
+  <!-- Card, message bar and row tints: the ink at 6%. -->
+  <SolidColorBrush x:Key="SC_DangerTintBrush" Color="#0FC0271A" />
+  <SolidColorBrush x:Key="SC_WarningTintBrush" Color="#0F9A5200" />
+  <SolidColorBrush x:Key="SC_SuccessTintBrush" Color="#0F217538" />
+  <SolidColorBrush x:Key="SC_InfoTintBrush" Color="#0F006AA5" />
+  <SolidColorBrush x:Key="SC_NeutralTintBrush" Color="#0F666666" />
+
+  <!-- Edges: the ink at 40%. -->
+  <SolidColorBrush x:Key="SC_DangerEdgeBrush" Color="#66C0271A" />
+  <SolidColorBrush x:Key="SC_WarningEdgeBrush" Color="#669A5200" />
+  <SolidColorBrush x:Key="SC_SuccessEdgeBrush" Color="#66217538" />
+  <SolidColorBrush x:Key="SC_InfoEdgeBrush" Color="#66006AA5" />
+  <SolidColorBrush x:Key="SC_NeutralEdgeBrush" Color="#66666666" />
+
+  <!-- NOT FOR NAVIGATION strip. -->
+  <SolidColorBrush x:Key="SC_CautionBackgroundBrush" Color="#FFF3D1" />
+  <SolidColorBrush x:Key="SC_CautionBorderBrush" Color="#D9A21B" />
+  <SolidColorBrush x:Key="SC_CautionInkBrush" Color="#6A4700" />
+
+  <!-- Lines: toolbar and footer rules, splitters, faint row rules (the Log)
+       and product tag borders. -->
+  <SolidColorBrush x:Key="SC_RuleBrush" Color="#D6D6D6" />
+  <SolidColorBrush x:Key="SC_RowRuleBrush" Color="#EBEBEB" />
+  <SolidColorBrush x:Key="SC_TagBorderBrush" Color="#BDBDBD" />
+
+  <!-- The app icon (About), 64 px drawn at 32 so it stays sharp at 200%.
+       The light rendering, as Pro shows the ribbon icon in this theme. -->
+  <BitmapImage x:Key="SC_AppIcon" UriSource="pack://application:,,,/EncDotNet.ArcGIS.SoundCharts;component/Images/AboutSoundCharts32.scale-200.png" />
+
+</ResourceDictionary>

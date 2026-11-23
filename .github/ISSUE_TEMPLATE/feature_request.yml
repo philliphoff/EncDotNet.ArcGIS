@@ -1,0 +1,73 @@
+name: Feature request
+description: Suggest a new feature or capability for SoundCharts for ArcGIS.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a feature! Please describe the problem you're
+        trying to solve before jumping to a specific design — that helps us
+        consider alternatives.
+
+        Support for a new S-100 product, or a change to how charts are
+        portrayed, starts in
+        [EncDotNet.S100](https://github.com/philliphoff/EncDotNet.S100/issues/new/choose).
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / motivation
+      description: What problem does this solve? Who benefits and how? For example, a GIS analyst, a hydrographic office or a planner.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: A concise description of what you'd like to see in Pro. Ribbon commands, panes, layer behaviour, geoprocessing tools, etc.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      description: Which part of the add-in would this touch? Pick the closest match.
+      options:
+        - "Ribbon, panes and dialogs"
+        - "Adding data and chart layers"
+        - "Palette and mariner settings"
+        - "Time-varying layers (S-104, S-111)"
+        - "Object information"
+        - "Route checking"
+        - "Printing and export"
+        - "Geoprocessing tools"
+        - "Chart server"
+        - "Install and loading"
+        - "Build / CI / packaging"
+        - "Docs"
+        - "Other / cross-cutting"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other approaches you considered, including Pro's built-in ENC support, and why they don't fit.
+
+  - type: textarea
+    id: spec
+    attributes:
+      label: Spec references (optional)
+      description: |
+        For spec-derived behavior, cite the relevant section(s)
+        (e.g. "S-104 §10.2.3 WaterLevel attribute names").
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Use cases, examples, mockups, related issues, etc.
