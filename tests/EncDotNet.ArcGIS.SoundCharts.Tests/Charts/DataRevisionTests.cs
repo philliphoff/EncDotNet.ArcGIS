@@ -70,6 +70,36 @@ public class DataRevisionTests
     }
 
     [Fact]
+    public void AnAdvisoryForecastZip_BringsItsWindRadiiAndBestTrackZips()
+    {
+        // The chart server reads them from beside the forecast zip (issue #63).
+        using var temp = new TempFolder();
+        var forecast = temp.File("al092022_5day_020.zip", "f");
+        var windRadii = temp.File("al092022_fcst_020.zip", "w");
+        var bestTrack = temp.File("al092022_best_track.zip", "b");
+        temp.File("al092022_fcst_019.zip", "an older advisory");
+        temp.File("ep012022_best_track.zip", "another storm");
+
+        var revision = DataRevision.Of([DatasetSource.Dataset(forecast)]);
+
+        Assert.Equal(
+            [forecast.ToUpperInvariant(), bestTrack.ToUpperInvariant(), windRadii.ToUpperInvariant()],
+            revision.Split('\n', StringSplitOptions.RemoveEmptyEntries).Select(line => line[..line.IndexOf('|', StringComparison.Ordinal)]).Order(StringComparer.Ordinal));
+    }
+
+    [Fact]
+    public void ANewBestTrackZip_ChangesTheAdvisorysRevision()
+    {
+        using var temp = new TempFolder();
+        var forecast = temp.File("al092022_5day_020.zip", "f");
+        var before = DataRevision.Of([DatasetSource.Dataset(forecast)]);
+
+        temp.File("al092022_best_track.zip", "b");
+
+        Assert.NotEqual(before, DataRevision.Of([DatasetSource.Dataset(forecast)]));
+    }
+
+    [Fact]
     public void AMissingFile_IsMarkedMissing()
     {
         using var temp = new TempFolder();

@@ -40,11 +40,29 @@ public sealed class SoundChartsLibrary : IDisposable
         Root = root;
         var paths = new LibraryDataPaths(root);
         _library = new CollectionLibrary(
-            CollectionIndexer.CreateDefault(probe),
+            CreateIndexer(probe),
             new CollectionLibraryOptions(paths.CollectionsFile, paths.IndexCacheDirectory),
             logger,
             timeProvider);
         _library.Changed += (_, e) => Changed?.Invoke(this, e);
+    }
+
+    /// <summary>
+    /// Creates the indexer: <see cref="CollectionIndexer.CreateDefault"/>'s,
+    /// with folders and exchange sets indexed through
+    /// <see cref="ZippedDatasetIndexer"/>, so a <c>.zip</c> that is a dataset
+    /// of its own, such as an NHC tropical cyclone advisory, is listed.
+    /// </summary>
+    /// <param name="probe">Reads loose and zipped dataset files.</param>
+    internal static CollectionIndexer CreateIndexer(DatasetProbe? probe)
+    {
+        var local = new LocalSourceIndexer(probe);
+        return new CollectionIndexer(
+        [
+            new ZippedDatasetIndexer(local, probe),
+            new LocalManifestIndexer(local),
+            new S128CatalogueIndexer(),
+        ]);
     }
 
     /// <summary>Raised after any change to <see cref="Collections"/>, on the changing thread.</summary>
