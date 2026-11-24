@@ -219,70 +219,144 @@ public class SoundChartsLibraryTests
         var zip = Fixtures.Upstream(Path.Combine("TC", "al092022", "al092022_5day_020.zip"));
         Assert.SkipWhen(zip is null, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
         using var temp = new TempFolder();
-        using var reader = new LibraryDatasetReader();
-        using var library = new SoundChartsLibrary(temp.Folder("library"), reader.Probe);
-        library.Initialize();
 
-        await library.ImportAsync([zip], cancellationToken: TestContext.Current.CancellationToken);
-        await library.WhenIdle();
+        var index = await IndexAsync(temp, zip);
 
-        var index = Assert.Single(Assert.Single(library.Collections).Sources).Index!;
         var item = Assert.Single(index.Items);
         Assert.Equal("TC", item.ProductSpec);
         Assert.Equal("al092022_5day_020", item.Name);
+        Assert.Equal("al092022_5day_020.zip", item.Key);
         Assert.Equal(Path.GetFullPath(zip), LibraryItemPaths.AddToMapPath(item));
+        Assert.Equal(Path.GetFullPath(zip), LibraryItemPaths.DatasetFile(item));
         Assert.DoesNotContain(index.Diagnostics, d => string.Equals(d.Path, Path.GetFullPath(zip), StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
-    public async Task Index_AdvisoryFolder_ListsOnlyTheForecastZip()
+    public async Task Index_AdvisoryFolder_IsOneItemAtTheFolder()
     {
-        var zip = Fixtures.Upstream(Path.Combine("TC", "al092022", "al092022_5day_020.zip"));
-        Assert.SkipWhen(zip is null, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        // Issue #69: EncDotNet.S100 lists a folder of one storm's zips as one
+        // item located at the folder, keyed like a GRIB2 run. The wind radii
+        // and best track zips aren't items of their own.
         using var temp = new TempFolder();
-        var folder = temp.Folder("storm");
-        foreach (var file in Directory.EnumerateFiles(Path.GetDirectoryName(zip)!))
-        {
-            File.Copy(file, Path.Combine(folder, Path.GetFileName(file)));
-        }
+        var folder = Path.Combine(temp.Path, "ian");
+        Assert.SkipUnless(Fixtures.CopyUpstreamStorm(folder), $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
 
-        using var reader = new LibraryDatasetReader();
-        using var library = new SoundChartsLibrary(temp.Folder("library"), reader.Probe);
-        library.Initialize();
+        var index = await IndexAsync(temp, folder);
 
-        await library.ImportAsync([folder], cancellationToken: TestContext.Current.CancellationToken);
-        await library.WhenIdle();
-
-        var item = Assert.Single(Assert.Single(Assert.Single(library.Collections).Sources).Index!.Items);
+        var item = Assert.Single(index.Items);
         Assert.Equal("TC", item.ProductSpec);
-        Assert.Equal("al092022_5day_020.zip", item.Key);
+        Assert.Equal("ian/", item.Key);
+        Assert.Equal("ian", item.Name);
+        Assert.NotNull(item.Bounds);
+        Assert.True(item.Properties.ContainsKey("timeStart"));
+        Assert.Equal(folder, LibraryItemPaths.AddToMapPath(item), ignoreCase: true);
+        Assert.Equal(folder, LibraryItemPaths.DatasetFile(item), ignoreCase: true);
+        Assert.True(LibraryItemPaths.Exists(LibraryItemPaths.AddToMapPath(item)));
     }
 
     [Fact]
-    public async Task Index_FolderWithAnAdvisorySubfolder_ListsTheAdvisoryOnce()
+    public async Task Index_FolderWithAnAdvisorySubfolder_ListsTheSubfolderOnce()
     {
-        // EncDotNet.S100 0.30.2 lists advisories itself (issue #69); ZippedDatasetIndexer mustn't add them again.
-        var zip = Fixtures.Upstream(Path.Combine("TC", "al092022", "al092022_5day_020.zip"));
-        Assert.SkipWhen(zip is null, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
         using var temp = new TempFolder();
         var root = temp.Folder("charts");
         var folder = Path.Combine(root, "ian");
-        Directory.CreateDirectory(folder);
-        foreach (var file in Directory.EnumerateFiles(Path.GetDirectoryName(zip)!))
-        {
-            File.Copy(file, Path.Combine(folder, Path.GetFileName(file)));
-        }
+        Assert.SkipUnless(Fixtures.CopyUpstreamStorm(folder), $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
 
+        var index = await IndexAsync(temp, root);
+
+        var item = Assert.Single(index.Items);
+        Assert.Equal("TC", item.ProductSpec);
+        Assert.Equal("ian/", item.Key);
+        Assert.Equal(folder, LibraryItemPaths.AddToMapPath(item), ignoreCase: true);
+    }
+
+    [Fact]
+    public async Task Index_AdvisoryBesideAGrib2Run_IsTheStormsLatestForecastZip()
+    {
+        // A folder that is a GRIB2 run keeps the folder for the run, so the
+        // advisory is its latest forecast zip, which supersedes older ones.
+        var grib = Fixtures.Upstream(Path.Combine("GRIB2", "gfswave-useast.grib2"));
+        var filter = Fixtures.Upstream(Path.Combine("GRIB2", "gfswave-useast-filter.grib2"));
+        Assert.SkipWhen(grib is null || filter is null, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        using var temp = new TempFolder();
+        var folder = temp.Folder("run");
+        Assert.SkipUnless(Fixtures.CopyUpstreamStorm(folder, advisory: "019"), "No TC fixture.");
+        Fixtures.CopyUpstreamStorm(folder);
+        File.Copy(grib, Path.Combine(folder, "gfswave-useast.grib2"));
+        File.Copy(filter, Path.Combine(folder, "gfswave-useast-filter.grib2"));
+
+        var index = await IndexAsync(temp, folder);
+
+        var storm = Assert.Single(index.Items, i => i.ProductSpec == "TC");
+        Assert.Equal("al092022_5day_020.zip", storm.Key);
+        Assert.Equal(Path.Combine(folder, "al092022_5day_020.zip"), LibraryItemPaths.AddToMapPath(storm), ignoreCase: true);
+
+        // The add-in reads GRIB2 runs file by file, so the run is its files.
+        Assert.Equal(
+            ["gfswave-useast-filter.grib2", "gfswave-useast.grib2"],
+            index.Items.Where(i => i.ProductSpec == "GRIB2").Select(i => i.Key).Order(StringComparer.Ordinal));
+        Assert.Equal(3, index.Items.Count);
+    }
+
+    [Fact]
+    public async Task Index_SeveralStormsInOneFolder_ListsEachStormsLatestForecastZip()
+    {
+        using var temp = new TempFolder();
+        var folder = Path.Combine(temp.Path, "storms");
+        Assert.SkipUnless(Fixtures.CopyUpstreamStorm(folder, advisory: "019"), $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        Fixtures.CopyUpstreamStorm(folder);
+        Fixtures.CopyUpstreamStorm(folder, atcfId: "ep012022", advisory: "003");
+
+        var index = await IndexAsync(temp, folder);
+
+        Assert.All(index.Items, i => Assert.Equal("TC", i.ProductSpec));
+        Assert.Equal(
+            ["al092022_5day_020.zip", "ep012022_5day_003.zip"],
+            index.Items.Select(i => i.Key).Order(StringComparer.Ordinal));
+    }
+
+    [Fact]
+    public async Task Index_ManifestGroupWithAnAdvisoryFolder_ListsTheFolder()
+    {
+        // The hurricane showcase's layout: a Storm group holding one advisory's folder.
+        using var temp = new TempFolder();
+        var folder = Path.Combine(temp.Path, "Storm", "al092022_020");
+        Assert.SkipUnless(Fixtures.CopyUpstreamStorm(folder), $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        var manifest = temp.File(
+            "al092022.s100collection.json",
+            """{ "format": "encdotnet-s100-collection", "version": 1, "title": "Ian", "groups": [ { "id": "storm", "name": "Storm", "paths": ["Storm"] } ] }""");
+
+        var index = await IndexAsync(temp, manifest);
+
+        var item = Assert.Single(index.Items);
+        Assert.Equal("TC", item.ProductSpec);
+        Assert.Equal(folder, LibraryItemPaths.AddToMapPath(item), ignoreCase: true);
+    }
+
+    [Fact]
+    public async Task Index_WindRadiiAndBestTrackZipsWithoutAForecast_AreNotItems()
+    {
+        using var temp = new TempFolder();
+        var folder = Path.Combine(temp.Path, "ian");
+        Assert.SkipUnless(Fixtures.CopyUpstreamStorm(folder), $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        File.Delete(Path.Combine(folder, "al092022_5day_020.zip"));
+
+        var index = await IndexAsync(temp, folder);
+
+        Assert.Empty(index.Items);
+    }
+
+    /// <summary>Indexes <paramref name="path"/> in a new library with the add-in's probe, as Pro does.</summary>
+    private static async Task<SourceIndex> IndexAsync(TempFolder temp, string path)
+    {
         using var reader = new LibraryDatasetReader();
         using var library = new SoundChartsLibrary(temp.Folder("library"), reader.Probe);
         library.Initialize();
 
-        await library.ImportAsync([root], cancellationToken: TestContext.Current.CancellationToken);
+        await library.ImportAsync([path], cancellationToken: TestContext.Current.CancellationToken);
         await library.WhenIdle();
 
-        var item = Assert.Single(Assert.Single(Assert.Single(library.Collections).Sources).Index!.Items);
-        Assert.Equal("TC", item.ProductSpec);
-        Assert.Equal(Path.Combine(folder, "al092022_5day_020.zip"), LibraryItemPaths.AddToMapPath(item));
+        return Assert.Single(Assert.Single(library.Collections).Sources).Index!;
     }
 
     private static SoundChartsLibrary Create(TempFolder temp)

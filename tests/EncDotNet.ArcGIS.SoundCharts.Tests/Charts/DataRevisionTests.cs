@@ -100,6 +100,24 @@ public class DataRevisionTests
     }
 
     [Fact]
+    public void AnAdvisoryFolder_BringsEveryFile_AndANewAdvisoryChangesIt()
+    {
+        // Issue #69: the Library's item for a storm's folder is the folder.
+        using var temp = new TempFolder();
+        var folder = temp.Folder("ian");
+        temp.File(@"ian/al092022_5day_020.zip", "f");
+        temp.File(@"ian/al092022_fcst_020.zip", "w");
+        temp.File(@"ian/al092022_best_track.zip", "b");
+        var before = DataRevision.Of([DatasetSource.Dataset(folder)]);
+
+        Assert.Equal(3, before.Split('\n', StringSplitOptions.RemoveEmptyEntries).Length);
+
+        temp.File(@"ian/al092022_5day_021.zip", "a newer advisory");
+
+        Assert.NotEqual(before, DataRevision.Of([DatasetSource.Dataset(folder)]));
+    }
+
+    [Fact]
     public void AMissingFile_IsMarkedMissing()
     {
         using var temp = new TempFolder();

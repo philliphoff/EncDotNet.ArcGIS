@@ -109,7 +109,8 @@ The format is described in EncDotNet.S100's
    manifest...**, and open `al142024.s100collection.json`.
 
 The collection appears as **Hurricane Milton at Tampa Bay**, with a node for
-each group.
+each group. The **Storm** group lists the advisory as one dataset,
+**al142024_018**: its folder, whose three zips are read together.
 
 ## Add the groups to the map
 
