@@ -183,6 +183,7 @@ Recommendation: each map holds at most one **SoundCharts** group layer, and
 SoundCharts · 5 datasets             group layer
 ├── Surface currents                 WMTS, time-aware        (S-111 datasets)
 ├── Water level                      WMTS, time-aware        (S-104 datasets)
+├── Navigational warnings            WMTS, time-aware        (S-124 datasets)
 ├── Weather                          WMTS, time-aware        (other datasets with time steps)
 ├── Chart                            WMTS                    (everything else)
 └── Coverage                         feature layer           (footprints, A7)
@@ -221,9 +222,18 @@ SoundCharts · 5 datasets             group layer
   to step through, and step snapping (§6.3) would hide it at almost every
   map time. It stays in **Chart**, drawn at its step, until the add-in reads
   how long a step stays valid (issue #64).
-- **S-124 stays in Chart for now.** It's time-dependent by validity, but the
-  server doesn't filter warnings by time (U7). It moves to its own
-  **Navigational warnings** layer when it does.
+- **S-124 has its own Navigational warnings layer** (U7, issue #75). The
+  server draws only the warnings in force at a time it's asked for, so
+  S-124 needs map time, but a time on **Chart** would make every chart tile
+  refetch whenever a warning starts or ends. In a layer of its own, only
+  the warnings refetch, and only when the warnings in force change (§6.5).
+  It costs a chart server and a Contents row, as **Weather** does. Its
+  name is the viewer's panel name. It's drawn above **Weather**, so
+  warnings stay readable over weather areas, and below **Water level** and
+  **Surface currents**. Rejected: giving **Chart** a time when it holds
+  S-124. Projects saved before this keep S-124 in **Chart**, drawing every
+  warning, until the warnings are added again; adding them again moves
+  them.
 - **A layer exists only while it has datasets.** A map with only S-101 has
   only **Chart** and **Coverage**.
 - **One group per map, not per Add.** A second **Add SoundCharts Data** joins
@@ -570,11 +580,24 @@ question P5 if users ask for it.
 | S-104 water level | Time steps of the series (fixed stations and grids) | Picks the step drawn in **Water level**; Object information samples there |
 | S-111 surface currents | Time steps | Picks the step drawn in **Surface currents**; Object information samples there |
 | Weather: TC, CAP, GRIB2, NetCDF, surface analyses, S-411, S-412 | The processor's time steps (`AvailableTimes`), when there's more than one | Picks the step drawn in **Weather** |
-| S-124 navigational warnings | Each warning's validity | Nothing on the map yet (U7). Object information says "In force at map time" or "Not in force at map time" per warning, from the library |
+| S-124 navigational warnings | Each warning's validity, cancellation date, cancellations and in-force bulletins | **Navigational warnings** draws the warnings in force (U7, issue #75); with no map time, every warning. Object information says "In force at map time" or "Not in force at map time" per warning, by the same rule |
 | Others (S-101, S-102, S-122...), and datasets with one time step | None | Nothing |
 
 The rule is the dataset's time steps, not its product name: a product
-upstream makes time-aware joins **Weather** without a change here. How map
+upstream makes time-aware joins **Weather** without a change here. S-124
+is the exception: it has no time steps, but which warnings draw depends on
+map time.
+
+**Navigational warnings** asks its server for the latest time at or before
+map time at which the warnings drawn change, not map time itself
+(`WarningTimes`): every map time between two changes has the same tile
+URLs, so Pro's cache refetches only when a warning starts, ends or is
+cancelled. The add-in works out those times in-process with the library's
+`NavigationalWarningSet`, the rule the server draws by, from the same
+datasets. With S-124 alone the server's capabilities advertise no `Time`
+dimension, so their tile template has no `{Time}` for Pro to fill (P1).
+The add-in also writes the time into the connection's tile template
+(`TemplateUrl`); whether Pro uses that template is open question P11. How map
 time picks the step is the dataset's time selection (§6.3): a cyclone moves
 smoothly between forecast points (issue #64). Outside its range a cyclone's
 cone and track still draw, without the storm, so its layer isn't hidden.
@@ -682,7 +705,7 @@ needs, in the order the slices need them.
 | U4 | **`--port 0`** with a machine-readable start-up line (JSON with the bound URLs). | A2 | The add-in picks a port and retries |
 | U5 | **Publish the data revision** (the disk-cache fingerprint) in TileJSON, capabilities and `/healthz`, so a client can put it in its URLs and let the server reload in place. | A5 | `--refresh 0` and add-in restarts |
 | U6 | **Strict time**: a time more than half a step outside a dataset's range answers `204`, and TileJSON says which datasets have no data at that time. Today it snaps to the last step silently. | A8 | The add-in hides the layer itself |
-| U7 | **S-124 by validity**: filter warnings to those in force at `TIME` / `t`. | A8 | S-124 always draws every warning |
+| U7 | **S-124 by validity**: filter warnings to those in force at `TIME` / `t`. Done in EncDotNet.S100 #1525; the add-in uses it (issue #75). Still open: a `Time` dimension in the capabilities for S-124 alone, with the times the warnings in force change as its values, so Pro fills `{Time}` as for the other time layers (P11). | A8 | S-124 always draws every warning |
 | U8 | **DPI-aware WMS GetMap**: `DPI`, `MAP_RESOLUTION`, `FORMAT_OPTIONS=dpi:N`; zoom and symbol scale chosen from DPI; more than 4096 px when DPI > 96. | A10 | A10 renders through the library or `s100 render` |
 | U9 | **Legends**: a WMTS `LegendURL` per style, from the viewer's Legend sections, so Pro's Contents shows a key for S-102 shades and S-111 speed bands. | A5 (later) | No legend in Contents |
 | U10 | **WMS and WMTS pick different zoom levels for the same scale**: make WMS GetMap choose the zoom WMTS would at that scale. | A10 | Only WMTS for display (D10) |
@@ -708,6 +731,7 @@ checked in Pro 3.7. Each names the slice that settles it and the fallback.
 | P8 | Should palette be per map (for layouts comparing day and night)? | A5 | Per project |
 | P9 | Can the add-in turn a layer's drawing off without changing its Contents check box, and show a tooltip there? | A8 | Turn the layer off and say why in the time status |
 | P10 | Is the Options dialog's Project scope the right home for mariner settings, or do users expect them on the map's properties? | A5 | Project scope |
+| P11 | Does Pro request tiles from a WMTS connection's `TemplateUrl` rather than the capabilities' template, so a time written there reaches the server? | issue #75 | **Navigational warnings** draws every warning, as before, until U7 adds a `Time` dimension |
 
 ## Decisions
 
@@ -755,9 +779,9 @@ Proposed, for the slices to cite once accepted.
 11. **D11 One group per map.** A map has at most one **SoundCharts · {source}**
     group; **Add SoundCharts Data** adds to it.
 12. **D12 Layers by time behaviour.** In the group: **Surface currents**
-    (S-111), **Water level** (S-104), **Weather** (every other dataset with
-    more than one time step, sea ice included), **Chart** (everything else,
-    S-124 included until U7), **Coverage** (footprints). A layer exists only while
+    (S-111), **Water level** (S-104), **Navigational warnings** (S-124),
+    **Weather** (every other dataset with more than one time step, sea ice
+    included), **Chart** (everything else), **Coverage** (footprints). A layer exists only while
     it has datasets. Removing a dataset is done from **Datasets...** or a
     selected footprint.
 13. **D13 Zoom floor.** The chart layers' minimum scale is the scale of
@@ -837,9 +861,10 @@ Proposed, for the slices to cite once accepted.
     with no map time: now if in range, otherwise the nearest end. User-set
     map time is never moved. **Now** sets it once; no live mode.
 33. **D33 Products.** S-104 and S-111 are time layers, and so is any other
-    dataset with more than one time step, in **Weather**. S-124 is
-    evaluated for validity at map time in Object information only, until
-    U7.
+    dataset with more than one time step, in **Weather**. S-124 is drawn in
+    **Navigational warnings** as the warnings in force at map time, or every
+    warning without map time, and Object information says whether each is
+    in force by the same rule (U7, issue #75).
 
 ### Wording
 

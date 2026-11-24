@@ -74,6 +74,40 @@ public class ChartCompositionTests
     }
 
     [Fact]
+    public void Add_PutsS124InNavigationalWarnings()
+    {
+        // Issue #75: warnings draw by map time, so not in the static Chart.
+        var composition = ChartComposition.Empty.With("mixed", [Cell, Warning]);
+
+        Assert.Equal([Cell], composition.Layers[ChartLayerKind.Chart].Datasets);
+        Assert.Equal([Warning], composition.Layers[ChartLayerKind.NavigationalWarnings].Datasets);
+        Assert.Equal([Warning, Cell], composition.Datasets);
+    }
+
+    [Fact]
+    public void AddingAgain_MovesADatasetSavedInAnotherLayer()
+    {
+        // A project saved before issue #75 holds its warnings in Chart.
+        var saved = ChartComposition.From(null, [ChartLayerMarker.ForLayer(ChartLayerKind.Chart, [Cell, Warning])]);
+
+        var again = saved.With("navwarn", [Warning]);
+
+        Assert.Equal([Cell], again.Layers[ChartLayerKind.Chart].Datasets);
+        Assert.Equal([Warning], again.Layers[ChartLayerKind.NavigationalWarnings].Datasets);
+        Assert.Equal([ChartLayerKind.NavigationalWarnings, ChartLayerKind.Chart], again.ChangedSince(saved));
+    }
+
+    [Fact]
+    public void AddingAgain_RemovesALayerLeftWithoutDatasets()
+    {
+        var saved = ChartComposition.From(null, [ChartLayerMarker.ForLayer(ChartLayerKind.Chart, [Warning])]);
+
+        var again = saved.With("navwarn", [Warning]);
+
+        Assert.Equal([ChartLayerKind.NavigationalWarnings], again.Layers.Keys);
+    }
+
+    [Fact]
     public void From_ExistingMarkers_RebuildsTheComposition()
     {
         var original = ChartComposition.Empty.With("a", [Cell, Tide]);

@@ -15,7 +15,10 @@ namespace EncDotNet.SoundCharts;
 /// <b>Surface currents</b> and <b>Weather</b>) by the layer's time selection
 /// (<see cref="TimeSteps.Resolve"/>, issue #64) and writes the step, or for a
 /// storm map time rounded down, into the layer's WMTS <c>Time</c> dimension;
-/// or hides the layer and says so when there's no data then.
+/// or hides the layer and says so when there's no data then. The
+/// <b>Navigational warnings</b> layer gets the latest time at or before map
+/// time at which the warnings in force change, or no time without map time
+/// (<see cref="WarningTimes"/>, U7, issue #75).
 /// </summary>
 /// <remarks>
 /// <para>
@@ -34,6 +37,7 @@ internal sealed class MapTimeController
 {
     private readonly Lock _gate = new();
     private readonly Dictionary<string, Tracked> _layers = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, TrackedWarnings> _warnings = new(StringComparer.Ordinal);
 
     // Maps whose time the add-in has set, or seen the user set: D32 never moves it again.
     private readonly HashSet<string> _settled = new(StringComparer.Ordinal);
@@ -79,16 +83,34 @@ internal sealed class MapTimeController
 
     /// <summary>
     /// Follows map time for <paramref name="layerUri"/>: a time layer
-    /// (<see cref="ChartLayerKinds.IsTimeLayer"/>) with <paramref name="steps"/>.
-    /// <b>Chart</b> layers, and layers without steps, are forgotten.
+    /// (<see cref="ChartLayerKinds.IsTimeLayer"/>) with <paramref name="steps"/>,
+    /// or a <b>Navigational warnings</b> layer with <paramref name="warnings"/>.
+    /// <b>Chart</b> layers, and layers without either, are forgotten.
     /// </summary>
     /// <param name="map">The layer's map.</param>
     /// <param name="layerUri">The layer's URI.</param>
     /// <param name="kind">The layer's kind.</param>
     /// <param name="steps">The steps its chart server advertises, or <see langword="null"/>.</param>
-    public void Track(Map map, string layerUri, ChartLayerKind kind, TimeSteps? steps)
+    /// <param name="warnings">When its warnings in force change, for a <b>Navigational warnings</b> layer; otherwise <see langword="null"/>.</param>
+    public void Track(Map map, string layerUri, ChartLayerKind kind, TimeSteps? steps, WarningTimes? warnings = null)
     {
         ArgumentNullException.ThrowIfNull(map);
+        if (kind == ChartLayerKind.NavigationalWarnings && warnings is not null)
+        {
+            Forget(layerUri);
+            lock (_gate)
+            {
+                _warnings[layerUri] = new TrackedWarnings(map, layerUri, warnings);
+            }
+
+            if (MapView.Active is { } active && active.Map?.URI == map.URI)
+            {
+                Guard("following map time", () => UpdateAsync(active));
+            }
+
+            return;
+        }
+
         if (!ChartLayerKinds.IsTimeLayer(kind) || steps is null)
         {
             Forget(layerUri);
@@ -97,6 +119,7 @@ internal sealed class MapTimeController
 
         lock (_gate)
         {
+            _warnings.Remove(layerUri);
             _layers[layerUri] = new Tracked(map, layerUri, ChartLayerKinds.DisplayName(kind), steps);
         }
 
@@ -137,6 +160,7 @@ internal sealed class MapTimeController
         bool removed;
         lock (_gate)
         {
+            _warnings.Remove(layerUri);
             removed = _layers.Remove(layerUri);
         }
 
@@ -152,6 +176,7 @@ internal sealed class MapTimeController
         lock (_gate)
         {
             _layers.Clear();
+            _warnings.Clear();
             _settled.Clear();
             _timeAware.Clear();
         }
@@ -308,9 +333,23 @@ internal sealed class MapTimeController
         }
 
         List<Tracked> layers;
+        List<TrackedWarnings> warnings;
         lock (_gate)
         {
             layers = [.. _layers.Values.Where(t => t.Map.URI == map.URI)];
+            warnings = [.. _warnings.Values.Where(t => t.Map.URI == map.URI)];
+        }
+
+        if (layers.Count == 0 && warnings.Count == 0)
+        {
+            return;
+        }
+
+        var time = await QueuedTask.Run(() => view.Time);
+        if (warnings.Count > 0)
+        {
+            // Without map time (the slider off) every warning draws, as the server does without a time.
+            await ApplyWarningsAsync(map, warnings, Instant(time)).ConfigureAwait(false);
         }
 
         if (layers.Count == 0)
@@ -318,7 +357,6 @@ internal sealed class MapTimeController
             return;
         }
 
-        var time = await QueuedTask.Run(() => view.Time);
         lock (_gate)
         {
             if (time is null)
@@ -413,6 +451,66 @@ internal sealed class MapTimeController
         time is null ? null :
         time.End is { } end ? TimeSteps.Utc(end) : time.Start is { } start ? TimeSteps.Utc(start) : null;
 
+    /// <summary>
+    /// Points each <b>Navigational warnings</b> layer at the warnings in force
+    /// at <paramref name="instant"/>, or at every warning without one; a layer
+    /// whose warnings in force didn't change keeps its tile URLs.
+    /// </summary>
+    private static async Task ApplyWarningsAsync(Map map, List<TrackedWarnings> warnings, DateTime? instant)
+    {
+        foreach (var layer in warnings)
+        {
+            var wanted = instant is { } at ? layer.Times.Segment(at) : null;
+            if (layer.Applied is { } applied && applied.Segment == wanted)
+            {
+                continue;
+            }
+
+            if (await QueuedTask.Run(() => ApplyWarnings(map, layer.LayerUri, wanted)))
+            {
+                layer.Applied = new AppliedSegment(wanted);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Writes a <b>Navigational warnings</b> layer's time: the <c>Time</c>
+    /// dimension, and the tile template with the time written in, since the
+    /// server's capabilities have no <c>{Time}</c> for S-124 alone
+    /// (<see cref="WarningTimes"/>). Without a time, neither: every warning
+    /// draws, from the capabilities' own template. Runs on the MCT.
+    /// </summary>
+    private static bool ApplyWarnings(Map map, string layerUri, string? segment)
+    {
+        if (map.FindLayer(layerUri) is not { } layer
+            || layer.GetDefinition() is not CIMTiledServiceLayer cim
+            || cim.ServiceConnection is not CIMWMTSServiceConnection connection
+            || connection.ServerConnection is not CIMInternetServerConnectionBase { URL: { } url }
+            || !Uri.TryCreate(url, UriKind.Absolute, out var capabilities))
+        {
+            return false;
+        }
+
+        var dimensions = connection.Dimensions is null
+            ? new Dictionary<string, object>(StringComparer.Ordinal)
+            : new Dictionary<string, object>(connection.Dimensions, StringComparer.Ordinal);
+        if (segment is null)
+        {
+            dimensions.Remove(LayerTime.DimensionName);
+        }
+        else
+        {
+            dimensions[LayerTime.DimensionName] = segment;
+        }
+
+        connection.Dimensions = dimensions;
+
+        // Without a time, Pro goes back to the capabilities' template, as for any other layer.
+        connection.TemplateUrl = segment is null ? null : WarningTimes.TemplateUrl(capabilities, segment);
+        layer.SetDefinition(cim);
+        return true;
+    }
+
     /// <summary>Writes a layer's time and visibility extent. Runs on the MCT.</summary>
     private static bool Apply(Map map, string layerUri, LayerTime wanted)
     {
@@ -466,6 +564,15 @@ internal sealed class MapTimeController
         {
             to.Dimensions = new Dictionary<string, object>(dimensions, StringComparer.Ordinal);
         }
+
+        // A Navigational warnings layer's template carries its time, at the new server's URL.
+        if (from is CIMWMTSServiceConnection { TemplateUrl: var template }
+            && WarningTimes.TryReadTemplate(template, out var segment)
+            && to.ServerConnection is CIMInternetServerConnectionBase { URL: { } url }
+            && Uri.TryCreate(url, UriKind.Absolute, out var capabilities))
+        {
+            to.TemplateUrl = WarningTimes.TemplateUrl(capabilities, segment);
+        }
     }
 
     private void SetStatuses(List<Tracked> layers, TimeStatus? status)
@@ -494,6 +601,19 @@ internal sealed class MapTimeController
         {
             AddInLog.Write(LogLevel.Error, $"SoundCharts failed {what}: {ex}");
         }
+    }
+
+    private sealed record AppliedSegment(string? Segment);
+
+    private sealed class TrackedWarnings(Map map, string layerUri, WarningTimes times)
+    {
+        public Map Map { get; } = map;
+
+        public string LayerUri { get; } = layerUri;
+
+        public WarningTimes Times { get; } = times;
+
+        public AppliedSegment? Applied { get; set; }
     }
 
     private sealed class Tracked(Map map, string layerUri, string name, TimeSteps steps)

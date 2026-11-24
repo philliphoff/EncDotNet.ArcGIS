@@ -267,6 +267,9 @@ public static class Strings
     /// <summary>Gets the name of the Weather layer (other time-varying datasets).</summary>
     public static string Layer_Weather => Get(nameof(Layer_Weather));
 
+    /// <summary>Gets the name of the layer of S-124 navigational warnings (issue #75).</summary>
+    public static string Layer_NavigationalWarnings => Get(nameof(Layer_NavigationalWarnings));
+
     /// <summary>Gets the line for a navigational warning in force at map time (D33).</summary>
     public static string ObjectInfo_InForce => Get(nameof(ObjectInfo_InForce));
 

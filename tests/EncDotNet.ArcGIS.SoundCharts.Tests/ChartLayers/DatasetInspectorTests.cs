@@ -31,7 +31,7 @@ public sealed class DatasetInspectorTests : IDisposable
     [InlineData("S102/102US004MI1CI262227.h5", "S-102", ChartLayerKind.Chart, double.NaN, double.NaN)]
     [InlineData("S104/104US004SC1BO_20251217T12Z.h5", "S-104", ChartLayerKind.WaterLevel, 32.0, -80.0)]
     [InlineData("S111/111US00_DBOFS_20260320T18Z_US4DE1BB.h5", "S-111", ChartLayerKind.SurfaceCurrents, double.NaN, double.NaN)]
-    [InlineData("S124/navwarn_ccg_ed2.gml", "S-124", ChartLayerKind.Chart, double.NaN, double.NaN)]
+    [InlineData("S124/navwarn_ccg_ed2.gml", "S-124", ChartLayerKind.NavigationalWarnings, double.NaN, double.NaN)]
     public async Task Dataset_ProductAndLayerComeFromTheContent(string relativePath, string product, ChartLayerKind kind, double latitude, double longitude)
     {
         var path = Upstream(relativePath);
@@ -62,7 +62,7 @@ public sealed class DatasetInspectorTests : IDisposable
     [InlineData("S411/iho_4112C00TDS001.gml", "S-411", ChartLayerKind.Chart)]
     [InlineData("S104/104US004SC1BO_20251217T12Z.h5", "S-104", ChartLayerKind.WaterLevel)]
     [InlineData("S102/102US004MI1CI262227.h5", "S-102", ChartLayerKind.Chart)]
-    [InlineData("S124/navwarn_ccg_ed2.gml", "S-124", ChartLayerKind.Chart)]
+    [InlineData("S124/navwarn_ccg_ed2.gml", "S-124", ChartLayerKind.NavigationalWarnings)]
     public async Task Dataset_WithMoreThanOneTimeStep_GoesInATimeLayer(string relativePath, string product, ChartLayerKind kind)
     {
         // Issue #62: the layer follows the dataset's time steps, not its product. One step stays in Chart.
@@ -71,7 +71,7 @@ public sealed class DatasetInspectorTests : IDisposable
         var dataset = Assert.Single(inspection.Datasets);
         Assert.Equal(product, dataset.Product);
         Assert.Equal(kind, dataset.Kind);
-        Assert.Equal(kind != ChartLayerKind.Chart, dataset.TimeVarying);
+        Assert.Equal(ChartLayerKinds.IsTimeLayer(kind), dataset.TimeVarying);
     }
 
     [Fact]

@@ -12,7 +12,7 @@ public class SmallPartsTests
     [InlineData("S-57", false, ChartLayerKind.Chart)]
     [InlineData("S-101", false, ChartLayerKind.Chart)]
     [InlineData("S-102", false, ChartLayerKind.Chart)]
-    [InlineData("S-124", false, ChartLayerKind.Chart)]
+    [InlineData("S-124", false, ChartLayerKind.NavigationalWarnings)]
     [InlineData("TC", true, ChartLayerKind.Weather)]
     [InlineData("CAP", true, ChartLayerKind.Weather)]
     [InlineData("GRIB2", true, ChartLayerKind.Weather)]
@@ -30,6 +30,7 @@ public class SmallPartsTests
     [InlineData(ChartLayerKind.WaterLevel, "Water level", "water-level")]
     [InlineData(ChartLayerKind.SurfaceCurrents, "Surface currents", "surface-currents")]
     [InlineData(ChartLayerKind.Weather, "Weather", "weather")]
+    [InlineData(ChartLayerKind.NavigationalWarnings, "Navigational warnings", "navigational-warnings")]
     public void Kinds_NamesAndIdsRoundTrip(ChartLayerKind kind, string name, string id)
     {
         Assert.Equal(name, ChartLayerKinds.DisplayName(kind));
@@ -38,22 +39,24 @@ public class SmallPartsTests
     }
 
     [Fact]
-    public void Kinds_TimeLayersAreAboveChart_WeatherUnderWaterLevelAndCurrents()
+    public void Kinds_TimeLayersAreAboveChart_WeatherUnderWarningsWaterLevelAndCurrents()
     {
         Assert.Equal(
-            [ChartLayerKind.SurfaceCurrents, ChartLayerKind.WaterLevel, ChartLayerKind.Weather, ChartLayerKind.Chart],
+            [ChartLayerKind.SurfaceCurrents, ChartLayerKind.WaterLevel, ChartLayerKind.NavigationalWarnings, ChartLayerKind.Weather, ChartLayerKind.Chart],
             ChartLayerKinds.TopFirst);
         Assert.Equal(Enum.GetValues<ChartLayerKind>().Order(), ChartLayerKinds.TopFirst.Order());
     }
 
     [Theory]
-    [InlineData(ChartLayerKind.Chart, false)]
-    [InlineData(ChartLayerKind.WaterLevel, true)]
-    [InlineData(ChartLayerKind.SurfaceCurrents, true)]
-    [InlineData(ChartLayerKind.Weather, true)]
-    public void Kinds_EveryLayerButChartFollowsMapTime(ChartLayerKind kind, bool timeLayer)
+    [InlineData(ChartLayerKind.Chart, false, false)]
+    [InlineData(ChartLayerKind.WaterLevel, true, true)]
+    [InlineData(ChartLayerKind.SurfaceCurrents, true, true)]
+    [InlineData(ChartLayerKind.Weather, true, true)]
+    [InlineData(ChartLayerKind.NavigationalWarnings, false, true)]
+    public void Kinds_EveryLayerButChartFollowsMapTime_WarningsWithoutSteps(ChartLayerKind kind, bool timeLayer, bool followsMapTime)
     {
         Assert.Equal(timeLayer, ChartLayerKinds.IsTimeLayer(kind));
+        Assert.Equal(followsMapTime, ChartLayerKinds.FollowsMapTime(kind));
     }
 
     [Fact]

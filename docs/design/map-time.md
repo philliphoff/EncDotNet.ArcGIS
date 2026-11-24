@@ -2,7 +2,8 @@
 
 How Pro's map time drives the time layers, **Water level** (S-104),
 **Surface currents** (S-111) and **Weather** (every other dataset with more
-than one time step), and what slice A8 found about Pro 3.7 on the way. The decisions are the design brief's §6 and D29–D33; this page
+than one time step), and the **Navigational warnings** layer (S-124), and
+what slice A8 found about Pro 3.7 on the way. The decisions are the design brief's §6 and D29–D33; this page
 records how they're carried out and the answers to open questions P1, P2,
 P4 and P9.
 
@@ -78,9 +79,58 @@ P4 and P9.
    is never moved.
 8. **Object information** samples water levels and currents at the
    instant, and says whether each S-124 warning is "In force at map time"
-   or "Not in force at map time" (D33): not before its `publicationTime`,
-   not from its `cancellationDate`, and only within a part's
-   `fixedDateRange`s when every dated part has them.
+   or "Not in force at map time" (D33), by the rule the map draws by
+   (below): a picked part is drawn at the instant.
+
+## Navigational warnings
+
+S-124 warnings have no time steps, but which of them are in force depends on
+map time (U7, issue #75). The chart server draws only the warnings in force
+at a time it's asked for, and every warning without one (EncDotNet.S100
+#1525). The add-in gives S-124 a layer of its own, **Navigational
+warnings**, rather than giving **Chart** a time: a time on **Chart** would
+refetch every chart tile whenever a warning starts or ends.
+
+1. When the layer's server starts, the add-in reads the layer's S-124
+   datasets in-process and builds the library's `NavigationalWarningSet`
+   from them, as the server does (`NavigationalWarnings`). A warning is
+   drawn when `IsDrawnAt` says so, without showing warnings not yet in
+   force: not outside its validity ranges, not from its cancellation date,
+   not once a warning that cancels it is published, and not once a later
+   in-force bulletin for its series leaves it out.
+2. From the set it works out when the warnings drawn change
+   (`WarningTimes`): each range's start, the tick after each range's end,
+   each cancellation date, and the publication of each cancellation and
+   in-force bulletin, less the times after which the same warnings draw as
+   before.
+3. On every map time change it asks for the latest of those at or before
+   the instant, or for `1900-01-01T00:00:00Z` before the first. Every map
+   time between two changes has the same tile URLs, so Pro's cache
+   refetches only when the warnings in force change. A range ends a tick
+   after its end, so such a time is written with seven fractional digits,
+   such as `2026-10-20T00:00:00.0000001Z`; the server reads it.
+4. With no map time (the time slider off) it asks for no time, and every
+   warning draws, as before. The layer is never hidden.
+
+With S-124 alone the server's capabilities advertise no `Time` dimension,
+so their tile template has no `{Time}` for Pro to fill from
+`Dimensions` (P1). The add-in sets `Dimensions["Time"]` and also writes the
+time into the connection's tile template, `TemplateUrl`:
+`.../wmts/1.0.0/s100/{Style}/2026-10-12T00:00:00Z/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png`.
+Without map time it clears both, so Pro uses the capabilities' template.
+Whether Pro requests tiles from `TemplateUrl` is open question P11 in the
+design brief; if it doesn't, the layer draws every warning, as before. A
+restart or a palette change carries the time over to the new connection.
+
+The pinned server, at v0.30.2 (`b9a19cbe`) and before it at `6731f4c7`,
+was checked with EncDotNet.S100's S-124 fixtures at v0.30.2. Asking for the add-in's time gave the same tile as
+asking for map time itself at every one of 201 map times, six hours apart
+from 25 Sep to 8 Nov 2026 and on both sides of every change. The map times
+covered NAVAREA X 120/26's parts (ended 5 Oct, in force 10 to 20 Oct, from
+25 Oct), NAVAREA X 121/26, cancelled on 12 Oct, and, among the bulletin
+fixtures, NAVAREA X 105/26, which the 12 Oct in-force bulletin leaves out.
+The REST time segment and WMTS KVP `Time=` both filter; a `?TIME=` query on
+the REST URL doesn't.
 
 The **Coverage** layer's first and last times come from the HDF5 metadata
 for S-104 and S-111, and from the processor's time steps for **Weather**
@@ -91,7 +141,8 @@ get no times, so the time-enabled **Coverage** layer never hides a
 footprint whose chart draws at every time.
 
 The logic that doesn't need Pro is in `src/EncDotNet.ArcGIS.SoundCharts/MapTime/`
-(`TimeSteps`, `TimeSelection`, `DatasetTimes`, `TimeStatus`, `LayerTime`, `TimeText`) and tested in
+(`TimeSteps`, `TimeSelection`, `DatasetTimes`, `TimeStatus`, `LayerTime`, `TimeText`,
+`NavigationalWarnings`, `WarningTimes`) and tested in
 `tests/EncDotNet.ArcGIS.SoundCharts.Tests/MapTime/`. `MapTimeController`
 is the Pro side.
 
@@ -112,12 +163,15 @@ Charleston S-104 sample, through a proxy that logged every request.
 - Without `--strict-time`, the server still holds a nearest or at-or-before
   dataset's last step when asked for a time outside its data (U6); the
   add-in hides those layers itself.
-- **Chart** gets no time, so the server draws every S-124 warning in it
-  (U7); Object information is where validity shows. The pinned server can
-  draw warnings by validity at a time asked for (EncDotNet.S100 #1525),
-  which the add-in doesn't use yet.
-- The validity rule combines the library's typed S-124 values; it belongs
-  in EncDotNet.S100 once the library says "in force" itself.
+- **Navigational warnings** draws by map time only if Pro uses the
+  connection's `TemplateUrl` (P11). Upstream advertising a `Time` dimension
+  for S-124 alone, with the change times as its values, would let Pro fill
+  `{Time}` as it does for the other time layers (U7).
+- S-124 alone doesn't make the map time-aware: the **Coverage** layer is
+  time-enabled from the time layers' steps, so a map with only charts and
+  warnings has no time slider, and draws every warning.
+- Projects saved before the **Navigational warnings** layer keep S-124 in
+  **Chart**, drawing every warning, until the warnings are added again.
 - A **Weather** layer with a storm and a GRIB2 run beside it is continuous,
   so its tile URLs change every 15 minutes even while the grid's step
   doesn't, and it's never hidden: past the grid's last step, the server

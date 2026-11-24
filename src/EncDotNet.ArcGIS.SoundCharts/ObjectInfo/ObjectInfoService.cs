@@ -2,6 +2,7 @@ using System.IO;
 using EncDotNet.S100;
 using EncDotNet.S100.Datasets.Pipelines;
 using EncDotNet.S100.Features;
+using EncDotNet.SoundCharts.MapTime;
 
 namespace EncDotNet.SoundCharts.ObjectInfo;
 
@@ -134,6 +135,7 @@ public sealed class ObjectInfoService : IDisposable
         lock (_gate)
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
+            var warnings = utcTime is null ? NavigationalWarnings.Empty : Warnings(datasets);
 
             foreach (var dataset in datasets.DistinctBy(d => d.Path, StringComparer.OrdinalIgnoreCase))
             {
@@ -158,7 +160,7 @@ public sealed class ObjectInfoService : IDisposable
                     if (features.Count > 0)
                     {
                         results.Add(new ObjectInfoDatasetResult(
-                            dataset, processor.Spec.Name, features, InForce(dataset, processor.Spec.Name, utcTime)));
+                            dataset, processor.Spec.Name, features, InForce(warnings, dataset, features, utcTime)));
                     }
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
@@ -249,27 +251,48 @@ public sealed class ObjectInfoService : IDisposable
     }
 
     /// <summary>
-    /// Whether an S-124 dataset's warning is in force at <paramref name="time"/>
-    /// (D33); <see langword="null"/> for other products, without a map time,
-    /// or when the warning can't be read as a typed model.
+    /// The S-124 warnings among <paramref name="datasets"/>, judged together
+    /// as the chart server judges them (issue #75), so cancellations and
+    /// in-force bulletins count. A dataset that can't be opened is left out;
+    /// the pick reports it.
     /// </summary>
-    private static bool? InForce(ChartDataset dataset, string spec, DateTime? time)
+    private NavigationalWarnings Warnings(IReadOnlyList<ChartDataset> datasets)
     {
-        if (time is not { } instant || !string.Equals(spec, "S-124", StringComparison.OrdinalIgnoreCase))
+        var opened = new List<(string, IDatasetProcessor)>();
+        foreach (var dataset in datasets.DistinctBy(d => d.Path, StringComparer.OrdinalIgnoreCase))
         {
-            return null;
+            // The pick opens every dataset anyway; the processors are kept.
+            try
+            {
+                opened.Add((dataset.Path, Open(dataset.Path)));
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                // Reported by the pick below.
+            }
         }
 
         try
         {
-            return NavigationalWarningValidity.IsInForce(dataset.Path, instant);
+            return NavigationalWarnings.From(opened);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            // The features were picked; only the validity is unknown.
-            return null;
+            // Without the set, validity is unknown; the features are still picked.
+            return NavigationalWarnings.Empty;
         }
     }
+
+    /// <summary>
+    /// Whether an S-124 dataset's warning is in force at <paramref name="time"/>
+    /// (D33), as the map draws it: one of the picked parts is drawn then.
+    /// <see langword="null"/> for other products, without a map time, or
+    /// when the warning couldn't be read.
+    /// </summary>
+    private static bool? InForce(NavigationalWarnings warnings, ChartDataset dataset, IReadOnlyList<ObjectInfoFeature> features, DateTime? time) =>
+        time is { } instant
+            ? warnings.IsInForce(dataset.Path, features.Select(f => f.FeatureRef), instant)
+            : null;
 
     private static int Rank(S100GeometryType primitive) => primitive switch
     {

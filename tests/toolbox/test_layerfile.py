@@ -75,6 +75,7 @@ class StringsTests(unittest.TestCase):
             "Layer_WaterLevel": layerfile.display_name(layerfile.WATER_LEVEL),
             "Layer_SurfaceCurrents": layerfile.display_name(layerfile.SURFACE_CURRENTS),
             "Layer_Weather": layerfile.display_name(layerfile.WEATHER),
+            "Layer_NavigationalWarnings": layerfile.display_name(layerfile.NAVIGATIONAL_WARNINGS),
         }
         for key, value in expected.items():
             with self.subTest(key=key):
@@ -104,6 +105,14 @@ class ComposeTests(unittest.TestCase):
         self.assertEqual(layerfile.CHART, single.kind)
         self.assertEqual(layerfile.WEATHER, STORM.kind)
         self.assertEqual(layerfile.WATER_LEVEL, layerfile.ChartDataset("a.h5", "S-104", time_varying=True).kind)
+
+    def test_s124_goes_to_navigational_warnings_above_weather(self):
+        warning = layerfile.ChartDataset(r"C:\Charts\navwarn.gml", "S-124")
+        self.assertEqual(layerfile.NAVIGATIONAL_WARNINGS, warning.kind)
+        _, text = layerfile.compose(["Mixed"], [CELL, warning, STORM])
+        group = json.loads(text)["layerDefinitions"][0]
+        self.assertEqual(["CIMPATH=soundcharts/navigational-warnings.json", "CIMPATH=soundcharts/weather.json",
+                          "CIMPATH=soundcharts/chart.json"], group["layers"])
 
     def test_layers_point_at_the_placeholder_until_the_add_in_connects_them(self):
         _, text = layerfile.compose(["US5MA1BO"], [CELL], style="night")

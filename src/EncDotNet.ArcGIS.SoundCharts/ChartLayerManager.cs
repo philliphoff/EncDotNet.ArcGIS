@@ -138,7 +138,7 @@ internal sealed partial class ChartLayerManager
             foreach (var (layer, ready) in bound)
             {
                 Bind(layer.URI, map, ready.Definition.Marker, ready.Lease, ready.Definition.CapabilitiesUri);
-                MapTimeController.Instance.Track(map, layer.URI, ready.Definition.Kind, ready.Steps);
+                MapTimeController.Instance.Track(map, layer.URI, ready.Definition.Kind, ready.Steps, ready.Warnings);
             }
 
             // A prepared layer that wasn't placed (the map changed meanwhile) gives its server back.
@@ -293,9 +293,34 @@ internal sealed partial class ChartLayerManager
         var tileJson = await ReadTileJsonAsync(endpoint, lease.Server.LogSource).ConfigureAwait(false);
         var minScale = TileJsonZoom.MinScale(ReadMinZoom(tileJson, lease.Server.LogSource));
         var steps = await ReadStepsAsync(endpoint, tileJson, lease.Server.LogSource).ConfigureAwait(false);
+        var warnings = marker.Kind == ChartLayerKind.NavigationalWarnings ? ReadWarningTimes(marker, lease.Server.LogSource) : null;
         var definition = new ChartLayerDefinition(
             marker, endpoint.WmtsCapabilitiesUri, Style: Settings.Effective.Style, MinScale: minScale, ServerVersion: ServerVersion);
-        return new Prepared(lease, definition, steps);
+        return new Prepared(lease, definition, steps, warnings);
+    }
+
+    /// <summary>
+    /// When the S-124 warnings a <b>Navigational warnings</b> layer draws can
+    /// change (U7, issue #75), read in-process from its datasets, as the
+    /// server judges them; the layer asks its server for the latest of these
+    /// at or before map time.
+    /// </summary>
+    private static WarningTimes ReadWarningTimes(ChartLayerMarker marker, string logSource)
+    {
+        var warnings = NavigationalWarnings.Read(marker.Datasets.Where(d => d.Exists).Select(d => d.Path), factory: null, out var failed);
+        foreach (var (path, reason) in failed)
+        {
+            SoundChartsSession.Log.Write(LogLevel.Warning, logSource, $"Couldn't read the warnings of {path}, so its warnings draw at every time: {reason}");
+        }
+
+        var changes = warnings.Times.Changes;
+        SoundChartsSession.Log.Write(
+            LogLevel.Debug,
+            logSource,
+            changes.Count == 0
+                ? "The navigational warnings in force don't change with time."
+                : $"The navigational warnings in force change {changes.Count} time(s), {MapTimeText.FormatTime(changes[0])} to {MapTimeText.FormatTime(changes[^1])}.");
+        return warnings.Times;
     }
 
     private static async Task<string?> ReadTileJsonAsync(ServerEndpoint endpoint, string logSource)
@@ -395,6 +420,15 @@ internal sealed partial class ChartLayerManager
             if (current.Layers.TryGetValue(kind, out var layer) && UpdateLayer(layer, ready.Definition))
             {
                 bound.Add((layer, ready));
+            }
+        }
+
+        // A layer whose datasets all moved to another kind goes; removing it releases its server.
+        foreach (var (kind, layer) in current.Layers)
+        {
+            if (!after.Layers.ContainsKey(kind))
+            {
+                map.RemoveLayer(layer);
             }
         }
 
@@ -761,7 +795,7 @@ internal sealed partial class ChartLayerManager
         }
 
         Bind(uri, map, marker, ready.Lease, ready.Definition.CapabilitiesUri);
-        MapTimeController.Instance.Track(map, uri, ready.Definition.Kind, ready.Steps);
+        MapTimeController.Instance.Track(map, uri, ready.Definition.Kind, ready.Steps, ready.Warnings);
     }
 
     /// <summary>Releases the servers of layers no longer in their map.</summary>
@@ -860,7 +894,7 @@ internal sealed partial class ChartLayerManager
 
     private sealed record MapState(GroupLayer? Group, ChartComposition Composition, IReadOnlyDictionary<ChartLayerKind, Layer> Layers);
 
-    private sealed record Prepared(ChartServerLease Lease, ChartLayerDefinition Definition, TimeSteps? Steps);
+    private sealed record Prepared(ChartServerLease Lease, ChartLayerDefinition Definition, TimeSteps? Steps, WarningTimes? Warnings = null);
 
     private sealed class Binding(string layerUri, Map map, ChartServerLease? lease)
     {

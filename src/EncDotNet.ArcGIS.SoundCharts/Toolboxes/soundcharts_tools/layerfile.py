@@ -49,8 +49,9 @@ CHART = "chart"
 WATER_LEVEL = "water-level"
 SURFACE_CURRENTS = "surface-currents"
 WEATHER = "weather"
+NAVIGATIONAL_WARNINGS = "navigational-warnings"
 
-TOP_FIRST = (SURFACE_CURRENTS, WATER_LEVEL, WEATHER, CHART)
+TOP_FIRST = (SURFACE_CURRENTS, WATER_LEVEL, NAVIGATIONAL_WARNINGS, WEATHER, CHART)
 """Layer kinds in drawing order, top first: time layers overlay the chart (§3.1)."""
 
 _NAMES = {
@@ -58,6 +59,7 @@ _NAMES = {
     WATER_LEVEL: "Water level",
     SURFACE_CURRENTS: "Surface currents",
     WEATHER: "Weather",
+    NAVIGATIONAL_WARNINGS: "Navigational warnings",
 }
 
 # The add-in's Strings.resx values; test_layerfile.py checks they still match.
@@ -116,13 +118,16 @@ class ChartDataset:
 def kind_for_product(product, time_varying=False):
     """Gets the layer kind for a dataset.
 
-    S-104 is water level and S-111 surface currents; any other dataset with
-    more than one time step is weather, and the rest is chart.
+    S-104 is water level, S-111 surface currents and S-124 navigational
+    warnings; any other dataset with more than one time step is weather, and
+    the rest is chart.
     """
     if product == "S-104":
         return WATER_LEVEL
     if product == "S-111":
         return SURFACE_CURRENTS
+    if product == "S-124":
+        return NAVIGATIONAL_WARNINGS
     if time_varying:
         return WEATHER
     return CHART
