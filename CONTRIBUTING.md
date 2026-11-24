@@ -48,7 +48,10 @@ itself runs as x64.
 `-RestoreConfigFile` restores through a NuGet mirror, and
 `-RollForwardLatestMajor` lets the upstream build use a newer major .NET
 SDK. To move the pin, change `commit` and `version` in
-`tools/s100-server.json`; CI caches the build by both.
+`tools/s100-server.json`; CI caches the build by both. For a release, use
+the commit its tag points to and the release version, such as `0.30.2`;
+for a commit ahead of a release, use the version upstream's nightly build
+stamps on it, such as `0.30.2-main.20261123`.
 
 To try another `s100` build without rebuilding the add-in, set
 `SOUNDCHARTS_S100_PATH` to its `s100.exe` before starting Pro. *About
