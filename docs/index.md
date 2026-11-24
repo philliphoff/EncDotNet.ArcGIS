@@ -12,11 +12,14 @@ Pro. It adds a **SoundCharts** tab to the ribbon with commands to:
   NHC tropical cyclone advisory's forecast zip (`al092022_5day_020.zip`) is
   added as one dataset, with the wind radii and best track zips beside it.
   A folder holding one storm's zips is added as that storm, one dataset,
-  with any charts beside the zips.
+  with any charts beside the zips. A folder holding one GRIB2 model run, a
+  file per forecast hour (`gfswave.t00z.global.0p25.f000.grib2`, `f003`,
+  …), is added as that run, one dataset with the run's hours.
 - Browse folders, exchange sets and collection manifests without loading
-  them (**Library**). A storm's folder is one dataset there too, named after
-  the folder. In a folder of several storms, or one that is also a GRIB2
-  model run, each storm is its latest forecast zip.
+  them (**Library**). A storm's folder and a GRIB2 run's folder are each one
+  dataset there too, named after the folder. In a folder of several storms,
+  or one that is also a GRIB2 model run, each storm is its latest forecast
+  zip.
 - Set the palette, display category and mariner settings of a project's
   SoundCharts layers.
 - List the features and coverage values at a point (**Object Information**)

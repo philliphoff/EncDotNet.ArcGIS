@@ -16,14 +16,20 @@ public static class TilesExportCommandLine
     /// </summary>
     /// <param name="request">The layer and output.</param>
     /// <param name="plan">The tiles for the frame and resolution.</param>
+    /// <param name="workingDirectory">
+    /// The export's working folder, where a GRIB2 run exported beside other
+    /// datasets is written as one file (see <see cref="ServerCommandLine.Inputs"/>);
+    /// <see langword="null"/> for none.
+    /// </param>
     /// <exception cref="NotSupportedException">The layer's sources can't be given to one command (see <see cref="ServerCommandLine.Inputs"/>).</exception>
-    public static IReadOnlyList<string> Build(ChartRasterRequest request, ChartTilePlan plan)
+    /// <exception cref="IOException">A run's file couldn't be written.</exception>
+    public static IReadOnlyList<string> Build(ChartRasterRequest request, ChartTilePlan plan, string? workingDirectory = null)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(plan);
 
         var zoom = plan.Zoom.ToString(CultureInfo.InvariantCulture);
-        List<string> arguments = ["tiles", "export", .. ServerCommandLine.Inputs(request.Datasets)];
+        List<string> arguments = ["tiles", "export", .. ServerCommandLine.Inputs(request.Datasets, workingDirectory)];
         arguments.AddRange(
         [
             "-o", request.OutputPath,

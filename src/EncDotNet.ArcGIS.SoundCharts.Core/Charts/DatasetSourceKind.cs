@@ -5,8 +5,9 @@ public enum DatasetSourceKind
 {
     /// <summary>
     /// One dataset: a file, such as an S-101 <c>.000</c> or an S-104
-    /// <c>.h5</c>, or a folder read as one dataset, such as an NHC tropical
-    /// cyclone advisory folder (<see cref="DatasetSource.IsAdvisoryFolder"/>).
+    /// <c>.h5</c>, or a folder read as one dataset: an NHC tropical cyclone
+    /// advisory folder (<see cref="DatasetSource.IsAdvisoryFolder"/>) or a
+    /// GRIB2 model run (<see cref="DatasetSource.IsRunFolder"/>).
     /// </summary>
     Dataset,
 

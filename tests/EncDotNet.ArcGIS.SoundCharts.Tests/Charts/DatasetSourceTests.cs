@@ -154,6 +154,50 @@ public class DatasetSourceTests
         Assert.False(DatasetSource.IsAdvisoryFolder(folder));
     }
 
+    [Fact]
+    public void IsRunFolder_AFolderOfForecastHours_IsAndStaysAFolderSource()
+    {
+        // Issue #73: the folder is one GRIB2 dataset to EncDotNet.S100, but a
+        // folder to the inspector, which may find charts beside the run.
+        using var temp = new TempFolder();
+        var folder = Path.Combine(temp.Path, "gfswave");
+        Assert.SkipWhen(Fixtures.WriteUpstreamRun(folder).Count == 0, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+
+        Assert.True(DatasetSource.IsRunFolder(folder));
+        Assert.False(DatasetSource.IsAdvisoryFolder(folder));
+        Assert.Equal(DatasetSourceKind.Folder, DatasetSource.FromPath(folder).Kind);
+    }
+
+    [Fact]
+    public void IsRunFolder_OneGrib2FileOrNone_IsNot()
+    {
+        // As in EncDotNet.S100's Library, a folder of one GRIB2 file lists the file.
+        using var temp = new TempFolder();
+        var folder = Path.Combine(temp.Path, "one");
+        Assert.SkipWhen(Fixtures.WriteUpstreamRun(folder, [3]).Count == 0, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        temp.File(@"one/gfswave.t00z.global.0p25.f003.grib2.idx", "1:0:d=2026102500:HTSGW:surface:3 hour fcst:");
+        temp.File(@"text/a.grib2", "not GRIB");
+        temp.File(@"text/b.grib2", "not GRIB either");
+
+        Assert.False(DatasetSource.IsRunFolder(folder));
+        Assert.False(DatasetSource.IsRunFolder(Path.Combine(temp.Path, "text")));
+        Assert.False(DatasetSource.IsRunFolder(temp.Folder("empty")));
+        Assert.False(DatasetSource.IsRunFolder(Path.Combine(temp.Path, "missing")));
+        Assert.False(DatasetSource.IsRunFolder(Path.Combine(folder, "gfswave.t00z.global.0p25.f003.grib2")));
+    }
+
+    [Fact]
+    public void IsRunFolder_ARunWithAStorm_IsTheRun()
+    {
+        using var temp = new TempFolder();
+        var folder = Path.Combine(temp.Path, "run");
+        Assert.SkipWhen(Fixtures.WriteUpstreamRun(folder).Count == 0, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        Assert.SkipUnless(Fixtures.CopyUpstreamStorm(folder), "No TC fixture.");
+
+        Assert.True(DatasetSource.IsRunFolder(folder));
+        Assert.False(DatasetSource.IsAdvisoryFolder(folder));
+    }
+
     private static string Upstream(string relativePath)
     {
         var path = Fixtures.Upstream(relativePath);

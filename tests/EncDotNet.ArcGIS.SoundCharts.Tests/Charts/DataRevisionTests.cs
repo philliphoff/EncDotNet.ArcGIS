@@ -100,6 +100,23 @@ public class DataRevisionTests
     }
 
     [Fact]
+    public void ARunFolder_BringsEveryFile_AndANewHourChangesIt()
+    {
+        // Issue #73: the Library's item for a GRIB2 run is its folder.
+        using var temp = new TempFolder();
+        var folder = temp.Folder("gfswave");
+        temp.File(@"gfswave/gfswave.t00z.global.0p25.f000.grib2", "0");
+        temp.File(@"gfswave/gfswave.t00z.global.0p25.f003.grib2", "3");
+        var before = DataRevision.Of([DatasetSource.Dataset(folder)]);
+
+        Assert.Equal(2, before.Split('\n', StringSplitOptions.RemoveEmptyEntries).Length);
+
+        temp.File(@"gfswave/gfswave.t00z.global.0p25.f006.grib2", "6");
+
+        Assert.NotEqual(before, DataRevision.Of([DatasetSource.Dataset(folder)]));
+    }
+
+    [Fact]
     public void AnAdvisoryFolder_BringsEveryFile_AndANewAdvisoryChangesIt()
     {
         // Issue #69: the Library's item for a storm's folder is the folder.

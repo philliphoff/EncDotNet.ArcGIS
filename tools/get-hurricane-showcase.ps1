@@ -217,7 +217,11 @@ if ('Charts' -notin $Skip) {
 }
 
 # Weather: GFS-Wave from the run at or before the start, one file per forecast
-# hour, appended into one GRIB2 file.
+# hour, appended into one GRIB2 file. SoundCharts also reads a folder of the
+# hours as one run (issue #73), but the Weather layer holds the storm too, and
+# the chart server reads a run beside another dataset only as one file, so
+# the add-in would copy the run into one for each session. The appended file
+# is that copy, made once, and older add-ins read it as well.
 if ('Weather' -notin $Skip) {
     $cycle = $Start.Date.AddHours([math]::Floor($Start.Hour / 6) * 6)
     $hours = [int][math]::Ceiling(($End - $cycle).TotalHours)
