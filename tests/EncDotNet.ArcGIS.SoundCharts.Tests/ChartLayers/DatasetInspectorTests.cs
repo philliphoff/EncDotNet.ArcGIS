@@ -194,6 +194,69 @@ public sealed class DatasetInspectorTests : IDisposable
     }
 
     [Fact]
+    public async Task Folder_RunFolder_IsOneGrib2DatasetAtTheFolder()
+    {
+        // Issue #73: the Library's item for a GRIB2 run is the folder, so Add
+        // to Map passes it. Its files are read together, as one dataset with
+        // the run's time steps, and its .idx inventories aren't counted as
+        // files that aren't datasets.
+        var folder = Path.Combine(_temp.Path, "gfswave");
+        Assert.SkipWhen(Fixtures.WriteUpstreamRun(folder).Count == 0, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        File.WriteAllText(Path.Combine(folder, "gfswave.t00z.global.0p25.f000.grib2.idx"), "1:0:d=2026102500:HTSGW:surface:anl:");
+
+        var inspection = await _inspector.InspectAsync(folder, cancellationToken: TestContext.Current.CancellationToken);
+
+        var dataset = Assert.Single(inspection.Datasets);
+        Assert.Equal("GRIB2", dataset.Product);
+        Assert.Equal(Path.GetFullPath(folder), dataset.Path);
+        Assert.Equal("gfswave", dataset.Name);
+        Assert.True(dataset.TimeVarying);
+        Assert.Equal(ChartLayerKind.Weather, dataset.Kind);
+        Assert.True(dataset.Exists);
+        Assert.NotNull(dataset.Extent);
+        Assert.Equal("gfswave", inspection.Input);
+        Assert.Empty(inspection.Warnings);
+    }
+
+    [Fact]
+    public async Task Folder_RunFolderWithAStormAndAChart_IsTheRunTheStormsLatestForecastZipAndTheChart()
+    {
+        // As in EncDotNet.S100's Library and CLI (#1687, #1694): the run keeps
+        // the folder, and the storm is its latest forecast zip. The storm's
+        // other zips aren't counted as files that aren't datasets.
+        var cell = Upstream("S57/US5MA1BO/US5MA1BO.000");
+        var folder = Path.Combine(_temp.Path, "run");
+        Assert.SkipWhen(Fixtures.WriteUpstreamRun(folder).Count == 0, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        Assert.True(Fixtures.CopyUpstreamStorm(folder, advisory: "019"));
+        Assert.True(Fixtures.CopyUpstreamStorm(folder));
+        File.Copy(cell, Path.Combine(folder, "US5MA1BO.000"));
+
+        var inspection = await _inspector.InspectAsync(folder, cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.Equal(
+            [("GRIB2", folder), ("S-57", Path.Combine(folder, "US5MA1BO.000")), ("TC", Path.Combine(folder, "al092022_5day_020.zip"))],
+            inspection.Datasets.Select(d => (d.Product, d.Path)).OrderBy(d => d.Product, StringComparer.Ordinal));
+        Assert.Empty(inspection.Warnings);
+    }
+
+    [Fact]
+    public async Task Folder_WithARunSubfolderAndOneGrib2File_FindsTheRunAndTheFile()
+    {
+        var root = Path.Combine(_temp.Path, "weather");
+        var run = Path.Combine(root, "gfswave");
+        Assert.SkipWhen(Fixtures.WriteUpstreamRun(run).Count == 0, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        var single = Assert.Single(Fixtures.WriteUpstreamRun(Path.Combine(root, "one"), [6]));
+
+        var inspection = await _inspector.InspectAsync(root, cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.Equal(
+            [(run, true), (single, false)],
+            inspection.Datasets.Select(d => (d.Path, d.TimeVarying)).OrderBy(d => d.Path, StringComparer.Ordinal));
+        Assert.All(inspection.Datasets, d => Assert.Equal("GRIB2", d.Product));
+        Assert.Empty(inspection.Warnings);
+    }
+
+    [Fact]
     public async Task Dataset_AdvisoryWindRadiiZipAlone_IsNoDataset()
     {
         var inspection = await _inspector.InspectAsync(Upstream("TC/al092022/al092022_fcst_020.zip"), cancellationToken: TestContext.Current.CancellationToken);

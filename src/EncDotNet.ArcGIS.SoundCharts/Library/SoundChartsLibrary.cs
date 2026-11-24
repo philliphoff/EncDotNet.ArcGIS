@@ -32,7 +32,7 @@ public sealed class SoundChartsLibrary : IDisposable
     /// <summary>Creates a library stored in <paramref name="root"/>.</summary>
     /// <param name="root">The folder for <c>collections.json</c> and the index cache.</param>
     /// <param name="probe">
-    /// Reads loose dataset files and NHC advisory folders, such as
+    /// Reads loose dataset files, NHC advisory folders and GRIB2 run folders, such as
     /// <see cref="LibraryDatasetReader.Probe"/>; <see langword="null"/>
     /// recognizes only S-57 cells, without bounds.
     /// </param>
@@ -44,9 +44,10 @@ public sealed class SoundChartsLibrary : IDisposable
         Root = root;
         var paths = new LibraryDataPaths(root);
         _library = new CollectionLibrary(
-            // EncDotNet.S100's own indexers. They list NHC tropical cyclone
-            // advisories, a folder of one storm's zips as one item at the
-            // folder (issue #69), when the probe reads advisory folders.
+            // EncDotNet.S100's own indexers. They list a folder of one
+            // storm's NHC advisory zips (issue #69), and a folder of one
+            // GRIB2 model run's files (issue #73), as one item at the
+            // folder, when the probe reads such folders.
             CollectionIndexer.CreateDefault(probe),
             new CollectionLibraryOptions(paths.CollectionsFile, paths.IndexCacheDirectory),
             logger,

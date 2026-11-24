@@ -6,6 +6,7 @@ using System.Text;
 using EncDotNet.S100;
 using EncDotNet.S100.Core;
 using EncDotNet.S100.Crs.ProjNet;
+using EncDotNet.S100.Datasets.Grib;
 using EncDotNet.S100.Datasets.Pipelines;
 using EncDotNet.S100.Datasets.S57;
 using EncDotNet.S100.Datasets.TropicalCyclones;
@@ -39,6 +40,15 @@ namespace EncDotNet.SoundCharts.ChartLayers;
 /// located at the folder, as the Library lists it (issue #69), whether it's
 /// what the user chose or a folder inside it. Other files in it are read as
 /// in any folder.
+/// </para>
+/// <para>
+/// A folder holding one GRIB2 model run, one file per forecast hour
+/// (<see cref="DatasetSource.IsRunFolder"/>), is one <c>GRIB2</c> dataset
+/// located at the folder, as the Library lists it (issue #73). A storm's
+/// advisory zips beside the run are the storm's latest forecast zip, a
+/// dataset of its own, as in EncDotNet.S100's Library and CLI
+/// (EncDotNet.S100 #1687, #1694); the run's <c>.idx</c> inventories aren't
+/// counted as files that aren't datasets.
 /// </para>
 /// <para>
 /// A <c>.zip</c> exchange set is extracted to <see cref="ExtractionFolder"/>
@@ -381,6 +391,7 @@ public sealed class DatasetInspector : IDisposable
     {
         var skipped = 0;
         var storms = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
+        var runs = new Dictionary<string, RunFolder?>(StringComparer.OrdinalIgnoreCase);
         var options = new EnumerationOptions { RecurseSubdirectories = true, IgnoreInaccessible = true };
         foreach (var path in Directory.EnumerateFiles(root, "*", options).Order(StringComparer.OrdinalIgnoreCase))
         {
@@ -388,6 +399,29 @@ public sealed class DatasetInspector : IDisposable
             if (IsUpdateFile(path) || Path.GetFileName(path) == CompleteMarker)
             {
                 continue;
+            }
+
+            // A run folder's GRIB2 files are read together, as one dataset at the folder (issue #73).
+            if (RunFolderOf(path, runs) is { } run)
+            {
+                switch (run.Claim(path))
+                {
+                    case RunClaim.Run:
+                        // Read once, from its first file, whether or not it can be drawn.
+                        if (!run.Read)
+                        {
+                            run.Read = true;
+                            progress?.Report(Path.GetFileName(run.Folder));
+                            if (Inspect(run.Folder, null, warnings) is { } grib)
+                            {
+                                datasets.Add(grib);
+                            }
+                        }
+
+                        continue;
+                    case RunClaim.Ignored:
+                        continue;
+                }
             }
 
             // An advisory folder's zips are read together, as one dataset at the folder (issue #69).
@@ -461,6 +495,29 @@ public sealed class DatasetInspector : IDisposable
         }
 
         return string.Equals(storm, atcfId, StringComparison.Ordinal) ? folder : null;
+    }
+
+    /// <summary>
+    /// Gets the run folder <paramref name="path"/> is in: its folder, when
+    /// that is a GRIB2 run (<see cref="DatasetSource.IsRunFolder"/>);
+    /// otherwise <see langword="null"/>.
+    /// </summary>
+    /// <param name="path">A file in the folder being inspected.</param>
+    /// <param name="runs">Each folder seen so far, <see langword="null"/> when it isn't a run.</param>
+    private static RunFolder? RunFolderOf(string path, Dictionary<string, RunFolder?> runs)
+    {
+        if (Path.GetDirectoryName(path) is not { } folder)
+        {
+            return null;
+        }
+
+        if (!runs.TryGetValue(folder, out var run))
+        {
+            run = DatasetSource.IsRunFolder(folder) ? RunFolder.Open(folder) : null;
+            runs[folder] = run;
+        }
+
+        return run;
     }
 
     /// <summary>Extracts a <c>.zip</c> exchange set once per version of the file; returns the extracted folder.</summary>
@@ -568,4 +625,97 @@ public sealed class DatasetInspector : IDisposable
 
     /// <summary>What an exchange set's catalogue says about a dataset.</summary>
     private sealed record Declared(string? Product, SpecVersion? Edition, GeoExtent? Extent, string? Producer, bool NotForNavigation);
+
+    /// <summary>What a file in a GRIB2 run folder is.</summary>
+    private enum RunClaim
+    {
+        /// <summary>One of the run's GRIB2 files.</summary>
+        Run,
+
+        /// <summary>Part of the folder's datasets without being one: an <c>.idx</c> inventory, or a storm's zip other than its latest forecast.</summary>
+        Ignored,
+
+        /// <summary>Anything else, read as in any folder, such as a storm's latest forecast zip or a chart.</summary>
+        Other,
+    }
+
+    /// <summary>
+    /// A GRIB2 run folder: the run's files, and each storm's latest forecast
+    /// zip, which EncDotNet.S100 lists beside the run (#1694).
+    /// </summary>
+    private sealed class RunFolder
+    {
+        private readonly HashSet<string> _files;
+        private readonly Dictionary<string, string> _latestForecasts;
+
+        private RunFolder(string folder, HashSet<string> files, Dictionary<string, string> latestForecasts)
+        {
+            Folder = folder;
+            _files = files;
+            _latestForecasts = latestForecasts;
+        }
+
+        public string Folder { get; }
+
+        /// <summary>Gets or sets whether the run has been read as a dataset.</summary>
+        public bool Read { get; set; }
+
+        public static RunFolder Open(string folder)
+        {
+            var files = new HashSet<string>(GribRunFolder.Files(folder), StringComparer.OrdinalIgnoreCase);
+            var latest = new Dictionary<string, string>(StringComparer.Ordinal);
+            IEnumerable<string> zips;
+            try
+            {
+                zips = Directory.EnumerateFiles(folder, "*.zip").Order(StringComparer.Ordinal).ToList();
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                zips = [];
+            }
+
+            foreach (var zip in zips)
+            {
+                if (NhcAdvisoryFiles.TryParseFileName(Path.GetFileName(zip), out var kind, out var atcfId, out var advisory)
+                    && kind == NhcFileKind.Forecast
+                    && (!latest.TryGetValue(atcfId, out var current) || IsLater(advisory, current)))
+                {
+                    latest[atcfId] = zip;
+                }
+            }
+
+            return new RunFolder(folder, files, latest);
+        }
+
+        public RunClaim Claim(string path)
+        {
+            if (_files.Contains(path))
+            {
+                return RunClaim.Run;
+            }
+
+            if (path.EndsWith(".idx", StringComparison.OrdinalIgnoreCase))
+            {
+                return RunClaim.Ignored;
+            }
+
+            if (NhcAdvisoryFiles.TryParseFileName(Path.GetFileName(path), out _, out var atcfId, out _)
+                && _latestForecasts.TryGetValue(atcfId, out var forecast))
+            {
+                return string.Equals(path, forecast, StringComparison.OrdinalIgnoreCase) ? RunClaim.Other : RunClaim.Ignored;
+            }
+
+            return RunClaim.Other;
+        }
+
+        private static bool IsLater(string advisory, string currentZip)
+        {
+            NhcAdvisoryFiles.TryParseFileName(Path.GetFileName(currentZip), out _, out _, out var current);
+            var (number, suffix) = NhcAdvisoryFiles.AdvisoryOrder(advisory);
+            var (currentNumber, currentSuffix) = NhcAdvisoryFiles.AdvisoryOrder(current);
+            return number != currentNumber
+                ? number > currentNumber
+                : string.CompareOrdinal(suffix, currentSuffix) > 0;
+        }
+    }
 }

@@ -25,8 +25,9 @@ public static class DataRevision
     /// <c>.zip</c> brings the files of its folder, or itself. An NHC tropical
     /// cyclone advisory's forecast zip, a dataset, brings the wind radii and
     /// best track zips the chart server reads from beside it, and an
-    /// advisory folder, also a dataset, brings every file under it, so a
-    /// newer advisory saved there is a new revision.
+    /// advisory folder or a GRIB2 run folder, also a dataset, brings every
+    /// file under it, so a newer advisory or forecast hour saved there is a
+    /// new revision.
     /// </remarks>
     /// <param name="sources">The chart's sources.</param>
     public static string Of(IEnumerable<DatasetSource> sources)

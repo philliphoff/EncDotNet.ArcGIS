@@ -1,4 +1,5 @@
 using EncDotNet.S100.Core;
+using EncDotNet.S100.Datasets.Grib;
 using EncDotNet.S100.Datasets.Pipelines;
 using EncDotNet.S100.Datasets.TropicalCyclones;
 
@@ -37,7 +38,10 @@ public sealed class DatasetSource : IEquatable<DatasetSource>
     /// <summary>Gets the file or folder name, for display.</summary>
     public string Name => System.IO.Path.GetFileName(Path) is { Length: > 0 } name ? name : Path;
 
-    /// <summary>Creates a source for one dataset: a file, or a folder read as one dataset (<see cref="IsAdvisoryFolder"/>).</summary>
+    /// <summary>
+    /// Creates a source for one dataset: a file, or a folder read as one
+    /// dataset (<see cref="IsAdvisoryFolder"/>, <see cref="IsRunFolder"/>).
+    /// </summary>
     /// <param name="path">The dataset's path.</param>
     public static DatasetSource Dataset(string path) => new(path, DatasetSourceKind.Dataset);
 
@@ -124,11 +128,11 @@ public sealed class DatasetSource : IEquatable<DatasetSource>
     /// <remarks>
     /// The Library lists such a folder as one <c>TC</c> dataset located at
     /// the folder (issue #69). Other files in it, such as charts, are
-    /// datasets of their own. A folder that is also a GRIB2 model run is read
-    /// by EncDotNet.S100 as the run, so it gives <see langword="false"/>, and
-    /// the Library lists the storm's forecast zip instead; the add-in reads
-    /// GRIB2 runs file by file. A missing or unreadable folder gives
-    /// <see langword="false"/>.
+    /// datasets of their own. A folder that is also a GRIB2 model run
+    /// (<see cref="IsRunFolder"/>) is read by EncDotNet.S100 as the run, so it
+    /// gives <see langword="false"/>, and the Library lists the storm's
+    /// latest forecast zip beside the run (EncDotNet.S100 #1694). A missing or
+    /// unreadable folder gives <see langword="false"/>.
     /// </remarks>
     /// <param name="path">The folder's path.</param>
     public static bool IsAdvisoryFolder(string path)
@@ -138,6 +142,39 @@ public sealed class DatasetSource : IEquatable<DatasetSource>
         {
             return NhcAdvisoryFiles.IsAdvisoryFolder(path)
                 && DatasetPipelineFactory.DetectProductSpec(path) == SpecName.TropicalCyclone;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Gets whether <paramref name="path"/> is a folder EncDotNet.S100 reads
+    /// as one GRIB2 dataset: a model run published one file per forecast
+    /// hour (<c>gfswave.t00z.global.0p25.f000.grib2</c>, <c>…f003…</c>), with
+    /// more than one GRIB2 file directly in it.
+    /// </summary>
+    /// <remarks>
+    /// The Library lists such a folder as one <c>GRIB2</c> dataset located at
+    /// the folder, with the run's time steps (issue #73, EncDotNet.S100
+    /// #1075), and Add SoundCharts Data reads it the same way. EncDotNet.S100
+    /// reads the run's GRIB2 files (<c>GribRunFolder.Files</c>) together, in
+    /// name order; other files in the folder, such as <c>.idx</c>
+    /// inventories, charts or a storm's advisory zips, aren't part of it, and
+    /// neither are sub-folders. A folder with one GRIB2 file gives
+    /// <see langword="false"/>: the Library lists the file, as EncDotNet.S100
+    /// does. A missing or unreadable folder gives <see langword="false"/>.
+    /// </remarks>
+    /// <param name="path">The folder's path.</param>
+    public static bool IsRunFolder(string path)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
+        try
+        {
+            return Directory.Exists(path)
+                && GribRunFolder.Files(path).Count > 1
+                && DatasetPipelineFactory.DetectProductSpec(path) == SpecName.Grib2;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
         {

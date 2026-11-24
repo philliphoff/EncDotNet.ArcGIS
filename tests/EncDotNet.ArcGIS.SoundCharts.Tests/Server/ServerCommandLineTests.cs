@@ -65,6 +65,87 @@ public class ServerCommandLineTests
     }
 
     [Fact]
+    public void Inputs_ARunFolderAlone_IsTheFolderWithOnlyGrib2()
+    {
+        // Issue #73: tiles serve reads a run as one dataset only from a folder
+        // given as its input; --only keeps a storm or chart beside it out.
+        using var temp = new TempFolder();
+        var folder = Path.Combine(temp.Path, "gfswave");
+        Assert.SkipWhen(Fixtures.WriteUpstreamRun(folder).Count == 0, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        var work = Path.Combine(temp.Path, "work");
+
+        Assert.Equal([folder, "--only", "GRIB2"], ServerCommandLine.Inputs(new DatasetSet([DatasetSource.Dataset(folder)]), work));
+        Assert.Equal([folder, "--only", "GRIB2"], ServerCommandLine.Inputs(new DatasetSet([DatasetSource.Dataset(folder)])));
+        Assert.False(Directory.Exists(work));
+
+        // A folder source is what the user chose, and is served as they chose it.
+        Assert.Equal([folder], ServerCommandLine.Inputs(new DatasetSet([DatasetSource.Folder(folder)]), work));
+    }
+
+    [Fact]
+    public void Inputs_ARunFolderWithSubfolders_IsTheRunAsOneFile()
+    {
+        // The server would read a sub-folder's datasets too, even with --only GRIB2.
+        using var temp = new TempFolder();
+        var folder = Path.Combine(temp.Path, "gfswave");
+        var files = Fixtures.WriteUpstreamRun(folder);
+        Assert.SkipWhen(files.Count == 0, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        Fixtures.WriteUpstreamRun(Path.Combine(folder, "older"), [0]);
+        var work = Path.Combine(temp.Path, "work");
+
+        var input = Assert.Single(ServerCommandLine.Inputs(new DatasetSet([DatasetSource.Dataset(folder)]), work));
+
+        Assert.StartsWith(Path.Combine(work, RunFolderInput.FolderName), input, StringComparison.Ordinal);
+        Assert.Equal("gfswave.grib2", Path.GetFileName(input));
+        Assert.Equal(files.SelectMany(File.ReadAllBytes), File.ReadAllBytes(input));
+    }
+
+    [Fact]
+    public void Inputs_ARunFolderBesideOtherDatasets_IsALayerOfTheRunAsOneFile()
+    {
+        // tiles serve refuses a folder as a --layer, and draws each of the
+        // run's files as a --layer of its own at every time.
+        using var temp = new TempFolder();
+        var folder = Path.Combine(temp.Path, "gfswave");
+        var files = Fixtures.WriteUpstreamRun(folder);
+        Assert.SkipWhen(files.Count == 0, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        var cap = temp.File("warning.xml");
+        var work = Path.Combine(temp.Path, "work");
+        var set = new DatasetSet([DatasetSource.Dataset(folder), DatasetSource.Dataset(cap)]);
+
+        var inputs = ServerCommandLine.Inputs(set, work);
+
+        Assert.Equal(["--layer", "--layer"], inputs.Where((_, i) => i % 2 == 0));
+        var run = Assert.Single(inputs.Where((_, i) => i % 2 == 1), path => path != cap);
+        Assert.Equal(files.SelectMany(File.ReadAllBytes), File.ReadAllBytes(run));
+
+        // Written once; a new hour gives a new file.
+        Assert.Equal(inputs, ServerCommandLine.Inputs(set, work));
+        File.Copy(files[0], Path.Combine(folder, "gfswave.t00z.global.0p25.f009.grib2"));
+        var newer = ServerCommandLine.Inputs(set, work);
+        Assert.NotEqual(inputs, newer);
+        Assert.Equal(new FileInfo(run).Length + new FileInfo(files[0]).Length, new FileInfo(newer[Array.IndexOf(inputs.ToArray(), run)]).Length);
+
+        // Without a folder to write to, the set can't be served.
+        Assert.Throws<NotSupportedException>(() => ServerCommandLine.Inputs(set));
+    }
+
+    [Fact]
+    public void Build_ARunFolderBesideOtherDatasets_WritesTheRunInTheWorkingFolder()
+    {
+        using var temp = new TempFolder();
+        var folder = Path.Combine(temp.Path, "gfswave");
+        Assert.SkipWhen(Fixtures.WriteUpstreamRun(folder).Count == 0, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        var cap = temp.File("warning.xml");
+        var work = Path.Combine(temp.Path, "work");
+
+        var arguments = ServerCommandLine.Build(
+            new DatasetSet([DatasetSource.Dataset(folder), DatasetSource.Dataset(cap)]), Endpoint, null, 512, work);
+
+        Assert.Contains(arguments, a => a.StartsWith(work, StringComparison.Ordinal) && a.EndsWith("gfswave.grib2", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void InputPath_AFileOrAnOrdinaryFolder_IsItsPath()
     {
         using var temp = new TempFolder();
