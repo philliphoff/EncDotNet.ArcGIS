@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/philliphoff/EncDotNet.S100.git",
-  "commit": "6731f4c7ac17dd8e612717ebe654a90e9a65e41c",
-  "version": "0.30.2-main.20261123",
+  "commit": "b9a19cbec754c121baa4ce16414cd4915f326333",
+  "version": "0.30.2",
   "runtimeIdentifiers": [ "win-x64", "win-arm64" ]
 }

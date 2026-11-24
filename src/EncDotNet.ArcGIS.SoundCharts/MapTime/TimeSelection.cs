@@ -1,3 +1,5 @@
+using EncDotNet.S100.Datasets.Pipelines;
+
 namespace EncDotNet.SoundCharts.MapTime;
 
 /// <summary>
@@ -45,6 +47,18 @@ public static class TimeSelections
         TimeSelection.AtOrBefore => "atOrBefore",
         TimeSelection.Continuous => "continuous",
         _ => "nearest",
+    };
+
+    /// <summary>
+    /// Gets EncDotNet.S100's <see cref="TimeStepSelection"/> for
+    /// <paramref name="selection"/>, for <see cref="TimeStepSelector"/>.
+    /// </summary>
+    /// <param name="selection">The selection.</param>
+    public static TimeStepSelection ToStepSelection(TimeSelection selection) => selection switch
+    {
+        TimeSelection.AtOrBefore => TimeStepSelection.AtOrBefore,
+        TimeSelection.Continuous => TimeStepSelection.Continuous,
+        _ => TimeStepSelection.Nearest,
     };
 
     /// <summary>

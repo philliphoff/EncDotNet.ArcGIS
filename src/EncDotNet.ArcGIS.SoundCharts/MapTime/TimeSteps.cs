@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using EncDotNet.S100.Datasets.Pipelines;
 
 namespace EncDotNet.SoundCharts.MapTime;
 
@@ -32,6 +33,18 @@ namespace EncDotNet.SoundCharts.MapTime;
 /// </list>
 /// <para>
 /// Anything else is "no data", never a silent snap to the last step (D31).
+/// </para>
+/// <para>
+/// Which step is drawn, and the range of an at-or-before layer, come from
+/// EncDotNet.S100's <see cref="TimeStepSelector"/>, the rule the chart
+/// server picks steps with (issue #72), with <see cref="Interval"/> as the
+/// tolerance. What's the add-in's own: <see cref="Interval"/> is the most
+/// common interval, where the selector's typical step is the median (the
+/// same for regular steps); a nearest layer's range is half an interval
+/// either side, not a whole one; a continuous layer is rounded to
+/// <see cref="ContinuousRounding"/>, not to the minute, and its range is the
+/// server's <c>timeRange</c>; and a layer whose datasets select differently
+/// has one combined <see cref="Selection"/>.
 /// </para>
 /// </remarks>
 public sealed class TimeSteps
@@ -96,7 +109,9 @@ public sealed class TimeSteps
     {
         TimeSelection.Continuous when _span is { } span => (Min(span.Start, First), Max(span.End, Last)),
         TimeSelection.Continuous => (First, Last),
-        TimeSelection.AtOrBefore => (First, Last + Interval),
+        TimeSelection.AtOrBefore => AtOrBeforeRange(),
+
+        // Half an interval, where the selector's range has a whole one either side (D31).
         _ => (First - (Interval / 2), Last + (Interval / 2)),
     };
 
@@ -251,36 +266,19 @@ public sealed class TimeSteps
             return new TimeStatus(at, null, Previous: end, Selection: TimeSelection.Continuous);
         }
 
-        // The steps at or before and after the drawn time, to say whether
-        // it's on a step, between two or before the first.
-        var drawn = RoundDown(at);
+        // The selector draws to the minute; Pro's tile cache wants coarser.
+        // The steps at or before and after the drawn time say whether it's
+        // on a step, between two or before the first.
+        var drawn = RoundDown(Select(at) ?? at);
         var index = Array.BinarySearch(_steps, drawn);
         return new TimeStatus(at, drawn, index >= 0 ? drawn : Before(drawn), After(drawn), TimeSelection.Continuous);
     }
 
-    private TimeStatus ResolveAtOrBefore(DateTime at)
-    {
-        if (at < First)
-        {
-            return new TimeStatus(at, null, Next: First, Selection: TimeSelection.AtOrBefore);
-        }
-
-        var index = Array.BinarySearch(_steps, at);
-        if (index >= 0)
-        {
-            return new TimeStatus(at, _steps[index], Selection: TimeSelection.AtOrBefore);
-        }
-
-        // ~index is the first step after the instant; at >= First, so there's one before.
-        var after = ~index;
-        var previous = _steps[after - 1];
-        DateTime? next = after < _steps.Length ? _steps[after] : null;
-
-        // Past the last step, or in a gap: the step before is more than one interval old.
-        return at - previous > Interval
-            ? new TimeStatus(at, null, previous, next, TimeSelection.AtOrBefore)
-            : new TimeStatus(at, previous, Selection: TimeSelection.AtOrBefore);
-    }
+    // No step before the first, past the last or in a gap: the step before is more than one interval old.
+    private TimeStatus ResolveAtOrBefore(DateTime at) =>
+        Select(at) is { } step
+            ? new TimeStatus(at, step, Selection: TimeSelection.AtOrBefore)
+            : new TimeStatus(at, null, Before(at), After(at), TimeSelection.AtOrBefore);
 
     private TimeStatus ResolveNearest(DateTime at)
     {
@@ -295,29 +293,27 @@ public sealed class TimeSteps
             return new TimeStatus(at, null, Previous: Last);
         }
 
-        var index = Array.BinarySearch(_steps, at);
-        if (index >= 0)
-        {
-            return new TimeStatus(at, _steps[index]);
-        }
-
-        // ~index is the first step after the instant.
-        var after = ~index;
-        DateTime? previous = after > 0 ? _steps[after - 1] : null;
-        DateTime? next = after < _steps.Length ? _steps[after] : null;
-        var nearest = (previous, next) switch
-        {
-            ({ } p, { } n) => at - p <= n - at ? p : n,
-            ({ } p, null) => p,
-            (null, { } n) => n,
-            _ => throw new InvalidOperationException("A step list is never empty."),
-        };
-
         // In range but within a gap: the nearest step is further than one interval away.
-        return (nearest - at).Duration() > Interval
-            ? new TimeStatus(at, null, previous, next)
-            : new TimeStatus(at, nearest);
+        return Select(at) is { } step
+            ? new TimeStatus(at, step)
+            : new TimeStatus(at, null, Before(at), After(at));
     }
+
+    /// <summary>
+    /// Gets the step drawn at <paramref name="at"/> by upstream's rule, with
+    /// <see cref="Interval"/> as the tolerance; for a continuous layer, the
+    /// time to the minute.
+    /// </summary>
+    private DateTime? Select(DateTime at) =>
+        TimeStepSelector.Select(_steps, TimeSelections.ToStepSelection(Selection), Interval, at);
+
+    /// <summary>
+    /// Gets upstream's range for at-or-before steps: the first step to
+    /// <see cref="Interval"/> after the last.
+    /// </summary>
+    private (DateTime Start, DateTime End) AtOrBeforeRange() =>
+        TimeStepSelector.RangeOf(new TimeSemantics(TimeStepKind.Forecast, TimeStepSelection.AtOrBefore, Interval), _steps)
+            ?? throw new InvalidOperationException("A step list is never empty.");
 
     /// <summary>
     /// Gets the last step before <paramref name="instant"/>, for
@@ -325,14 +321,7 @@ public sealed class TimeSteps
     /// there's none.
     /// </summary>
     /// <param name="instant">The map instant; local times are converted to UTC, unspecified ones taken as UTC.</param>
-    public DateTime? Before(DateTime instant)
-    {
-        var index = Array.BinarySearch(_steps, Utc(instant));
-
-        // A hit is the instant's own step; a miss gives the first step after it.
-        var first = index >= 0 ? index : ~index;
-        return first > 0 ? _steps[first - 1] : null;
-    }
+    public DateTime? Before(DateTime instant) => TimeStepSelector.Previous(_steps, Utc(instant));
 
     /// <summary>
     /// Gets the first step after <paramref name="instant"/>, for
@@ -340,12 +329,7 @@ public sealed class TimeSteps
     /// there's none.
     /// </summary>
     /// <param name="instant">The map instant; local times are converted to UTC, unspecified ones taken as UTC.</param>
-    public DateTime? After(DateTime instant)
-    {
-        var index = Array.BinarySearch(_steps, Utc(instant));
-        var next = index >= 0 ? index + 1 : ~index;
-        return next < _steps.Length ? _steps[next] : null;
-    }
+    public DateTime? After(DateTime instant) => TimeStepSelector.Next(_steps, Utc(instant));
 
     /// <summary>
     /// Gets the map time to open at when the first time-varying layer arrives

@@ -26,8 +26,9 @@ P4 and P9.
 3. On every map time change in the active map view
    (`MapViewTimeChangedEvent`), and when the active view changes, the add-in
    takes the end of the map time range as the instant (D30) and resolves it
-   per layer by the layer's selection (`TimeSteps.Resolve`), as the server
-   does for each dataset:
+   per layer by the layer's selection (`TimeSteps.Resolve`). The step comes
+   from EncDotNet.S100's `TimeStepSelector`, the rule the server draws each
+   dataset by (issue #72), with the layer's interval as the tolerance:
    - **nearest** (S-111, GRIB2, NetCDF): in range, within half an interval
      of the first or last step, the nearest step; between steps, a nearest
      step more than one interval away is a gap;
@@ -176,4 +177,13 @@ Charleston S-104 sample, through a proxy that logged every request.
   doesn't, and it's never hidden: past the grid's last step, the server
   holds that step (U6) beside the storm's cone and track. A layer with nearest and at-or-before datasets resolves at or
   before, so its nearest datasets can lag by up to an interval.
+- The add-in's interval, which is the tolerance it selects with, is the
+  most common interval between steps; the server's is the dataset's
+  validity, or else the median interval. They're the same for regular
+  steps, and for EncDotNet.S100's TC, S-104 and S-111 test datasets
+  (`TimeStepSelectorAgreementTests`), but a dataset with irregular steps or
+  a validity of its own can draw a step the add-in calls a gap, or the
+  other way round. A nearest layer's range is half an interval beyond its
+  first and last steps, where the server's is a whole one, so the add-in
+  hides it a little earlier than the server stops drawing it.
 - Times in the tab and the log follow A5's **Time format** setting (D28).
