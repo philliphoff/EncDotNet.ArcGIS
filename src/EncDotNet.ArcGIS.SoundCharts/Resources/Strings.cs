@@ -1149,6 +1149,9 @@ public static class Strings
     /// <summary>Gets the Cancel button's text.</summary>
     public static string Button_Cancel => Get(nameof(Button_Cancel));
 
+    /// <summary>Gets a progress dialog's message after its Cancel button is clicked.</summary>
+    public static string Progress_Canceling => Get(nameof(Progress_Canceling));
+
     /// <summary>Gets the export Browse button's tooltip.</summary>
     public static string Tooltip_ExportBrowse => Get(nameof(Tooltip_ExportBrowse));
 

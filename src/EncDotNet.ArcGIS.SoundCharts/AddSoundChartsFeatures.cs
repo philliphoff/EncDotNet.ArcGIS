@@ -45,28 +45,33 @@ internal static class AddSoundChartsFeatures
             return;
         }
 
-        var progress = new ProgressDialog(Strings.Features_ProgressReading);
-        progress.Show();
-        var warnings = new List<string>();
-        var added = 0;
+        List<DatasetInspection>? inspections;
         try
         {
-            var datasets = new List<ChartLayerDataset>();
-            foreach (var path in paths)
-            {
-                try
-                {
-                    var inspection = await Inspector.Value.InspectAsync(path);
-                    warnings.AddRange(inspection.Warnings);
-                    datasets.AddRange(inspection.Datasets);
-                }
-                catch (Exception ex) when (ex is not OperationCanceledException)
-                {
-                    AddInLog.Write(LogLevel.Error, $"Add as Feature Layers: reading {path} failed: {ex}");
-                    warnings.Add(string.Format(CultureInfo.CurrentCulture, Strings.AddData_Unreadable, System.IO.Path.GetFileName(path), ex.Message));
-                }
-            }
+            inspections = await CancelableProgress.RunAsync(
+                Strings.AddData_ProgressReading,
+                (progress, cancellationToken) => ChosenPaths.InspectAsync("Add as Feature Layers", paths, Inspector.Value.InspectAsync, progress, cancellationToken));
+        }
+        catch (Exception ex)
+        {
+            Fail(ex);
+            return;
+        }
 
+        if (inspections is null)
+        {
+            // Canceled while reading: nothing is added, and there's nothing to report.
+            AddInLog.Write("Add as Feature Layers: canceled while reading the datasets.");
+            return;
+        }
+
+        var warnings = inspections.SelectMany(i => i.Warnings).ToList();
+        var datasets = inspections.SelectMany(i => i.Datasets).ToList();
+        var added = 0;
+        var progress = new ProgressDialog(Strings.Features_ProgressReading);
+        progress.Show();
+        try
+        {
             foreach (var dataset in datasets.DistinctBy(d => d.Path, StringComparer.OrdinalIgnoreCase))
             {
                 if (!FeatureLayerPlan.Products.Contains(dataset.Product))
@@ -87,17 +92,22 @@ internal static class AddSoundChartsFeatures
         catch (Exception ex)
         {
             progress.Hide();
-            AddInLog.Write(LogLevel.Error, $"Add as Feature Layers failed: {ex}");
-            MessageBox.Show(
-                string.Format(CultureInfo.CurrentCulture, Strings.AddData_Failed, ex.Message),
-                Strings.Features_Title,
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
+            Fail(ex);
         }
         finally
         {
             progress.Dispose();
         }
+    }
+
+    private static void Fail(Exception ex)
+    {
+        AddInLog.Write(LogLevel.Error, $"Add as Feature Layers failed: {ex}");
+        MessageBox.Show(
+            string.Format(CultureInfo.CurrentCulture, Strings.AddData_Failed, ex.Message),
+            Strings.Features_Title,
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
     }
 
     private static async Task<bool> AddDatasetAsync(Map map, ChartLayerDataset dataset, List<string> warnings)

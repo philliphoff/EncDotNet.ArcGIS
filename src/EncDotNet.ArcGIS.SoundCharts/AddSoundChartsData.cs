@@ -33,17 +33,36 @@ internal static class AddSoundChartsData
             return;
         }
 
-        var progress = new ProgressDialog(Strings.AddData_ProgressReading);
-        progress.Show();
+        List<DatasetInspection>? inspections;
         try
         {
-            var inspections = await Task.Run(() => InspectAsync(paths));
-            var warnings = inspections.SelectMany(i => i.Warnings).ToList();
-            foreach (var warning in warnings)
-            {
-                AddInLog.Write(LogLevel.Warning, $"Add SoundCharts Data: {warning}");
-            }
+            inspections = await CancelableProgress.RunAsync(
+                Strings.AddData_ProgressReading,
+                (progress, cancellationToken) => ChosenPaths.InspectAsync("Add SoundCharts Data", paths, Inspector.Value.InspectAsync, progress, cancellationToken));
+        }
+        catch (Exception ex)
+        {
+            Fail(ex);
+            return;
+        }
 
+        if (inspections is null)
+        {
+            // Canceled while reading: nothing is added, and there's nothing to report.
+            AddInLog.Write("Add SoundCharts Data: canceled while reading the datasets.");
+            return;
+        }
+
+        var warnings = inspections.SelectMany(i => i.Warnings).ToList();
+        foreach (var warning in warnings)
+        {
+            AddInLog.Write(LogLevel.Warning, $"Add SoundCharts Data: {warning}");
+        }
+
+        var progressDialog = new ProgressDialog(Strings.AddData_ProgressStarting);
+        progressDialog.Show();
+        try
+        {
             ChartLayerManager.AddOutcome? outcome = null;
             if (inspections.Any(i => i.Datasets.Count > 0))
             {
@@ -54,50 +73,28 @@ internal static class AddSoundChartsData
                 }
             }
 
-            progress.Hide();
+            progressDialog.Hide();
             Report(outcome, warnings);
         }
         catch (Exception ex)
         {
-            progress.Hide();
-            AddInLog.Write(LogLevel.Error, $"Add SoundCharts Data failed: {ex}");
-            MessageBox.Show(
-                string.Format(CultureInfo.CurrentCulture, Strings.AddData_Failed, ex.Message),
-                Strings.AddData_FileDialogTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
+            progressDialog.Hide();
+            Fail(ex);
         }
         finally
         {
-            progress.Dispose();
+            progressDialog.Dispose();
         }
     }
 
-    private static async Task<List<DatasetInspection>> InspectAsync(IReadOnlyList<string> paths)
+    private static void Fail(Exception ex)
     {
-        var inspections = new List<DatasetInspection>();
-        foreach (var path in paths)
-        {
-            try
-            {
-                var inspection = await Inspector.Value.InspectAsync(path).ConfigureAwait(false);
-                AddInLog.Write(
-                    $"Add SoundCharts Data: {inspection.Input}: {inspection.Datasets.Count} dataset(s): " +
-                    string.Join(", ", inspection.Datasets.Select(d => $"{d.Name} ({d.ProductAndEdition})")));
-                inspections.Add(inspection);
-            }
-            catch (Exception ex) when (ex is not OperationCanceledException)
-            {
-                // One unreadable input mustn't stop the others.
-                AddInLog.Write(LogLevel.Error, $"Add SoundCharts Data: reading {path} failed: {ex}");
-                inspections.Add(new DatasetInspection(
-                    System.IO.Path.GetFileName(path),
-                    [],
-                    [string.Format(CultureInfo.CurrentCulture, Strings.AddData_Unreadable, System.IO.Path.GetFileName(path), ex.Message)]));
-            }
-        }
-
-        return inspections;
+        AddInLog.Write(LogLevel.Error, $"Add SoundCharts Data failed: {ex}");
+        MessageBox.Show(
+            string.Format(CultureInfo.CurrentCulture, Strings.AddData_Failed, ex.Message),
+            Strings.AddData_FileDialogTitle,
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
     }
 
     private static void Report(ChartLayerManager.AddOutcome? outcome, IReadOnlyList<string> warnings)

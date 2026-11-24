@@ -1282,6 +1282,10 @@ Choose No to export without it.</value>
   <data name="Button_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="Progress_Canceling" xml:space="preserve">
+    <value>Canceling...</value>
+    <comment>Shown in a progress dialog after its Cancel button is clicked, until the work stops.</comment>
+  </data>
   <data name="Tooltip_ExportBrowse" xml:space="preserve">
     <value>Choose the file to export to.</value>
   </data>
