@@ -140,6 +140,26 @@ class EndToEndTests(unittest.TestCase):
         self.assertIn(("warning", "No map to add the layer to. Add {} to a map in ArcGIS Pro.".format(path)),
                       self.arcpy.messages)
 
+    def test_add_soundcharts_layer_puts_an_advisory_in_weather(self):
+        storm = support.upstream("TC/al092022/al092022_5day_020.zip")
+        if storm is None:
+            self.skipTest("Needs EncDotNet.S100's TC test datasets.")
+        tool = self.module.AddSoundChartsLayer()
+        parameters = tool.getParameterInfo()
+        parameters[0].value = [self.cell, storm]
+        tool.execute(parameters, None)
+
+        with open(self.arcpy.outputs[2], encoding="utf-8") as stream:
+            document = json.load(stream)
+        _, *layers = document["layerDefinitions"]
+        self.assertEqual(["Weather", "Chart"], [layer["name"] for layer in layers])
+        weather = layers[0]
+        marker = json.loads(weather["customProperties"][0]["value"])
+        self.assertEqual("weather", marker["kind"])
+        self.assertEqual([("TC", "1.0.0", True)],
+                         [(d["product"], d["edition"], d["timeVarying"]) for d in marker["datasets"]])
+        self.assertIn("Follow official forecasts and advisories.", weather["description"])
+
     def test_export_tiles_reports_progress(self):
         tool = self.module.ExportTiles()
         parameters = tool.getParameterInfo()
