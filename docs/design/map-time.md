@@ -122,8 +122,8 @@ Whether Pro requests tiles from `TemplateUrl` is open question P11 in the
 design brief; if it doesn't, the layer draws every warning, as before. A
 restart or a palette change carries the time over to the new connection.
 
-The pinned server (`6731f4c7`) was checked with EncDotNet.S100's S-124
-fixtures at v0.30.2. Asking for the add-in's time gave the same tile as
+The pinned server, at v0.30.2 (`b9a19cbe`) and before it at `6731f4c7`,
+was checked with EncDotNet.S100's S-124 fixtures at v0.30.2. Asking for the add-in's time gave the same tile as
 asking for map time itself at every one of 201 map times, six hours apart
 from 25 Sep to 8 Nov 2026 and on both sides of every change. The map times
 covered NAVAREA X 120/26's parts (ended 5 Oct, in force 10 to 20 Oct, from
