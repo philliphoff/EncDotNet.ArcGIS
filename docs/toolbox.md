@@ -76,23 +76,19 @@ messages.
 ## Add SoundCharts Layer
 
 Adds datasets, exchange sets or folders to a map as a SoundCharts chart: a
-**SoundCharts · {source}** group with a **Chart** layer, and **Water level**
-(S-104) and **Surface currents** (S-111) layers when the data has them. These
-are the layers **Add SoundCharts Data** makes on the ribbon, and the add-in
-treats them the same way.
+**SoundCharts · {source}** group with a **Chart** layer, and **Weather**,
+**Water level** (S-104) and **Surface currents** (S-111) layers when the data
+has them. These are the layers **Add SoundCharts Data** makes on the ribbon,
+and the add-in treats them the same way.
 
-The tool doesn't read time steps, so S-411 and S-412 datasets go in **Chart**,
-drawn at their first time. For a **Weather** layer that follows map time, add
-them with **Add SoundCharts Data**.
-
-The tool reads each dataset with `s100 info`, writes a layer file (`.lyrx`)
-and adds it to the map. The add-in then starts a chart server for the layers'
+The tool reads each dataset's product, edition and time steps with
+`s100 info`, writes a layer file (`.lyrx`) and adds it to the map. The add-in then starts a chart server for the layers'
 datasets and connects them, as it does when a project opens. Without the
 add-in, the layers draw nothing unless you give a chart server URL.
 
 | Parameter | Name | Default | Description |
 |---|---|---|---|
-| Input datasets, exchange sets or folders | `in_data` | required | Dataset files (`.000`, `.h5`, `.gml`), exchange sets (a folder, `CATALOG.XML` or `CATALOG.031`) and folders, searched recursively. Extract a `.zip` first. |
+| Input datasets, exchange sets or folders | `in_data` | required | Dataset files (`.000`, `.h5`, `.gml`, and weather files such as `.grib2`, `.nc`, CAP `.xml` and an NHC advisory's `_5day_` `.zip`), exchange sets (a folder, `CATALOG.XML` or `CATALOG.031`) and folders, searched recursively for `.000`, `.h5` and `.gml` files. Extract a `.zip` exchange set first. |
 | Map | `in_map` | the active map | The map to add the chart to. |
 | Output layer file | `out_layer_file` | the scratch folder | Where to write the `.lyrx`. |
 | Palette | `palette` | `Day` | `Day`, `Dusk` or `Night`. |
@@ -101,6 +97,16 @@ add-in, the layers draw nothing unless you give a chart server URL.
 
 Datasets `s100` can't read are skipped with a warning. Update files (`.001`
 and so on) are applied to their base cell.
+
+A dataset with more than one time step, other than S-104 and S-111, goes in
+**Weather**, which follows map time: NHC tropical cyclone advisories (`TC`),
+CAP warnings, GRIB2 and NetCDF forecasts, and S-411 and S-412 with several
+dates. A dataset with one time step, such as a one-date ice chart, stays in
+**Chart**, drawn at that time. This is the rule **Add SoundCharts Data**
+follows. To add an NHC advisory, give its forecast zip
+(`al092022_5day_020.zip`); its `_fcst_` and `_best_track` zips, beside it,
+add the wind radii and past track. The tool can't read an advisory folder as
+one dataset, as the add-in does.
 
 The layer file records each dataset's product and edition. Unlike **Add
 SoundCharts Data**, it takes the producer from the file name (`US5MA1BO`
@@ -251,8 +257,10 @@ use arcpy. Its tests run with any Python 3.9 or later, including Pro's:
 "C:\Program Files\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\python.exe" -I -m unittest discover -s tests/toolbox -v
 ```
 
-The tests load `SoundChartsTools.pyt` against a stand-in for arcpy. The ones
-that run `s100` need a build the toolbox can find (see
+The tests load `SoundChartsTools.pyt` against a stand-in for arcpy. The
+`s100 info` output the toolbox reads is tested against copies recorded from
+the pinned `s100` in `tests/toolbox/info`; record them again when a new pin
+changes it. The ones that run `s100` need a build the toolbox can find (see
 [The s100 the tools run](#the-s100-the-tools-run)) and
 `SOUNDCHARTS_S100_TEST_DATASETS` set to EncDotNet.S100's `tests/datasets`
 folder; they skip otherwise. CI runs them all.

@@ -1,0 +1,22 @@
+╭───────────────────┬──────────────────────────────────────────────────────────╮
+│ Property          │ Value                                                    │
+├───────────────────┼──────────────────────────────────────────────────────────┤
+│ Dataset           │ S411/iho_4112C00TDS001.gml                               │
+│ Specification     │ S-411                                                    │
+│ Edition           │ 1.0.0                                                    │
+│ Supported edition │ 1.2.1                                                    │
+│ Catalogue version │ S-411 1.2.1                                              │
+│ Version match     │ application supports a newer, compatible edition         │
+│ Axis order        │ unverified — latitude first assumed                      │
+│ Headless render   │ yes                                                      │
+│ Display modes     │ ice-navigational, ice-concentration, ice-sod             │
+│                   │ ice-navigational is a provisional preview, not a         │
+│                   │ POLARIS/RIO risk computation                             │
+│ Time steps        │ 1                                                        │
+╰───────────────────┴──────────────────────────────────────────────────────────╯
+     Available time steps      
+╭───────┬─────────────────────╮
+│ Index │ Time (UTC)          │
+├───────┼─────────────────────┤
+│ 0     │ 2001-04-22 00:00:00 │
+╰───────┴─────────────────────╯

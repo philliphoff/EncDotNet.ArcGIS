@@ -178,7 +178,8 @@ class AddSoundChartsLayer(object):
         self.label = "Add SoundCharts Layer"
         self.description = (
             "Adds datasets and exchange sets to a map as a SoundCharts chart: a SoundCharts group with a Chart, "
-            "Water level and Surface currents layer as the data needs, the layers Add SoundCharts Data makes. "
+            "Weather, Water level and Surface currents layer as the data needs, the layers Add SoundCharts Data "
+            "makes. "
             "Writes the layer file and adds it to the map; the SoundCharts add-in connects the layers to a "
             "chart server. " + _NOT_FOR_NAVIGATION)
         self.canRunInBackground = False
