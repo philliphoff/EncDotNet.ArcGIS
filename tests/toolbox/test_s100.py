@@ -51,6 +51,32 @@ class S100Tests(unittest.TestCase):
                 self.assertEqual(product, dataset.product)
                 self.assertRegex(dataset.edition, r"^\d+\.\d+\.\d+$")
 
+    def test_info_reads_time_steps(self):
+        # The add-in's rule: more than one time step is a time layer; one step stays in Chart.
+        cases = (("TC/al092022/al092022_5day_020.zip", "TC", True, "weather"),
+                 ("CAP/nws-gale-warning-pzz560.xml", "CAP", True, "weather"),
+                 ("GRIB2/gfswave-useast.grib2", "GRIB2", True, "weather"),
+                 ("GRIB2/gfs-1p00-ugrd10m-f003.grib2", "GRIB2", False, "chart"),
+                 ("S411/iho_4112C00TDS001.gml", "S-411", False, "chart"),
+                 ("S104/104US004SC1BO_20251217T12Z.h5", "S-104", True, "water-level"),
+                 ("S57/US5MA1BO/US5MA1BO.000", "S-57", False, "chart"))
+        for relative, product, time_varying, kind in cases:
+            path = support.upstream(relative)
+            if path is None:
+                continue
+            with self.subTest(dataset=relative):
+                dataset, warning = datasets.inspect(PROGRAM.path, path, cwd=self.folder)
+                self.assertIsNone(warning)
+                self.assertEqual((product, time_varying, kind), (dataset.product, dataset.time_varying, dataset.kind))
+
+    def test_info_skips_a_zip_that_isnt_a_dataset(self):
+        radii = support.upstream("TC/al092022/al092022_fcst_020.zip")
+        if radii is None:
+            self.skipTest("Needs EncDotNet.S100's TC test datasets.")
+        dataset, warning = datasets.inspect(PROGRAM.path, radii, cwd=self.folder)
+        self.assertIsNone(dataset)
+        self.assertIn("extract it first", warning)
+
     def test_info_skips_what_it_cant_read(self):
         bogus = support.touch(os.path.join(self.folder, "bogus.000"), b"not a cell")
         dataset, warning = datasets.inspect(PROGRAM.path, bogus)

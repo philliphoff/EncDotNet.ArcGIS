@@ -1,9 +1,12 @@
 """Finds the datasets in a tool's inputs and reads what each one is.
 
 The add-in reads datasets in-process with EncDotNet.S100; the toolbox asks
-``s100 info``, which prints the product and edition. ``s100 info`` has no
-JSON output yet, so its table is read leniently: only the ``Specification``
-and ``Edition`` rows, which are short enough never to wrap.
+``s100 info``, which prints the product, the edition and the time steps.
+``s100 info`` has no JSON output yet, so its tables are read leniently: the
+``Specification`` and ``Edition`` rows and the rows of the **Available time
+steps** table, which are short enough never to wrap. Box-drawing characters
+may arrive in whatever code page .NET chose, so only the text between them
+counts.
 """
 
 import os
@@ -15,8 +18,13 @@ from . import layerfile, runner
 DATASET_EXTENSIONS = (".000", ".h5", ".hdf5", ".gml")
 CATALOGUES = ("CATALOG.XML", "CATALOG.031")
 
-_SPECIFICATION = re.compile(r"^\W*Specification\W+(S-\d{2,3})\b", re.MULTILINE)
+# S-101, S-57, and the weather products that aren't S-100: TC, CAP, GRIB2, NetCDF, CODSUS.
+_SPECIFICATION = re.compile(r"^\W*Specification\W+([A-Za-z0-9][A-Za-z0-9.-]*)(?![\w.-])", re.MULTILINE)
 _EDITION = re.compile(r"^\W*Edition\W+(\d+(?:\.\d+)*)\b", re.MULTILINE)
+_TIME_STEPS_TITLE = "Available time steps"
+# A row of the time steps table: its index and its UTC time, to the second. The
+# other tables' times (forecast points, warnings) have no seconds.
+_TIME_STEP = re.compile(r"^\W*\d+\W+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\W*$")
 
 
 class Input:
@@ -93,9 +101,6 @@ def expand(paths):
             folder = os.path.dirname(path)
             files = _dataset_files(folder)
             name = os.path.basename(folder) or folder
-        elif os.path.isfile(path) and path.lower().endswith(".zip"):
-            warnings.append("{}: extract the .zip first, then add its folder.".format(path))
-            continue
         elif os.path.isfile(path):
             if is_update_file(path):
                 warnings.append("{}: an update file; add its base cell (.000) instead.".format(path))
@@ -119,19 +124,58 @@ def parse_info(text):
     return (product.group(1) if product else None, edition.group(1) if edition else None)
 
 
+def parse_times(text):
+    """Reads the time steps from ``s100 info`` output, in order, as ``yyyy-MM-dd HH:mm:ss`` UTC text.
+
+    A dataset that doesn't change with time has none.
+    """
+    lines = (text or "").splitlines()
+    start = next((i for i, line in enumerate(lines) if _TIME_STEPS_TITLE in line), None)
+    if start is None:
+        return []
+    times = []
+    for line in lines[start + 1:]:
+        match = _TIME_STEP.match(line)
+        if match:
+            times.append(match.group(1))
+    return times
+
+
+def is_time_varying(times):
+    """Whether a dataset with these time steps changes with time, as the add-in decides it.
+
+    More than one distinct step puts a dataset in a time layer; a single step
+    has nothing to step through, so it stays in **Chart** (the add-in's
+    ``DatasetInspector.IsTimeVarying``).
+    """
+    return len(set(times)) > 1
+
+
+def dataset_from_info(path, text):
+    """Gets the ``ChartDataset`` that ``s100 info`` output describes, or ``None`` when it names no product."""
+    product, edition = parse_info(text)
+    if product is None:
+        return None
+    return layerfile.ChartDataset(path, product, edition, producer=producer_from_name(path),
+                                  time_varying=is_time_varying(parse_times(text)))
+
+
 def inspect(program, path, cwd=None):
     """Asks ``s100 info`` what a dataset is.
 
     :returns: ``(ChartDataset or None, warning or None)``.
     """
     result = runner.run(program, ["info", path], cwd=cwd)
-    product, edition = parse_info(result.output)
-    if result.exit_code != 0 or product is None:
+    dataset = dataset_from_info(path, result.output) if result.exit_code == 0 else None
+    if dataset is None:
         detail = next((line.strip() for line in result.stderr + result.stdout
                        if runner.severity(line) == runner.ERROR), None)
         reason = detail or runner.exit_message(result.exit_code)
-        return None, "{}: skipped, s100 can't read it. {}".format(path, reason)
-    return layerfile.ChartDataset(path, product, edition, producer=producer_from_name(path)), None
+        warning = "{}: skipped, s100 can't read it. {}".format(path, reason)
+        if path.lower().endswith(".zip"):
+            warning += " To add a .zip exchange set, extract it first, then add its folder."
+        return None, warning
+    return dataset, None
 
 
 def inspect_all(program, inputs, on_done=None, workers=4, cwd=None):
