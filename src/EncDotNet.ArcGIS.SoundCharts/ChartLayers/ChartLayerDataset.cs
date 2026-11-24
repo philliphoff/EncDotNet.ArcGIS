@@ -9,7 +9,8 @@ namespace EncDotNet.SoundCharts.ChartLayers;
 /// </summary>
 /// <param name="Path">
 /// The dataset's full path: its file, or for a folder read as one dataset,
-/// such as an NHC tropical cyclone advisory folder, the folder.
+/// such as an NHC tropical cyclone advisory folder or a GRIB2 model run, the
+/// folder.
 /// </param>
 /// <param name="Product">The product specification read from the content, such as <c>S-101</c> or <c>S-57</c>.</param>
 /// <param name="Edition">The edition the dataset declares, such as <c>2.0.0</c>, or <see langword="null"/> when it says none.</param>
@@ -32,7 +33,8 @@ public sealed record ChartLayerDataset(
 {
     /// <summary>
     /// Gets the dataset's name: its file name without the extension, such as
-    /// <c>US5MA1BO</c>, or a folder's name, such as <c>al092022</c>.
+    /// <c>US5MA1BO</c>, or a folder's name, such as <c>al092022</c> or
+    /// <c>gfswave.20261025</c>.
     /// </summary>
     public string Name => Directory.Exists(Path)
         ? System.IO.Path.GetFileName(System.IO.Path.TrimEndingDirectorySeparator(Path))

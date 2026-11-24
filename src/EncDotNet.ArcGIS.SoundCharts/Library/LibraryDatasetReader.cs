@@ -16,9 +16,10 @@ namespace EncDotNet.SoundCharts.Library;
 /// </summary>
 /// <remarks>
 /// <para>
-/// A dataset is a file, or an NHC tropical cyclone advisory folder
-/// (<see cref="DatasetSource.IsAdvisoryFolder"/>), which EncDotNet.S100's
-/// indexer lists as one item at the folder (issue #69).
+/// A dataset is a file, an NHC tropical cyclone advisory folder
+/// (<see cref="DatasetSource.IsAdvisoryFolder"/>, issue #69) or a GRIB2
+/// model run folder (<see cref="DatasetSource.IsRunFolder"/>, issue #73),
+/// which EncDotNet.S100's indexer lists as one item at the folder.
 /// </para>
 /// <para>
 /// Nothing is drawn or kept open: each call opens the dataset, reads, and
@@ -70,7 +71,7 @@ public sealed class LibraryDatasetReader : IDisposable
     /// surface currents, weather, sea ice, tropical cyclone advisories) has
     /// data for, in UTC: its processor's time steps.
     /// </summary>
-    /// <param name="path">The dataset file or advisory folder.</param>
+    /// <param name="path">The dataset file, advisory folder or run folder.</param>
     /// <returns>The times in order; empty for a dataset without time steps, or one that can't be read.</returns>
     public IReadOnlyList<DateTime> ReadTimeSteps(string path)
     {
@@ -89,7 +90,7 @@ public sealed class LibraryDatasetReader : IDisposable
     /// Footprint</b> when the Library's index has none (an exchange set
     /// whose catalogue gives no bounds).
     /// </summary>
-    /// <param name="path">The dataset file or advisory folder.</param>
+    /// <param name="path">The dataset file, advisory folder or run folder.</param>
     /// <returns>The bounding box, or <see langword="null"/> when the dataset has no geographic extent or can't be read.</returns>
     public LibraryFootprint? ReadFootprint(string path)
     {
@@ -118,7 +119,7 @@ public sealed class LibraryDatasetReader : IDisposable
         {
             return File.Exists(path)
                 ? DatasetPipelineFactory.DetectProductSpec(path) is not null
-                : DatasetSource.IsAdvisoryFolder(path);
+                : DatasetSource.IsAdvisoryFolder(path) || DatasetSource.IsRunFolder(path);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {

@@ -10,7 +10,7 @@ public static class LibraryItemPaths
     /// <summary>
     /// Gets the dataset's own file (an S-57 or S-101 base cell, an HDF5 or
     /// GML file, an NHC advisory's forecast zip) or folder (an NHC advisory
-    /// folder, issue #69), or <see langword="null"/> when it's inside a
+    /// folder, issue #69, or a GRIB2 run, issue #73), or <see langword="null"/> when it's inside a
     /// <c>.zip</c> exchange set or not on this computer.
     /// </summary>
     /// <param name="item">The item.</param>
@@ -22,7 +22,7 @@ public static class LibraryItemPaths
 
     /// <summary>
     /// Gets what <b>Add to Map</b> passes to Add SoundCharts Data: the
-    /// dataset's file or advisory folder, or for a dataset inside a
+    /// dataset's file, advisory folder or run folder, or for a dataset inside a
     /// <c>.zip</c> exchange set the <c>.zip</c> itself, since only a whole
     /// zipped exchange set can be added.
     /// </summary>
@@ -47,7 +47,7 @@ public static class LibraryItemPaths
 
     /// <summary>
     /// Gets what <b>Open Containing Folder</b> selects in File Explorer:
-    /// the dataset's file or advisory folder, or the <c>.zip</c> that holds it.
+    /// the dataset's file, advisory folder or run folder, or the <c>.zip</c> that holds it.
     /// </summary>
     /// <param name="item">The item.</param>
     /// <returns>The path, or <see langword="null"/> when the item isn't on this computer.</returns>

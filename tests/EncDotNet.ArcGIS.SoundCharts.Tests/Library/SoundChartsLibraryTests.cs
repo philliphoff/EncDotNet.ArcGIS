@@ -271,31 +271,69 @@ public class SoundChartsLibraryTests
     }
 
     [Fact]
-    public async Task Index_AdvisoryBesideAGrib2Run_IsTheStormsLatestForecastZip()
+    public async Task Index_RunFolder_IsOneItemAtTheFolder()
     {
-        // A folder that is a GRIB2 run keeps the folder for the run, so the
-        // advisory is its latest forecast zip, which supersedes older ones.
-        var grib = Fixtures.Upstream(Path.Combine("GRIB2", "gfswave-useast.grib2"));
-        var filter = Fixtures.Upstream(Path.Combine("GRIB2", "gfswave-useast-filter.grib2"));
-        Assert.SkipWhen(grib is null || filter is null, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        // Issue #73: EncDotNet.S100 lists a folder of one GRIB2 model run's
+        // files, one per forecast hour, as one item located at the folder,
+        // when the probe reads the folder. Its .idx inventories aren't items.
         using var temp = new TempFolder();
-        var folder = temp.Folder("run");
-        Assert.SkipUnless(Fixtures.CopyUpstreamStorm(folder, advisory: "019"), "No TC fixture.");
-        Fixtures.CopyUpstreamStorm(folder);
-        File.Copy(grib, Path.Combine(folder, "gfswave-useast.grib2"));
-        File.Copy(filter, Path.Combine(folder, "gfswave-useast-filter.grib2"));
+        var folder = Path.Combine(temp.Path, "gfswave");
+        Assert.SkipWhen(Fixtures.WriteUpstreamRun(folder).Count == 0, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        temp.File(@"gfswave/gfswave.t00z.global.0p25.f000.grib2.idx", "1:0:d=2026102500:HTSGW:surface:anl:");
 
         var index = await IndexAsync(temp, folder);
 
+        var item = Assert.Single(index.Items);
+        Assert.Equal("GRIB2", item.ProductSpec);
+        Assert.Equal("gfswave/", item.Key);
+        Assert.Equal("gfswave", item.Name);
+        Assert.Equal("3", item.Properties["files"]);
+        Assert.NotNull(item.Bounds);
+        Assert.Equal(folder, LibraryItemPaths.AddToMapPath(item), ignoreCase: true);
+        Assert.Equal(folder, LibraryItemPaths.DatasetFile(item), ignoreCase: true);
+        Assert.True(LibraryItemPaths.Exists(LibraryItemPaths.AddToMapPath(item)));
+        Assert.DoesNotContain(index.Diagnostics, d => d.Severity >= IndexDiagnosticSeverity.Warning);
+    }
+
+    [Fact]
+    public async Task Index_FolderWithRunSubfoldersAndOneGrib2File_ListsEachRunAndTheFile()
+    {
+        using var temp = new TempFolder();
+        var root = temp.Folder("weather");
+        Assert.SkipWhen(Fixtures.WriteUpstreamRun(Path.Combine(root, "00z")).Count == 0, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        Fixtures.WriteUpstreamRun(Path.Combine(root, "06z"), [0, 3]);
+        Fixtures.WriteUpstreamRun(Path.Combine(root, "single"), [6]);
+
+        var index = await IndexAsync(temp, root);
+
+        Assert.All(index.Items, i => Assert.Equal("GRIB2", i.ProductSpec));
+        Assert.Equal(
+            ["00z/", "06z/", "single/gfswave.t00z.global.0p25.f006.grib2"],
+            index.Items.Select(i => i.Key).Order(StringComparer.Ordinal));
+    }
+
+    [Fact]
+    public async Task Index_AdvisoryBesideAGrib2Run_IsTheRunAtTheFolderAndTheStormsLatestForecastZip()
+    {
+        // A folder that is both a GRIB2 run and a storm's advisory folder is
+        // two datasets, as in EncDotNet.S100's Library and CLI (#1687,
+        // #1694): the run keeps the folder, so the advisory is its latest
+        // forecast zip, which supersedes older ones.
+        using var temp = new TempFolder();
+        var folder = temp.Folder("run");
+        Assert.SkipWhen(Fixtures.WriteUpstreamRun(folder).Count == 0, $"Set {Fixtures.UpstreamDatasetsVariable} to EncDotNet.S100's tests/datasets folder.");
+        Assert.SkipUnless(Fixtures.CopyUpstreamStorm(folder, advisory: "019"), "No TC fixture.");
+        Fixtures.CopyUpstreamStorm(folder);
+
+        var index = await IndexAsync(temp, folder);
+
+        Assert.Equal(2, index.Items.Count);
         var storm = Assert.Single(index.Items, i => i.ProductSpec == "TC");
         Assert.Equal("al092022_5day_020.zip", storm.Key);
         Assert.Equal(Path.Combine(folder, "al092022_5day_020.zip"), LibraryItemPaths.AddToMapPath(storm), ignoreCase: true);
-
-        // The add-in reads GRIB2 runs file by file, so the run is its files.
-        Assert.Equal(
-            ["gfswave-useast-filter.grib2", "gfswave-useast.grib2"],
-            index.Items.Where(i => i.ProductSpec == "GRIB2").Select(i => i.Key).Order(StringComparer.Ordinal));
-        Assert.Equal(3, index.Items.Count);
+        var run = Assert.Single(index.Items, i => i.ProductSpec == "GRIB2");
+        Assert.Equal("run/", run.Key);
+        Assert.Equal(folder, LibraryItemPaths.AddToMapPath(run), ignoreCase: true);
     }
 
     [Fact]

@@ -110,7 +110,9 @@ The format is described in EncDotNet.S100's
 
 The collection appears as **Hurricane Milton at Tampa Bay**, with a node for
 each group. The **Storm** group lists the advisory as one dataset,
-**al142024_018**: its folder, whose three zips are read together.
+**al142024_018**: its folder, whose three zips are read together. The
+**Weather** group lists the GFS-Wave run as one dataset too: the script
+appends the run's hours into one GRIB2 file.
 
 ## Add the groups to the map
 

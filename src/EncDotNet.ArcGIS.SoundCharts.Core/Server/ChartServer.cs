@@ -263,9 +263,9 @@ public sealed class ChartServer : IAsyncDisposable
             try
             {
                 endpoint = new ServerEndpoint(LoopbackPort.FindFree(), ServerToken.Create(renderKey));
-                arguments = ServerCommandLine.Build(Datasets, endpoint, _host.Folders.TileCache, _host.Options.TileCacheMegabytes);
+                arguments = ServerCommandLine.Build(Datasets, endpoint, _host.Folders.TileCache, _host.Options.TileCacheMegabytes, workingDirectory);
             }
-            catch (Exception ex) when (ex is NotSupportedException or InvalidOperationException or System.Net.Sockets.SocketException)
+            catch (Exception ex) when (ex is NotSupportedException or InvalidOperationException or System.Net.Sockets.SocketException or IOException)
             {
                 return ex.Message;
             }

@@ -70,7 +70,7 @@ public sealed class DatasetValidationStore
     }
 
     // The file's size and last write time: a different edition or a new update changes it.
-    // An advisory folder's revision covers its files, so a newer advisory changes it.
+    // An advisory or run folder's revision covers its files, so a newer advisory or hour changes it.
     private static string Stamp(string path)
     {
         try

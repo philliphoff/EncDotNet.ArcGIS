@@ -62,9 +62,9 @@ public sealed class TilesExportRenderer : IChartRasterRenderer
         try
         {
             plan = ChartTilePlan.For(request.Frame, request.Dpi, MaxPixelRatio);
-            arguments = TilesExportCommandLine.Build(request, plan);
+            arguments = TilesExportCommandLine.Build(request, plan, _workingDirectory);
         }
-        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or NotSupportedException)
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or NotSupportedException or IOException)
         {
             throw new ChartRasterException($"{request.Name} can't be rendered: {ex.Message}", ex);
         }
