@@ -302,6 +302,10 @@
     <value>Weather</value>
     <comment>The SoundCharts layer for other time-varying datasets: tropical cyclones, CAP, GRIB2, NetCDF, S-411 sea ice, S-412. The viewer's word for weather data.</comment>
   </data>
+  <data name="Layer_NavigationalWarnings" xml:space="preserve">
+    <value>Navigational warnings</value>
+    <comment>The SoundCharts layer for S-124 navigational warnings, drawn as the warnings in force at map time. The viewer's panel name.</comment>
+  </data>
   <data name="Group_Name" xml:space="preserve">
     <value>SoundCharts · {0}</value>
     <comment>{0} is the source: a cell or exchange set name, or Group_DatasetCount.</comment>

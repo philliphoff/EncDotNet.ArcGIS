@@ -20,6 +20,9 @@ internal static class ChartLayerSamples
     public static readonly ChartLayerDataset Storm = new(
         @"C:\Charts\TC\al092022_5day_020.zip", "TC", "1.0.0", new GeoExtent(-85.41, 12.3, -66.3, 38.35), TimeVarying: true);
 
+    public static readonly ChartLayerDataset Warning = new(
+        @"C:\Charts\S124\navwarn_drawing_parts.gml", "S-124", "2.0.0", new GeoExtent(145.7, -16.7, 146.4, -16.2), "ZZ");
+
     public static readonly Uri Capabilities = new("http://127.0.0.1:52100/abc-123/wmts/1.0.0/WMTSCapabilities.xml");
 
     public static ChartLayerDefinition Definition(ChartLayerKind kind, params ChartLayerDataset[] datasets) =>

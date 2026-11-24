@@ -78,6 +78,29 @@ public sealed class ChartComposition
         }
 
         var layers = new Dictionary<ChartLayerKind, ChartLayerMarker>(Layers);
+
+        // A dataset added again leaves a layer of another kind: a project saved
+        // before S-124 had its own layer holds warnings in Chart (issue #75).
+        foreach (var (kind, marker) in Layers)
+        {
+            var kept = marker.Datasets
+                .Where(d => !added.Any(a => a.Kind != kind && string.Equals(a.Path, d.Path, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+            if (kept.Count == marker.Datasets.Count)
+            {
+                continue;
+            }
+
+            if (kept.Count == 0)
+            {
+                layers.Remove(kind);
+            }
+            else
+            {
+                layers[kind] = ChartLayerMarker.ForLayer(kind, kept);
+            }
+        }
+
         foreach (var group in added.GroupBy(d => d.Kind))
         {
             var existing = layers.TryGetValue(group.Key, out var marker) ? marker.Datasets : [];
